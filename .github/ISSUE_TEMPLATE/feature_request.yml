@@ -1,0 +1,84 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your feature suggestion! Please provide details about your idea.
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework/Component
+      description: Which framework or component would this feature affect?
+      options:
+        - Vanilla JavaScript
+        - jQuery
+        - Vue.js
+        - React.js
+        - Angular
+        - Backend API (go-chess)
+        - Docker Setup
+        - Documentation
+        - All Frameworks
+        - New Framework
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: Describe the problem or need this feature addresses...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed solution or feature
+      placeholder: Describe how you envision this feature working...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Any alternative solutions or features you've considered
+      placeholder: Describe any alternatives you've thought about...
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would improve experience
+        - High - Needed for functionality
+        - Critical - Blocking current work
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: implementation
+    attributes:
+      label: Implementation Willingness
+      description: Are you willing to help implement this feature?
+      options:
+        - label: I can help with implementation
+        - label: I can help with testing
+        - label: I can help with documentation
+        - label: I would like to be involved in design discussions
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples about the feature request here.

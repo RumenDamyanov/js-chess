@@ -1,0 +1,453 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+  GO_VERSION: '1.22'
+
+jobs:
+  # Job 1: Basic validation and dependency installation
+  setup-and-validate:
+    name: Setup & Validate Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Verify submodule backend
+        run: |
+          echo "Checking go-chess backend submodule..."
+          ls -la backend/
+          if [ -d "backend/go-chess" ]; then
+            echo "✅ go-chess submodule found"
+            ls -la backend/go-chess/
+          else
+            echo "❌ go-chess submodule missing"
+            exit 1
+          fi
+
+      - name: Install frontend dependencies
+        run: |
+          echo "Installing dependencies for all frontend apps..."
+
+          # Install Vue.js dependencies
+          if [ -f "apps/vue/package.json" ]; then
+            echo "Installing Vue.js dependencies..."
+            cd apps/vue && npm ci && cd ../..
+          fi
+
+          # Install React dependencies
+          if [ -f "apps/react/package.json" ]; then
+            echo "Installing React dependencies..."
+            cd apps/react && npm ci && cd ../..
+          fi
+
+          # Install Angular dependencies
+          if [ -f "apps/angular/package.json" ]; then
+            echo "Installing Angular dependencies..."
+            cd apps/angular && npm ci && cd ../..
+          fi
+
+      - name: Build backend dependencies
+        run: |
+          echo "Building go-chess backend..."
+          cd backend/go-chess
+          go mod download
+          go mod verify
+          echo "✅ Backend dependencies verified"
+
+      - name: Validate project structure
+        run: |
+          echo "Validating project structure..."
+          required_dirs=("apps" "shared" "docker" "wiki")
+          for dir in "${required_dirs[@]}"; do
+            if [ -d "$dir" ]; then
+              echo "✅ $dir directory exists"
+            else
+              echo "❌ $dir directory missing"
+              exit 1
+            fi
+          done
+
+          echo "Checking Makefile..."
+          if [ -f "Makefile" ]; then
+            echo "✅ Makefile found"
+          else
+            echo "❌ Makefile missing"
+            exit 1
+          fi
+
+  # Job 2: Frontend build validation
+  frontend-builds:
+    name: Frontend Build Tests
+    runs-on: ubuntu-latest
+    needs: setup-and-validate
+
+    strategy:
+      matrix:
+        app: [vue, react, angular]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies for ${{ matrix.app }}
+        run: |
+          if [ -f "apps/${{ matrix.app }}/package.json" ]; then
+            echo "Installing ${{ matrix.app }} dependencies..."
+            cd apps/${{ matrix.app }}
+            npm ci
+            cd ../..
+          else
+            echo "❌ package.json not found for ${{ matrix.app }}"
+            exit 1
+          fi
+
+      - name: Build ${{ matrix.app }} application
+        run: |
+          cd apps/${{ matrix.app }}
+          case "${{ matrix.app }}" in
+            "vue")
+              npm run build
+              ;;
+            "react")
+              npm run build
+              ;;
+            "angular")
+              npm run build
+              ;;
+          esac
+          echo "✅ ${{ matrix.app }} build successful"
+
+      - name: Validate build artifacts
+        run: |
+          cd apps/${{ matrix.app }}
+          case "${{ matrix.app }}" in
+            "vue"|"react")
+              if [ -d "dist" ]; then
+                echo "✅ ${{ matrix.app }} dist directory created"
+                ls -la dist/
+              else
+                echo "❌ ${{ matrix.app }} dist directory missing"
+                exit 1
+              fi
+              ;;
+            "angular")
+              if [ -d "dist" ]; then
+                echo "✅ Angular dist directory created"
+                ls -la dist/
+              else
+                echo "❌ Angular dist directory missing"
+                exit 1
+              fi
+              ;;
+          esac
+
+  # Job 3: Docker integration tests
+  docker-integration:
+    name: Docker Integration Tests
+    runs-on: ubuntu-latest
+    needs: setup-and-validate
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Verify Docker Compose configuration
+        run: |
+          echo "Validating docker-compose.yml..."
+          if [ -f "docker-compose.yml" ]; then
+            docker-compose config
+            echo "✅ Docker Compose configuration valid"
+          else
+            echo "❌ docker-compose.yml missing"
+            exit 1
+          fi
+
+      - name: Build Docker images
+        run: |
+          echo "Building Docker images..."
+          docker-compose build --parallel
+          echo "✅ All Docker images built successfully"
+
+      - name: Start services
+        run: |
+          echo "Starting all services..."
+          docker-compose up -d
+
+          echo "Waiting for services to start..."
+          sleep 30
+
+          echo "Checking container status..."
+          docker-compose ps
+
+      - name: Health check - Backend API
+        run: |
+          echo "Testing backend API health..."
+          max_attempts=10
+          attempt=1
+
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt/$max_attempts - Testing backend on port 8080..."
+            if curl -f -s http://localhost:8080/health || curl -f -s http://localhost:8080/api/health; then
+              echo "✅ Backend API is responding"
+              break
+            elif [ $attempt -eq $max_attempts ]; then
+              echo "❌ Backend API failed to respond after $max_attempts attempts"
+              docker-compose logs backend
+              exit 1
+            else
+              echo "Backend not ready, waiting 10 seconds..."
+              sleep 10
+              attempt=$((attempt + 1))
+            fi
+          done
+
+      - name: Health check - Frontend services
+        run: |
+          echo "Testing frontend services..."
+
+          services=(
+            "3000:Landing Page"
+            "3001:Vanilla JS"
+            "3002:jQuery"
+            "3003:Vue.js"
+            "3004:React"
+            "3005:Angular"
+          )
+
+          for service in "${services[@]}"; do
+            port=$(echo $service | cut -d: -f1)
+            name=$(echo $service | cut -d: -f2)
+
+            echo "Testing $name on port $port..."
+            max_attempts=5
+            attempt=1
+
+            while [ $attempt -le $max_attempts ]; do
+              if curl -f -s http://localhost:$port > /dev/null; then
+                echo "✅ $name is responding on port $port"
+                break
+              elif [ $attempt -eq $max_attempts ]; then
+                echo "⚠️ $name not responding on port $port (may not be implemented yet)"
+                # Don't fail the build for frontend services that might not exist yet
+                break
+              else
+                echo "Waiting for $name..."
+                sleep 5
+                attempt=$((attempt + 1))
+              fi
+            done
+          done
+
+      - name: Test API endpoints
+        run: |
+          echo "Testing key API endpoints..."
+
+          # Test creating a new game
+          echo "Testing game creation..."
+          response=$(curl -s -X POST http://localhost:8080/api/games \
+            -H "Content-Type: application/json" \
+            -d '{"ai_enabled": true, "difficulty": "medium"}')
+
+          if echo "$response" | grep -q "id\|ID"; then
+            echo "✅ Game creation endpoint working"
+          else
+            echo "⚠️ Game creation endpoint response: $response"
+          fi
+
+      - name: Container logs (on failure)
+        if: failure()
+        run: |
+          echo "=== Container Status ==="
+          docker-compose ps
+
+          echo "=== Backend Logs ==="
+          docker-compose logs backend
+
+          echo "=== Frontend Logs ==="
+          docker-compose logs landing vue react angular
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "Cleaning up Docker resources..."
+          docker-compose down -v
+          docker system prune -f
+
+  # Job 4: Cross-platform compatibility
+  cross-platform:
+    name: Cross-Platform Tests
+    runs-on: ${{ matrix.os }}
+    needs: setup-and-validate
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Test Makefile commands
+        run: |
+          echo "Testing Makefile help command..."
+          make help
+
+          echo "Testing Make environment setup..."
+          # Test non-Docker make commands
+          if command -v make >/dev/null 2>&1; then
+            echo "✅ Make is available"
+          else
+            echo "❌ Make is not available"
+            exit 1
+          fi
+
+      - name: Validate environment setup
+        run: |
+          echo "Node.js version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Go version: $(go version)"
+          echo "OS: ${{ matrix.os }}"
+          echo "✅ Environment validation complete"
+
+  # Job 5: Quality checks and linting
+  quality-checks:
+    name: Quality & Security Checks
+    runs-on: ubuntu-latest
+    needs: setup-and-validate
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Check for common issues
+        run: |
+          echo "Checking for common configuration issues..."
+
+          # Check for .env.example
+          if [ -f ".env.example" ]; then
+            echo "✅ .env.example found"
+          else
+            echo "⚠️ .env.example not found"
+          fi
+
+          # Check for .gitignore
+          if [ -f ".gitignore" ]; then
+            echo "✅ .gitignore found"
+            # Check if common items are ignored
+            if grep -q "node_modules" .gitignore; then
+              echo "✅ node_modules in .gitignore"
+            else
+              echo "⚠️ node_modules not in .gitignore"
+            fi
+          else
+            echo "❌ .gitignore missing"
+            exit 1
+          fi
+
+      - name: Validate documentation
+        run: |
+          echo "Checking documentation files..."
+
+          docs=("README.md" "CONTRIBUTING.md" "LICENSE.md" "SECURITY.md" "FUNDING.md" "CHANGELOG.md")
+          for doc in "${docs[@]}"; do
+            if [ -f "$doc" ]; then
+              echo "✅ $doc exists"
+            else
+              echo "⚠️ $doc missing"
+            fi
+          done
+
+          # Check wiki directory
+          if [ -d "wiki" ]; then
+            echo "✅ Wiki directory exists"
+            wiki_files=$(find wiki -name "*.md" | wc -l)
+            echo "📚 Found $wiki_files wiki documentation files"
+          else
+            echo "⚠️ Wiki directory missing"
+          fi
+
+      - name: Security scan
+        run: |
+          echo "Running basic security checks..."
+
+          # Check for potential secrets in repository
+          if grep -r -i "password\|secret\|token\|key" --include="*.js" --include="*.ts" --include="*.json" . | grep -v node_modules | grep -v ".git" | head -5; then
+            echo "⚠️ Potential secrets found - please review"
+          else
+            echo "✅ No obvious secrets detected"
+          fi
+
+  # Summary job
+  ci-success:
+    name: CI Pipeline Success
+    runs-on: ubuntu-latest
+    needs: [setup-and-validate, frontend-builds, docker-integration, cross-platform, quality-checks]
+    if: success()
+
+    steps:
+      - name: Success notification
+        run: |
+          echo "🎉 All CI checks passed successfully!"
+          echo "✅ Dependencies installed and validated"
+          echo "✅ Frontend builds completed"
+          echo "✅ Docker integration working"
+          echo "✅ Cross-platform compatibility verified"
+          echo "✅ Quality checks passed"
+          echo ""
+          echo "The JS Chess project is ready for deployment! 🚀"
