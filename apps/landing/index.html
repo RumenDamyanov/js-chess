@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Chess - Frontend Showcase</title>
+    <link rel="stylesheet" href="../../shared/styles/common.css">
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">♟️ JS Chess</h1>
+                    <p class="hero-subtitle">Frontend Framework Showcase</p>
+                    <p class="hero-description">
+                        Experience the same powerful chess game built with 5 different JavaScript frameworks.
+                        Compare modern development approaches while enjoying a feature-rich chess experience
+                        powered by a robust Go backend API.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Frameworks</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Feature Parity</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">1</span>
+                            <span class="stat-label">Shared API</span>
+                        </div>
+                    </div>
+                    <div class="hero-actions">
+                        <a href="#frameworks" class="btn btn-primary btn-large">
+                            🚀 Explore Frameworks
+                        </a>
+                        <a href="https://github.com/RumenDamyanov/js-chess" class="btn btn-secondary btn-large" target="_blank">
+                            📱 View on GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Framework Showcase -->
+        <main class="main">
+            <div class="container">
+                <!-- Framework Showcase -->
+                <section class="showcase" id="frameworks">
+                    <h2 class="section-title">Choose Your Framework Adventure</h2>
+                    <p class="section-description">
+                        Each implementation demonstrates identical chess functionality using different approaches.
+                        Compare how various JavaScript frameworks handle the same requirements and discover
+                        the unique strengths of each technology stack.
+                    </p>
+
+                    <div class="frameworks-grid">
+                        <!-- Vanilla JavaScript -->
+                        <div class="framework-card">
+                            <div class="framework-header">
+                                <div class="framework-icon">📦</div>
+                                <h3 class="framework-name">Vanilla JS</h3>
+                                <span class="framework-badge vanilla">Pure</span>
+                            </div>
+                            <p class="framework-description">
+                                Pure JavaScript implementation using modern ES6+ features.
+                                No frameworks, just clean DOM manipulation and event handling.
+                            </p>
+                            <div class="framework-features">
+                                <span class="feature-tag">ES6+</span>
+                                <span class="feature-tag">DOM API</span>
+                                <span class="feature-tag">Lightweight</span>
+                            </div>
+                            <div class="framework-actions">
+                                <a href="http://localhost:3001" class="btn btn-primary" target="_blank">
+                                    Play Now
+                                </a>
+                                <a href="../vanilla-js/" class="btn btn-secondary">
+                                    View Code
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- jQuery -->
+                        <div class="framework-card">
+                            <div class="framework-header">
+                                <div class="framework-icon">💙</div>
+                                <h3 class="framework-name">jQuery</h3>
+                                <span class="framework-badge jquery">Classic</span>
+                            </div>
+                            <p class="framework-description">
+                                Traditional jQuery approach with familiar selectors and event delegation.
+                                Demonstrates classic web development patterns.
+                            </p>
+                            <div class="framework-features">
+                                <span class="feature-tag">Selectors</span>
+                                <span class="feature-tag">Animations</span>
+                                <span class="feature-tag">Cross-browser</span>
+                            </div>
+                            <div class="framework-actions">
+                                <a href="http://localhost:3002" class="btn btn-primary" target="_blank">
+                                    Play Now
+                                </a>
+                                <a href="../jquery/" class="btn btn-secondary">
+                                    View Code
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Vue.js -->
+                        <div class="framework-card">
+                            <div class="framework-header">
+                                <div class="framework-icon">💚</div>
+                                <h3 class="framework-name">Vue.js</h3>
+                                <span class="framework-badge vue">Progressive</span>
+                            </div>
+                            <p class="framework-description">
+                                Modern Vue 3 with Composition API, reactive state management,
+                                and TypeScript integration.
+                            </p>
+                            <div class="framework-features">
+                                <span class="feature-tag">Composition API</span>
+                                <span class="feature-tag">Reactivity</span>
+                                <span class="feature-tag">TypeScript</span>
+                            </div>
+                            <div class="framework-actions">
+                                <a href="http://localhost:3003" class="btn btn-primary" target="_blank">
+                                    Play Now
+                                </a>
+                                <a href="../vue/" class="btn btn-secondary">
+                                    View Code
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- React -->
+                        <div class="framework-card">
+                            <div class="framework-header">
+                                <div class="framework-icon">⚛️</div>
+                                <h3 class="framework-name">React</h3>
+                                <span class="framework-badge react">Component</span>
+                            </div>
+                            <p class="framework-description">
+                                React 18 with hooks, functional components, and modern
+                                React patterns for state management.
+                            </p>
+                            <div class="framework-features">
+                                <span class="feature-tag">Hooks</span>
+                                <span class="feature-tag">Context</span>
+                                <span class="feature-tag">TypeScript</span>
+                            </div>
+                            <div class="framework-actions">
+                                <a href="http://localhost:3004" class="btn btn-primary" target="_blank">
+                                    Play Now
+                                </a>
+                                <a href="../react/" class="btn btn-secondary">
+                                    View Code
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Angular -->
+                        <div class="framework-card">
+                            <div class="framework-header">
+                                <div class="framework-icon">🅰️</div>
+                                <h3 class="framework-name">Angular</h3>
+                                <span class="framework-badge angular">Enterprise</span>
+                            </div>
+                            <p class="framework-description">
+                                Enterprise-grade Angular with dependency injection, services,
+                                and RxJS for reactive programming.
+                            </p>
+                            <div class="framework-features">
+                                <span class="feature-tag">DI</span>
+                                <span class="feature-tag">RxJS</span>
+                                <span class="feature-tag">Services</span>
+                            </div>
+                            <div class="framework-actions">
+                                <a href="http://localhost:3005" class="btn btn-primary" target="_blank">
+                                    Play Now
+                                </a>
+                                <a href="../angular/" class="btn btn-secondary">
+                                    View Code
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Features Section -->
+                <section class="features">
+                    <h2 class="section-title">Common Features</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">♟️</div>
+                            <h3>Complete Chess Game</h3>
+                            <p>Full chess rules including castling, en passant, and pawn promotion</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🤖</div>
+                            <h3>AI Opponents</h3>
+                            <p>Multiple difficulty levels and LLM-powered AI with chat capabilities</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">⏱️</div>
+                            <h3>Real-time Updates</h3>
+                            <p>WebSocket integration for live multiplayer gameplay</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3>Move Analysis</h3>
+                            <p>Position evaluation and move suggestions from the chess engine</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Technology Stack -->
+                <section class="tech-stack">
+                    <h2 class="section-title">Technology Stack</h2>
+                    <div class="stack-comparison">
+                        <div class="stack-column">
+                            <h3>Backend</h3>
+                            <div class="stack-items">
+                                <div class="stack-item">Go 1.22+</div>
+                                <div class="stack-item">Gin Web Framework</div>
+                                <div class="stack-item">WebSocket Support</div>
+                                <div class="stack-item">Chess Engine</div>
+                                <div class="stack-item">LLM AI Integration</div>
+                                <div class="stack-item">Docker Ready</div>
+                            </div>
+                        </div>
+                        <div class="stack-column">
+                            <h3>Frontend</h3>
+                            <div class="stack-items">
+                                <div class="stack-item">5 Different Approaches</div>
+                                <div class="stack-item">TypeScript Support</div>
+                                <div class="stack-item">Modern Build Tools</div>
+                                <div class="stack-item">Responsive Design</div>
+                                <div class="stack-item">Shared API Client</div>
+                                <div class="stack-item">Hot Reload Dev</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>Project</h4>
+                        <a href="https://github.com/RumenDamyanov/js-chess">GitHub Repository</a>
+                        <a href="https://github.com/RumenDamyanov/go-chess">Backend API</a>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Documentation</h4>
+                        <a href="../../docs/development.md">Development Guide</a>
+                        <a href="../../docs/api-integration.md">API Integration</a>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Author</h4>
+                        <p>Rumen Damyanov</p>
+                        <a href="mailto:contact@rumenx.com">contact@rumenx.com</a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Rumen Damyanov. MIT License.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

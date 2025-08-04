@@ -1,0 +1,3 @@
+[submodule "backend/go-chess"]
+	path = backend/go-chess
+	url = https://github.com/RumenDamyanov/go-chess.git

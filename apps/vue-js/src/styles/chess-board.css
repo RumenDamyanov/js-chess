@@ -1,0 +1,151 @@
+/* Common Chess Board Styles */
+/* Shared across all framework implementations */
+
+.chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 480px;
+    height: 480px;
+    border: 3px solid #2c3e50;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    user-select: none;
+}
+
+.square.light {
+    background: #f0d9b5;
+}
+
+.square.dark {
+    background: #b58863;
+}
+
+.square.selected {
+    background: #7fb3d3 !important;
+    box-shadow: inset 0 0 0 3px #4a90a4;
+}
+
+.square.highlighted {
+    background: #ffffcc !important;
+}
+
+.square.possible-move {
+    position: relative;
+}
+
+.square.possible-move::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+.square.capture-move::after {
+    background: rgba(255, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+
+.square:hover {
+    filter: brightness(1.1);
+}
+
+.piece {
+    user-select: none;
+    pointer-events: none;
+    font-size: 2.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Chess piece Unicode characters */
+.piece.white.king::before { content: '♔'; }
+.piece.white.queen::before { content: '♕'; }
+.piece.white.rook::before { content: '♖'; }
+.piece.white.bishop::before { content: '♗'; }
+.piece.white.knight::before { content: '♘'; }
+.piece.white.pawn::before { content: '♙'; }
+
+.piece.black.king::before { content: '♚'; }
+.piece.black.queen::before { content: '♛'; }
+.piece.black.rook::before { content: '♜'; }
+.piece.black.bishop::before { content: '♝'; }
+.piece.black.knight::before { content: '♞'; }
+.piece.black.pawn::before { content: '♟'; }
+
+/* Board coordinates */
+.board-container {
+    position: relative;
+}
+
+.board-coordinates {
+    position: absolute;
+    pointer-events: none;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #666;
+}
+
+.board-coordinates.files {
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.board-coordinates.ranks {
+    left: -20px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* Responsive chess board */
+@media (max-width: 600px) {
+    .chess-board {
+        width: 320px;
+        height: 320px;
+    }
+
+    .piece {
+        font-size: 2rem;
+    }
+
+    .square {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .chess-board {
+        width: 280px;
+        height: 280px;
+    }
+
+    .piece {
+        font-size: 1.75rem;
+    }
+
+    .square {
+        font-size: 1.75rem;
+    }
+}

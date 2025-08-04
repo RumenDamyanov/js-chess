@@ -1,0 +1,134 @@
+services:
+  # Go-chess backend API
+  chess-backend:
+    build:
+      context: ./backend/go-chess
+      dockerfile: Dockerfile
+    container_name: chess-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - CHESS_HOST=0.0.0.0
+      - CHESS_PORT=8080
+      - CHESS_LOG_LEVEL=info
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - chess-network
+
+  # Landing page with app showcase
+  chess-landing:
+    build:
+      context: ./apps/landing
+      dockerfile: Dockerfile
+    container_name: chess-landing
+    ports:
+      - "3000:80"
+    depends_on:
+      - chess-backend
+    networks:
+      - chess-network
+
+  # Vanilla JavaScript app
+  chess-vanilla:
+    build:
+      context: ./apps/vanilla-js
+      dockerfile: Dockerfile
+    container_name: chess-vanilla
+    ports:
+      - "3001:80"
+    depends_on:
+      - chess-backend
+    networks:
+      - chess-network
+
+  # jQuery app
+  chess-jquery:
+    build:
+      context: ./apps/jquery
+      dockerfile: Dockerfile
+    container_name: chess-jquery
+    ports:
+      - "3002:80"
+    depends_on:
+      - chess-backend
+    networks:
+      - chess-network
+
+  # Vue.js app
+  chess-vue:
+    build:
+      context: ./apps/vue-js
+      dockerfile: Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    container_name: chess-vue
+    ports:
+      - "3003:80"
+    environment:
+      - VITE_API_URL=http://localhost:8080
+      - VITE_WS_URL=ws://localhost:8080
+    depends_on:
+      - chess-backend
+    networks:
+      - chess-network
+
+  # React.js app
+  chess-react:
+    build:
+      context: ./apps/react-js
+      dockerfile: Dockerfile
+    container_name: chess-react
+    ports:
+      - "3004:80"
+    environment:
+      - VITE_API_URL=http://localhost:8080
+      - VITE_WS_URL=ws://localhost:8080
+    depends_on:
+      - chess-backend
+    networks:
+      - chess-network
+
+  # Angular app
+  chess-angular:
+    build:
+      context: ./apps/angular
+      dockerfile: Dockerfile
+    container_name: chess-angular
+    ports:
+      - "3005:80"
+    environment:
+      - API_URL=http://localhost:8080
+      - WS_URL=ws://localhost:8080
+    depends_on:
+      - chess-backend
+    networks:
+      - chess-network
+
+  # Nginx reverse proxy (optional, for advanced routing)
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: chess-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - chess-landing
+      - chess-vanilla
+      - chess-jquery
+      - chess-vue
+      - chess-react
+      - chess-angular
+    networks:
+      - chess-network
+    profiles:
+      - nginx
+
+networks:
+  chess-network:
+    driver: bridge

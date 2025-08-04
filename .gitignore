@@ -1,0 +1,127 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+.next/
+.nuxt/
+.vite/
+.cache/
+.angular/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup and temporary files
+*.bak
+*.backup
+*.old
+*.tmp
+*~
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# ESLint cache
+.eslintcache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.parcel-cache
+
+# Docker
+.dockerignore
+
+# Backend build artifacts (submodule content will be tracked)
+backend/go-chess/build/
+backend/go-chess/bin/
+
+# Temporary files
+tmp/
+temp/
+
+# Development scripts (local utilities)
+dev-*.sh
+*-dev.sh
+rebuild.sh
+
+# Framework-specific ignores
+# Angular
+.angular/
+*.tsbuildinfo
+
+# React/Vite
+dist/
+*.local
+
+# Vue
+.vuepress/dist/
+
+# Miscellaneous
+wiki/
+*.patch
