@@ -3,7 +3,9 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
+# Keep root package-lock.json for CI caching, ignore in subdirs
+apps/*/package-lock.json
+shared/*/package-lock.json
 yarn.lock
 
 # Build outputs
