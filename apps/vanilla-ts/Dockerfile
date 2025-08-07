@@ -11,6 +11,7 @@ RUN npm install
 # Copy source code and build
 COPY ./apps/vanilla-ts/src ./src
 COPY ./apps/vanilla-ts/tsconfig.json ./
+COPY ./apps/vanilla-ts/nginx.conf ./nginx.conf
 RUN npm run build
 
 # Production stage
@@ -26,8 +27,8 @@ COPY --from=builder /app/dist /usr/share/nginx/html/dist
 # Copy shared styles (overwrite the symlink)
 COPY ./shared/styles/ /usr/share/nginx/html/shared/
 
-# Copy custom nginx configuration
-COPY ./apps/vanilla-ts/nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx configuration from build stage
+COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
