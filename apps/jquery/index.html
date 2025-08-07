@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess - jQuery</title>
-    <link rel="stylesheet" href="../../shared/styles/common.css">
-    <link rel="stylesheet" href="../../shared/styles/header.css">
+    <link rel="stylesheet" href="shared/common.css">
+    <link rel="stylesheet" href="shared/header.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' style='font-size:14px'>♛</text></svg>">
 </head>
@@ -23,10 +24,11 @@
                     <li><a href="http://localhost:3000" class="nav-link">🏠 Home</a></li>
                     <li><span class="nav-separator"></span></li>
                     <li><a href="http://localhost:3001" class="nav-link">📦 Vanilla</a></li>
-                    <li><a href="http://localhost:3002" class="nav-link active">💙 jQuery</a></li>
-                    <li><a href="http://localhost:3003" class="nav-link">💚 Vue</a></li>
-                    <li><a href="http://localhost:3004" class="nav-link">⚛️ React</a></li>
-                    <li><a href="http://localhost:3005" class="nav-link">🅰️ Angular</a></li>
+                    <li><a href="http://localhost:3002" class="nav-link">📘 TypeScript</a></li>
+                    <li><a href="http://localhost:3003" class="nav-link active">💙 jQuery</a></li>
+                    <li><a href="http://localhost:3004" class="nav-link">💚 Vue</a></li>
+                    <li><a href="http://localhost:3005" class="nav-link">⚛️ React</a></li>
+                    <li><a href="http://localhost:3006" class="nav-link">🅰️ Angular</a></li>
                 </ul>
 
                 <div class="header-controls">
@@ -39,33 +41,148 @@
     </header>
 
     <div class="container">
-
         <main>
-            <div class="game-info">
-                <h3>Game Status</h3>
-                <div class="status">
-                    <div>Turn: <span id="current-player">White</span></div>
-                    <div>Status: <span id="game-status">In Progress</span></div>
-                    <div>Move: <span id="move-count">1</span></div>
+            <div class="left-panel">
+                <div class="game-config">
+                    <h3>⚙️ Game Settings</h3>
+
+                    <div class="config-section">
+                        <h4>Player Settings</h4>
+                        <div class="config-group">
+                            <label for="player-name">Player Name:</label>
+                            <input type="text" id="player-name" value="Player 1" maxlength="20">
+                        </div>
+
+                        <div class="config-group">
+                            <label for="player-color">Play as:</label>
+                            <select id="player-color">
+                                <option value="white">White (First)</option>
+                                <option value="black">Black (Second)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h4>Game Features</h4>
+                        <div class="config-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="enable-undo" checked>
+                                Enable Undo Move
+                            </label>
+                        </div>
+
+                        <div class="config-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="enable-hints" checked>
+                                Enable Hints
+                            </label>
+                        </div>
+
+                        <div class="config-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="enable-chat" checked>
+                                Enable AI Chat
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h4>Timer Settings</h4>
+                        <div class="config-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="enable-timer" checked>
+                                Enable Timer
+                            </label>
+                        </div>
+
+                        <div class="config-group">
+                            <label for="timer-mode">Timer Mode:</label>
+                            <select id="timer-mode">
+                                <option value="count-up">Count Up</option>
+                                <option value="count-down">Count Down</option>
+                            </select>
+                        </div>
+
+                        <div class="config-group">
+                            <label for="time-limit">Time Limit (minutes):</label>
+                            <input type="number" id="time-limit" value="10" min="1" max="120">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="chess-board" id="chess-board">
-                <!-- Chess board squares will be generated by jQuery -->
+            <div class="center-panel">
+                <div class="chess-board" id="chess-board">
+                    <!-- Chess board squares will be generated by jQuery -->
+                </div>
             </div>
 
-            <div class="move-history">
-                <h3>📜 Move History</h3>
-                <div id="move-list" class="moves">
-                    <div class="move-item">
-                        <span class="move-number">-</span>
-                        <span class="move-notation">Game started</span>
+            <div class="right-panel">
+                <div class="game-info">
+                    <h3>📊 Game Status</h3>
+                    <div class="status">
+                        <div>Turn: <span id="current-player">White</span></div>
+                        <div>Status: <span id="game-status">In Progress</span></div>
+                        <div>Move: <span id="move-count">1</span></div>
+                    </div>
+                </div>
+
+                <div class="timer-display">
+                    <h3>⏱️ Timer</h3>
+                    <div class="timer-sections">
+                        <div class="timer-section white">
+                            <span class="timer-label">White:</span>
+                            <span id="white-timer" class="timer-value">00:00</span>
+                        </div>
+                        <div class="timer-section black">
+                            <span class="timer-label">Black:</span>
+                            <span id="black-timer" class="timer-value">00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="move-history">
+                    <h3>📜 Move History</h3>
+                    <div id="move-list" class="moves">
+                        <div class="move-item">
+                            <span class="move-number">-</span>
+                            <span class="move-notation">Game started</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- AI Chat Component -->
+    <div id="chat-container" class="chat-container collapsed">
+        <div class="chat-header">
+            <span>💬 AI Chat</span>
+            <span class="chat-toggle" id="chat-toggle">+</span>
+        </div>
+
+        <div id="chat-content" class="chat-content" style="display: none;">
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will be added here -->
+            </div>
+
+            <div class="chat-input">
+                <textarea
+                    id="chat-input-text"
+                    placeholder="Type a message to the AI..."
+                    rows="2"
+                    onkeypress="handleChatKeyPress(event)"
+                ></textarea>
+                <button id="send-button" onclick="sendChatMessage()" class="send-button">
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/debug.js"></script>
     <script src="js/chess-game.js"></script>
+    <script src="js/chat.js"></script>
 </body>
 </html>
