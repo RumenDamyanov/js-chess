@@ -1,16 +1,17 @@
 # JS Chess - Frontend Showcase
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI/CD Pipeline](https://github.com/RumenDamyanov/js-chess/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/RumenDamyanov/js-chess/actions)
 [![Go Chess API](https://img.shields.io/badge/API-go--chess-blue.svg)](https://github.com/RumenDamyanov/go-chess)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A comprehensive demonstration of chess frontends built with different JavaScript frameworks, all powered by the [go-chess](https://github.com/RumenDamyanov/go-chess) backend API.
 
 ## 🎯 Project Overview
 
-This project showcases **5 different frontend implementations** of the same chess application, each using a different JavaScript technology:
+This project showcases **6 different frontend implementations** of the same chess application, each using a different JavaScript technology:
 
 - **Vanilla JS** - Pure JavaScript implementation
+- **Vanilla TypeScript** - Type-safe pure TypeScript implementation ✅
 - **jQuery** - Classic DOM manipulation approach
 - **Vue.js** - Progressive framework implementation
 - **React.js** - Component-based architecture
@@ -39,6 +40,15 @@ js-chess/
 │   │   ├── js/
 │   │   ├── css/
 │   │   ├── assets/
+│   │   └── README.md
+│   │
+│   ├── vanilla-ts/               # Pure TypeScript implementation ✅
+│   │   ├── index.html
+│   │   ├── src/                  # TypeScript source files
+│   │   ├── dist/                 # Compiled JavaScript
+│   │   ├── css/
+│   │   ├── tsconfig.json         # TypeScript configuration
+│   │   ├── package.json          # Build configuration
 │   │   └── README.md
 │   │
 │   ├── jquery/                   # jQuery implementation
@@ -125,6 +135,7 @@ Each app demonstrates the same features using different approaches:
 | Framework | Key Features | Build Tool | Highlights |
 |-----------|-------------|------------|------------|
 | **Vanilla JS** | Pure DOM manipulation, ES6+ | None | Lightweight, educational |
+| **Vanilla TypeScript** | Type-safe DOM, strict typing | TypeScript | Type safety, modern tooling |
 | **jQuery** | Classic event handling | None | Familiar, rapid development |
 | **Vue.js** | Reactive components | Vite | Progressive enhancement |
 | **React.js** | Component architecture | Vite | Modern hooks, state management |
@@ -135,7 +146,7 @@ Each app demonstrates the same features using different approaches:
 The project includes a complete Docker setup with:
 
 - **Backend API**: go-chess server running on port 8080
-- **Frontend Apps**: Each app served on different ports (3001-3005)
+- **Frontend Apps**: Each app served on different ports (3000-3006)
 - **Nginx Proxy**: Reverse proxy routing to different apps
 - **Development Mode**: Hot reload for all frameworks
 
@@ -162,10 +173,11 @@ make urls     # Show all application URLs
 
 - **Landing Page**: http://localhost:3000
 - **Vanilla JS**: http://localhost:3001
-- **jQuery**: http://localhost:3002
-- **Vue.js**: http://localhost:3003
-- **React.js**: http://localhost:3004
-- **Angular**: http://localhost:3005
+- **Vanilla TypeScript**: http://localhost:3002
+- **jQuery**: http://localhost:3003
+- **Vue.js**: http://localhost:3004
+- **React.js**: http://localhost:3005
+- **Angular**: http://localhost:3006
 - **Backend API**: http://localhost:8080
 
 ## 🛠️ Make Commands
@@ -177,7 +189,9 @@ This project includes a comprehensive Makefile with convenient aliases for Docke
 make help          # Show all available commands with descriptions
 make install       # First-time setup - build and start everything
 make up            # Start all containers in detached mode
+make start         # Alias for 'up' command
 make down          # Stop and remove all containers
+make stop          # Alias for 'down' command
 make restart       # Restart all containers
 make status        # Show status of all containers
 make logs          # Show logs from all containers (last 50 lines)
@@ -198,13 +212,14 @@ make open          # Open all applications in browser (macOS only)
 ### Individual Service Management
 ```bash
 # Start individual services
-make start-backend    # Start only backend (port 8080)
-make start-angular    # Start only Angular (port 3005)
-make start-react      # Start only React (port 3004)
-make start-vue        # Start only Vue.js (port 3003)
-make start-jquery     # Start only jQuery (port 3002)
-make start-vanilla    # Start only Vanilla JS (port 3001)
-make start-landing    # Start only Landing page (port 3000)
+make start-backend      # Start only backend (port 8080)
+make start-angular      # Start only Angular (port 3006)
+make start-react        # Start only React (port 3005)
+make start-vue          # Start only Vue.js (port 3004)
+make start-jquery       # Start only jQuery (port 3003)
+make start-vanilla-ts   # Start only Vanilla TypeScript (port 3002)
+make start-vanilla      # Start only Vanilla JS (port 3001)
+make start-landing      # Start only Landing page (port 3000)
 
 # Build individual services
 make build-backend
@@ -212,6 +227,7 @@ make build-angular
 make build-react
 make build-vue
 make build-jquery
+make build-vanilla-ts
 make build-vanilla
 make build-landing
 
@@ -224,10 +240,11 @@ make restart-frontend  # Restart all frontend containers
 ```bash
 make logs-backend     # Show backend logs only
 make logs-frontend    # Show all frontend logs
-make shell-backend    # Open shell in backend container
-make shell-angular    # Open shell in Angular container
-make shell-react      # Open shell in React container
-make shell-vue        # Open shell in Vue container
+make shell-backend     # Open shell in backend container
+make shell-angular     # Open shell in Angular container
+make shell-react       # Open shell in React container
+make shell-vue         # Open shell in Vue container
+make shell-vanilla-ts  # Open shell in Vanilla TypeScript container
 make watch            # Watch container status in real-time
 make stats            # Show container resource usage
 make inspect          # Show detailed container information
@@ -240,6 +257,23 @@ make prune            # Remove unused Docker resources
 make clean-volumes    # Remove all Docker volumes
 make clean-all        # Nuclear option - remove everything (with 5s warning)
 make reset-games      # Reset all game data (restart backend)
+```
+
+### Monitoring and Debugging Commands
+```bash
+make watch            # Watch container status in real-time
+make stats            # Show container resource usage
+make inspect          # Show detailed container information
+make help-detailed    # Show detailed help with examples
+```
+
+### Database and Project Management
+```bash
+make backup-games     # Backup game data (if persistent storage exists)
+make update           # Update project (git pull + submodule update + rebuild)
+make setup            # Alias for install command
+make validate-ci      # Run local CI validation checks
+make ci-test          # Run complete CI test suite locally
 ```
 
 ### Example Workflows
@@ -276,7 +310,23 @@ make health            # Check service health
 make logs-backend      # Check backend logs
 make shell-backend     # Debug inside container
 make test-api          # Test API endpoints
+make stats             # Check resource usage
+make inspect           # Show container details
 make clean && make up  # Clean restart
+```
+
+**Database and backup operations:**
+```bash
+make backup-games      # Backup game data
+make reset-games       # Reset all games
+make clean-volumes     # Remove persistent data
+```
+
+**Project maintenance:**
+```bash
+make update            # Update project from git
+make validate-ci       # Run CI checks locally
+make help-detailed     # Show comprehensive help
 ```
 
 ## 🛠️ Development Setup
@@ -297,11 +347,12 @@ npm run install:all
 npm run start:backend
 
 # Start individual frontend apps
-npm run start:vanilla    # Port 3001
-npm run start:jquery     # Port 3002
-npm run start:vue        # Port 3003
-npm run start:react      # Port 3004
-npm run start:angular    # Port 3005
+npm run start:vanilla      # Port 3001
+npm run start:vanilla-ts   # Port 3002
+npm run start:jquery       # Port 3003
+npm run start:vue          # Port 3004
+npm run start:react        # Port 3005
+npm run start:angular      # Port 3006
 
 # Or start all frontends
 npm run start:all
@@ -356,6 +407,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 ### Framework-Specific Guides
 
 - [Vanilla JavaScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-JS-Guide) - Pure JavaScript implementation
+- [Vanilla TypeScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-TS-Guide) - Pure TypeScript implementation ✅
 - [jQuery Implementation](https://github.com/RumenDamyanov/js-chess/wiki/jQuery-Guide) - jQuery-based implementation
 - [Vue.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Vue-Guide) - Vue 3 with Composition API
 - [React.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/React-Guide) - Modern React with hooks

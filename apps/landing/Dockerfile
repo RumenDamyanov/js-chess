@@ -2,10 +2,13 @@
 FROM nginx:alpine
 
 # Copy static files to nginx document root
-COPY . /usr/share/nginx/html/
+COPY ./apps/landing/ /usr/share/nginx/html/
+
+# Copy shared styles (overwrite the symlink)
+COPY ./shared/styles/ /usr/share/nginx/html/shared/
 
 # Copy custom nginx configuration if needed
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./apps/landing/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80

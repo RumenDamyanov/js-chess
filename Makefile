@@ -15,7 +15,7 @@ RESET  := \033[0m
 PROJECT_NAME := js-chess
 COMPOSE_FILE := docker-compose.yml
 BACKEND_IMAGE := chess-backend
-FRONTEND_IMAGES := chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-landing
+FRONTEND_IMAGES := chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-vanilla-ts chess-landing
 
 ##@ General Commands
 
@@ -40,7 +40,7 @@ logs-backend: ## Show backend logs only
 
 .PHONY: logs-frontend
 logs-frontend: ## Show all frontend logs
-	@docker-compose logs -f chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-landing
+	@docker-compose logs -f chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-vanilla-ts chess-landing
 
 ##@ Development Commands
 
@@ -50,13 +50,14 @@ up: ## Start all containers in detached mode
 	@docker-compose up -d
 	@echo "$(GREEN)✅ All containers started!$(RESET)"
 	@echo "$(YELLOW)Access URLs:$(RESET)"
-	@echo "  Landing Page: http://localhost:3000"
-	@echo "  Vanilla JS:   http://localhost:3001"
-	@echo "  jQuery:       http://localhost:3002"
-	@echo "  Vue.js:       http://localhost:3003"
-	@echo "  React.js:     http://localhost:3004"
-	@echo "  Angular:      http://localhost:3005"
-	@echo "  Backend API:  http://localhost:8080"
+	@echo "  Landing Page:    http://localhost:3000"
+	@echo "  Vanilla JS:      http://localhost:3001"
+	@echo "  Vanilla TypeScript: http://localhost:3002"
+	@echo "  jQuery:          http://localhost:3003"
+	@echo "  Vue.js:          http://localhost:3004"
+	@echo "  React.js:        http://localhost:3005"
+	@echo "  Angular:         http://localhost:3006"
+	@echo "  Backend API:     http://localhost:8080"
 
 .PHONY: start
 start: up ## Alias for 'up' command
@@ -75,10 +76,6 @@ down: ## Stop and remove all containers
 .PHONY: stop
 stop: down ## Alias for 'down' command
 
-.PHONY: restart
-restart: down up ## Restart all containers
-	@echo "$(GREEN)✅ All containers restarted$(RESET)"
-
 .PHONY: restart-backend
 restart-backend: ## Restart only the backend container
 	@echo "$(YELLOW)Restarting backend...$(RESET)"
@@ -88,7 +85,7 @@ restart-backend: ## Restart only the backend container
 .PHONY: restart-frontend
 restart-frontend: ## Restart all frontend containers
 	@echo "$(YELLOW)Restarting frontend containers...$(RESET)"
-	@docker-compose restart chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-landing
+	@docker-compose restart chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-vanilla-ts chess-landing
 	@echo "$(GREEN)✅ Frontend containers restarted$(RESET)"
 
 ##@ Build Commands
@@ -108,7 +105,7 @@ build-backend: ## Build only the backend container
 .PHONY: build-frontend
 build-frontend: ## Build all frontend containers
 	@echo "$(GREEN)Building frontend containers...$(RESET)"
-	@docker-compose build chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-landing
+	@docker-compose build chess-angular chess-react chess-vue chess-jquery chess-vanilla chess-vanilla-ts chess-landing
 	@echo "$(GREEN)✅ Frontend containers built$(RESET)"
 
 .PHONY: build-angular
@@ -136,8 +133,29 @@ build-landing: ## Build only Landing page container
 	@docker-compose build chess-landing
 
 .PHONY: rebuild
-rebuild: clean build up ## Clean, rebuild, and start all containers
+rebuild: ## Complete rebuild with no cache (removes all containers and images)
+	@echo "$(YELLOW)Performing complete rebuild with no cache...$(RESET)"
+	@docker-compose down --rmi local --volumes --remove-orphans
+	@docker-compose build --no-cache
+	@docker-compose up -d
 	@echo "$(GREEN)✅ Complete rebuild finished$(RESET)"
+	@echo "$(YELLOW)Access URLs:$(RESET)"
+	@echo "  Landing Page:    http://localhost:3000"
+	@echo "  Vanilla JS:      http://localhost:3001"
+	@echo "  Vanilla TS:      http://localhost:3002"
+	@echo "  jQuery:          http://localhost:3003"
+	@echo "  Vue.js:          http://localhost:3004"
+	@echo "  React.js:        http://localhost:3005"
+	@echo "  Angular:         http://localhost:3006"
+	@echo "  Backend API:     http://localhost:8080"
+
+.PHONY: restart
+restart: ## Soft rebuild with cache (stops containers, rebuilds with cache, restarts)
+	@echo "$(YELLOW)Performing soft restart with cache...$(RESET)"
+	@docker-compose down
+	@docker-compose build
+	@docker-compose up -d
+	@echo "$(GREEN)✅ Containers restarted$(RESET)"
 
 ##@ Cleanup Commands
 
@@ -179,22 +197,27 @@ start-backend: ## Start only the backend container
 .PHONY: start-angular
 start-angular: ## Start only Angular container
 	@docker-compose up -d chess-angular
-	@echo "$(GREEN)✅ Angular started on http://localhost:3005$(RESET)"
+	@echo "$(GREEN)✅ Angular started on http://localhost:3006$(RESET)"
 
 .PHONY: start-react
 start-react: ## Start only React container
 	@docker-compose up -d chess-react
-	@echo "$(GREEN)✅ React started on http://localhost:3004$(RESET)"
+	@echo "$(GREEN)✅ React started on http://localhost:3005$(RESET)"
 
 .PHONY: start-vue
 start-vue: ## Start only Vue container
 	@docker-compose up -d chess-vue
-	@echo "$(GREEN)✅ Vue.js started on http://localhost:3003$(RESET)"
+	@echo "$(GREEN)✅ Vue.js started on http://localhost:3004$(RESET)"
 
 .PHONY: start-jquery
 start-jquery: ## Start only jQuery container
 	@docker-compose up -d chess-jquery
-	@echo "$(GREEN)✅ jQuery started on http://localhost:3002$(RESET)"
+	@echo "$(GREEN)✅ jQuery started on http://localhost:3003$(RESET)"
+
+.PHONY: start-vanilla-ts
+start-vanilla-ts: ## Start only Vanilla TypeScript container
+	@docker-compose up -d chess-vanilla-ts
+	@echo "$(GREEN)✅ Vanilla TypeScript started on http://localhost:3002$(RESET)"
 
 .PHONY: start-vanilla
 start-vanilla: ## Start only Vanilla JS container
@@ -321,22 +344,24 @@ open: ## Open all applications in browser (macOS)
 	@echo "$(GREEN)Opening applications in browser...$(RESET)"
 	@open http://localhost:3000  # Landing page
 	@open http://localhost:3001  # Vanilla JS
-	@open http://localhost:3002  # jQuery
-	@open http://localhost:3003  # Vue.js
-	@open http://localhost:3004  # React.js
-	@open http://localhost:3005  # Angular
+	@open http://localhost:3002  # Vanilla TypeScript
+	@open http://localhost:3003  # jQuery
+	@open http://localhost:3004  # Vue.js
+	@open http://localhost:3005  # React.js
+	@open http://localhost:3006  # Angular
 
 .PHONY: urls
 urls: ## Display all application URLs
 	@echo "$(BLUE)Application URLs:$(RESET)"
-	@echo "  $(YELLOW)Landing Page:$(RESET) http://localhost:3000"
-	@echo "  $(YELLOW)Vanilla JS:$(RESET)   http://localhost:3001"
-	@echo "  $(YELLOW)jQuery:$(RESET)       http://localhost:3002"
-	@echo "  $(YELLOW)Vue.js:$(RESET)       http://localhost:3003"
-	@echo "  $(YELLOW)React.js:$(RESET)     http://localhost:3004"
-	@echo "  $(YELLOW)Angular:$(RESET)      http://localhost:3005"
-	@echo "  $(YELLOW)Backend API:$(RESET)  http://localhost:8080"
-	@echo "  $(YELLOW)API Docs:$(RESET)     http://localhost:8080/swagger"
+	@echo "  $(YELLOW)Landing Page:$(RESET)    http://localhost:3000"
+	@echo "  $(YELLOW)Vanilla JS:$(RESET)      http://localhost:3001"
+	@echo "  $(YELLOW)Vanilla TypeScript:$(RESET) http://localhost:3002"
+	@echo "  $(YELLOW)jQuery:$(RESET)          http://localhost:3003"
+	@echo "  $(YELLOW)Vue.js:$(RESET)          http://localhost:3004"
+	@echo "  $(YELLOW)React.js:$(RESET)        http://localhost:3005"
+	@echo "  $(YELLOW)Angular:$(RESET)         http://localhost:3006"
+	@echo "  $(YELLOW)Backend API:$(RESET)     http://localhost:8080"
+	@echo "  $(YELLOW)API Docs:$(RESET)        http://localhost:8080/swagger"
 
 # Help formatting
 .PHONY: help-detailed

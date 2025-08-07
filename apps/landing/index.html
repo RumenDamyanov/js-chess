@@ -3,277 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS Chess - Frontend Showcase</title>
-    <link rel="stylesheet" href="../../shared/styles/common.css">
+    <title>JS Chess - Framework Comparison</title>
+    <link rel="stylesheet" href="shared/common.css">
+    <link rel="stylesheet" href="shared/header.css">
     <link rel="stylesheet" href="css/landing.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' style='font-size:14px'>♛</text></svg>">
 </head>
 <body>
-    <div class="app">
-        <!-- Hero Section -->
-        <header class="hero">
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>🏁 JS Chess</h1>
+                <p>Framework Showcase</p>
+            </div>
+            <nav class="navigation">
+                <a href="#frameworks" class="nav-link">Frameworks</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#comparison" class="nav-link">Comparison</a>
+                <a href="https://github.com/RumenDamyanov/js-chess" class="nav-link" target="_blank">
+                    <span>GitHub</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <h1 class="hero-title">♟️ JS Chess</h1>
-                    <p class="hero-subtitle">Frontend Framework Showcase</p>
+                    <h2>One Chess Game, Six JavaScript Implementations</h2>
                     <p class="hero-description">
-                        Experience the same powerful chess game built with 5 different JavaScript frameworks.
-                        Compare modern development approaches while enjoying a feature-rich chess experience
-                        powered by a robust Go backend API.
+                        Explore how the same chess application is built using different JavaScript frameworks and approaches.
+                        Compare implementation patterns, performance, and developer experience across
+                        Vanilla JS, TypeScript, jQuery, Vue.js, React.js, and Angular.
                     </p>
-                    <div class="hero-stats">
-                        <div class="stat">
-                            <span class="stat-number">5</span>
-                            <span class="stat-label">Frameworks</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">100%</span>
-                            <span class="stat-label">Feature Parity</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">1</span>
-                            <span class="stat-label">Shared API</span>
-                        </div>
-                    </div>
-                    <div class="hero-actions">
-                        <a href="#frameworks" class="btn btn-primary btn-large">
-                            🚀 Explore Frameworks
-                        </a>
-                        <a href="https://github.com/RumenDamyanov/js-chess" class="btn btn-secondary btn-large" target="_blank">
-                            📱 View on GitHub
+                    <div class="hero-buttons">
+                        <a href="#frameworks" class="btn btn-primary">Explore Frameworks</a>
+                        <a href="https://github.com/RumenDamyanov/js-chess" class="btn btn-secondary" target="_blank">
+                            View Source Code
                         </a>
                     </div>
                 </div>
-            </div>
-        </header>
-
-        <!-- Framework Showcase -->
-        <main class="main">
-            <div class="container">
-                <!-- Framework Showcase -->
-                <section class="showcase" id="frameworks">
-                    <h2 class="section-title">Choose Your Framework Adventure</h2>
-                    <p class="section-description">
-                        Each implementation demonstrates identical chess functionality using different approaches.
-                        Compare how various JavaScript frameworks handle the same requirements and discover
-                        the unique strengths of each technology stack.
-                    </p>
-
-                    <div class="frameworks-grid">
-                        <!-- Vanilla JavaScript -->
-                        <div class="framework-card">
-                            <div class="framework-header">
-                                <div class="framework-icon">📦</div>
-                                <h3 class="framework-name">Vanilla JS</h3>
-                                <span class="framework-badge vanilla">Pure</span>
-                            </div>
-                            <p class="framework-description">
-                                Pure JavaScript implementation using modern ES6+ features.
-                                No frameworks, just clean DOM manipulation and event handling.
-                            </p>
-                            <div class="framework-features">
-                                <span class="feature-tag">ES6+</span>
-                                <span class="feature-tag">DOM API</span>
-                                <span class="feature-tag">Lightweight</span>
-                            </div>
-                            <div class="framework-actions">
-                                <a href="http://localhost:3001" class="btn btn-primary" target="_blank">
-                                    Play Now
-                                </a>
-                                <a href="../vanilla-js/" class="btn btn-secondary">
-                                    View Code
-                                </a>
-                            </div>
+                <div class="hero-visual">
+                    <div class="chess-board-demo">
+                        <div class="board">
+                            <!-- Chess board visual representation -->
+                            <div class="square light"></div>
+                            <div class="square dark"></div>
+                            <div class="square light"></div>
+                            <div class="square dark"></div>
+                            <div class="square light"></div>
+                            <div class="square dark"></div>
+                            <div class="square light"></div>
+                            <div class="square dark"></div>
+                            <!-- Add more squares as needed -->
                         </div>
-
-                        <!-- jQuery -->
-                        <div class="framework-card">
-                            <div class="framework-header">
-                                <div class="framework-icon">💙</div>
-                                <h3 class="framework-name">jQuery</h3>
-                                <span class="framework-badge jquery">Classic</span>
-                            </div>
-                            <p class="framework-description">
-                                Traditional jQuery approach with familiar selectors and event delegation.
-                                Demonstrates classic web development patterns.
-                            </p>
-                            <div class="framework-features">
-                                <span class="feature-tag">Selectors</span>
-                                <span class="feature-tag">Animations</span>
-                                <span class="feature-tag">Cross-browser</span>
-                            </div>
-                            <div class="framework-actions">
-                                <a href="http://localhost:3002" class="btn btn-primary" target="_blank">
-                                    Play Now
-                                </a>
-                                <a href="../jquery/" class="btn btn-secondary">
-                                    View Code
-                                </a>
-                            </div>
+                        <div class="floating-icons">
+                            <div class="icon js">JS</div>
+                            <div class="icon ts">TS</div>
+                            <div class="icon vue">Vue</div>
+                            <div class="icon react">React</div>
+                            <div class="icon angular">Angular</div>
                         </div>
-
-                        <!-- Vue.js -->
-                        <div class="framework-card">
-                            <div class="framework-header">
-                                <div class="framework-icon">💚</div>
-                                <h3 class="framework-name">Vue.js</h3>
-                                <span class="framework-badge vue">Progressive</span>
-                            </div>
-                            <p class="framework-description">
-                                Modern Vue 3 with Composition API, reactive state management,
-                                and TypeScript integration.
-                            </p>
-                            <div class="framework-features">
-                                <span class="feature-tag">Composition API</span>
-                                <span class="feature-tag">Reactivity</span>
-                                <span class="feature-tag">TypeScript</span>
-                            </div>
-                            <div class="framework-actions">
-                                <a href="http://localhost:3003" class="btn btn-primary" target="_blank">
-                                    Play Now
-                                </a>
-                                <a href="../vue/" class="btn btn-secondary">
-                                    View Code
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- React -->
-                        <div class="framework-card">
-                            <div class="framework-header">
-                                <div class="framework-icon">⚛️</div>
-                                <h3 class="framework-name">React</h3>
-                                <span class="framework-badge react">Component</span>
-                            </div>
-                            <p class="framework-description">
-                                React 18 with hooks, functional components, and modern
-                                React patterns for state management.
-                            </p>
-                            <div class="framework-features">
-                                <span class="feature-tag">Hooks</span>
-                                <span class="feature-tag">Context</span>
-                                <span class="feature-tag">TypeScript</span>
-                            </div>
-                            <div class="framework-actions">
-                                <a href="http://localhost:3004" class="btn btn-primary" target="_blank">
-                                    Play Now
-                                </a>
-                                <a href="../react/" class="btn btn-secondary">
-                                    View Code
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Angular -->
-                        <div class="framework-card">
-                            <div class="framework-header">
-                                <div class="framework-icon">🅰️</div>
-                                <h3 class="framework-name">Angular</h3>
-                                <span class="framework-badge angular">Enterprise</span>
-                            </div>
-                            <p class="framework-description">
-                                Enterprise-grade Angular with dependency injection, services,
-                                and RxJS for reactive programming.
-                            </p>
-                            <div class="framework-features">
-                                <span class="feature-tag">DI</span>
-                                <span class="feature-tag">RxJS</span>
-                                <span class="feature-tag">Services</span>
-                            </div>
-                            <div class="framework-actions">
-                                <a href="http://localhost:3005" class="btn btn-primary" target="_blank">
-                                    Play Now
-                                </a>
-                                <a href="../angular/" class="btn btn-secondary">
-                                    View Code
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Features Section -->
-                <section class="features">
-                    <h2 class="section-title">Common Features</h2>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon">♟️</div>
-                            <h3>Complete Chess Game</h3>
-                            <p>Full chess rules including castling, en passant, and pawn promotion</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🤖</div>
-                            <h3>AI Opponents</h3>
-                            <p>Multiple difficulty levels and LLM-powered AI with chat capabilities</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">⏱️</div>
-                            <h3>Real-time Updates</h3>
-                            <p>WebSocket integration for live multiplayer gameplay</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">📊</div>
-                            <h3>Move Analysis</h3>
-                            <p>Position evaluation and move suggestions from the chess engine</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Technology Stack -->
-                <section class="tech-stack">
-                    <h2 class="section-title">Technology Stack</h2>
-                    <div class="stack-comparison">
-                        <div class="stack-column">
-                            <h3>Backend</h3>
-                            <div class="stack-items">
-                                <div class="stack-item">Go 1.22+</div>
-                                <div class="stack-item">Gin Web Framework</div>
-                                <div class="stack-item">WebSocket Support</div>
-                                <div class="stack-item">Chess Engine</div>
-                                <div class="stack-item">LLM AI Integration</div>
-                                <div class="stack-item">Docker Ready</div>
-                            </div>
-                        </div>
-                        <div class="stack-column">
-                            <h3>Frontend</h3>
-                            <div class="stack-items">
-                                <div class="stack-item">5 Different Approaches</div>
-                                <div class="stack-item">TypeScript Support</div>
-                                <div class="stack-item">Modern Build Tools</div>
-                                <div class="stack-item">Responsive Design</div>
-                                <div class="stack-item">Shared API Client</div>
-                                <div class="stack-item">Hot Reload Dev</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="container">
-                <div class="footer-content">
-                    <div class="footer-section">
-                        <h4>Project</h4>
-                        <a href="https://github.com/RumenDamyanov/js-chess">GitHub Repository</a>
-                        <a href="https://github.com/RumenDamyanov/go-chess">Backend API</a>
-                    </div>
-                    <div class="footer-section">
-                        <h4>Documentation</h4>
-                        <a href="../../docs/development.md">Development Guide</a>
-                        <a href="../../docs/api-integration.md">API Integration</a>
-                    </div>
-                    <div class="footer-section">
-                        <h4>Author</h4>
-                        <p>Rumen Damyanov</p>
-                        <a href="mailto:contact@rumenx.com">contact@rumenx.com</a>
                     </div>
                 </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2025 Rumen Damyanov. MIT License.</p>
+            </div>
+        </section>
+
+        <section id="frameworks" class="frameworks">
+            <div class="container">
+                <h2>Framework Implementations</h2>
+                <p class="section-description">
+                    Each implementation provides the same chess functionality with full game rules,
+                    AI opponents, real-time multiplayer, and chat features.
+                </p>
+
+                <div class="framework-grid">
+                    <div class="framework-card">
+                        <div class="framework-header">
+                            <div class="framework-icon vanilla">JS</div>
+                            <h3>Vanilla JavaScript</h3>
+                            <span class="framework-tag">Pure JS</span>
+                        </div>
+                        <p class="framework-description">
+                            Pure JavaScript implementation using DOM manipulation,
+                            modern ES6+ features, and Web APIs. No external dependencies.
+                        </p>
+                        <div class="framework-features">
+                            <span class="feature">No Dependencies</span>
+                            <span class="feature">Direct DOM Access</span>
+                            <span class="feature">Web APIs</span>
+                        </div>
+                        <div class="framework-actions">
+                            <a href="http://localhost:3001" class="btn btn-primary">Try Demo</a>
+                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/vanilla-js" class="btn btn-outline" target="_blank">View Code</a>
+                        </div>
+                    </div>
+
+                    <div class="framework-card">
+                        <div class="framework-header">
+                            <div class="framework-icon typescript">TS</div>
+                            <h3>TypeScript</h3>
+                            <span class="framework-tag">Type-Safe</span>
+                        </div>
+                        <p class="framework-description">
+                            Type-safe implementation with TypeScript for enhanced development experience,
+                            error prevention, and comprehensive debugging utilities.
+                        </p>
+                        <div class="framework-features">
+                            <span class="feature">Type Safety</span>
+                            <span class="feature">Debug System</span>
+                            <span class="feature">Modern Tooling</span>
+                        </div>
+                        <div class="framework-actions">
+                            <a href="http://localhost:3002" class="btn btn-primary">Try Demo</a>
+                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/vanilla-ts" class="btn btn-outline" target="_blank">View Code</a>
+                        </div>
+                    </div>
+
+                    <div class="framework-card">
+                        <div class="framework-header">
+                            <div class="framework-icon jquery">jQ</div>
+                            <h3>jQuery</h3>
+                            <span class="framework-tag">Classic</span>
+                        </div>
+                        <p class="framework-description">
+                            Classic jQuery approach with simplified DOM manipulation,
+                            event handling, and AJAX. Demonstrating traditional web development.
+                        </p>
+                        <div class="framework-features">
+                            <span class="feature">Simple Syntax</span>
+                            <span class="feature">Cross-browser</span>
+                            <span class="feature">Plugin Ecosystem</span>
+                        </div>
+                        <div class="framework-actions">
+                            <a href="http://localhost:3003" class="btn btn-primary">Try Demo</a>
+                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/jquery" class="btn btn-outline" target="_blank">View Code</a>
+                        </div>
+                    </div>
+
+                    <div class="framework-card">
+                        <div class="framework-header">
+                            <div class="framework-icon vue">Vue</div>
+                            <h3>Vue.js 3</h3>
+                            <span class="framework-tag">Progressive</span>
+                        </div>
+                        <p class="framework-description">
+                            Modern Vue.js 3 with Composition API, TypeScript integration,
+                            Pinia for state management, and reactive data binding.
+                        </p>
+                        <div class="framework-features">
+                            <span class="feature">Composition API</span>
+                            <span class="feature">TypeScript</span>
+                            <span class="feature">Reactivity</span>
+                        </div>
+                        <div class="framework-actions">
+                            <a href="http://localhost:3004" class="btn btn-primary">Try Demo</a>
+                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/vue-js" class="btn btn-outline" target="_blank">View Code</a>
+                        </div>
+                    </div>
+
+                    <div class="framework-card">
+                        <div class="framework-header">
+                            <div class="framework-icon react">React</div>
+                            <h3>React.js 18</h3>
+                            <span class="framework-tag">Component-based</span>
+                        </div>
+                        <p class="framework-description">
+                            Modern React 18 with hooks, Context API, TypeScript,
+                            and functional components following current best practices.
+                        </p>
+                        <div class="framework-features">
+                            <span class="feature">Hooks</span>
+                            <span class="feature">Context API</span>
+                            <span class="feature">TypeScript</span>
+                        </div>
+                        <div class="framework-actions">
+                            <a href="http://localhost:3005" class="btn btn-primary">Try Demo</a>
+                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/react-js" class="btn btn-outline" target="_blank">View Code</a>
+                        </div>
+                    </div>
+
+                    <div class="framework-card">
+                        <div class="framework-header">
+                            <div class="framework-icon angular">Angular</div>
+                            <h3>Angular 17+</h3>
+                            <span class="framework-tag">Enterprise</span>
+                        </div>
+                        <p class="framework-description">
+                            Enterprise-grade Angular with standalone components,
+                            dependency injection, RxJS, and comprehensive TypeScript integration.
+                        </p>
+                        <div class="framework-features">
+                            <span class="feature">Dependency Injection</span>
+                            <span class="feature">RxJS</span>
+                            <span class="feature">Full TypeScript</span>
+                        </div>
+                        <div class="framework-actions">
+                            <a href="http://localhost:3006" class="btn btn-primary">Try Demo</a>
+                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/angular" class="btn btn-outline" target="_blank">View Code</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </footer>
-    </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Comprehensive Chess Features</h2>
+                <p class="section-description">
+                    Every framework implementation includes the complete set of chess features
+                    powered by our Go backend API.
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">♟️</div>
+                        <h3>Complete Chess Rules</h3>
+                        <p>Full chess implementation with all rules including castling, en passant, pawn promotion, and check/checkmate detection.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>AI Opponents</h3>
+                        <p>Multiple AI difficulty levels using traditional chess engines (Minimax, Alpha-Beta) and modern LLM integration.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Real-time Multiplayer</h3>
+                        <p>WebSocket-powered real-time gameplay with live move synchronization and player presence indicators.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <h3>AI Chat Assistant</h3>
+                        <p>Integrated chat with multiple LLM providers (OpenAI, Anthropic, Google) for move analysis and chess coaching.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Game Analysis</h3>
+                        <p>Position evaluation, move history, FEN export/import, and comprehensive game state tracking.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h3>Responsive Design</h3>
+                        <p>Mobile-friendly interface with adaptive layouts and touch-optimized chess board interaction.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="comparison">
+            <div class="container">
+                <h2>Framework Comparison</h2>
+                <p class="section-description">
+                    Compare the different approaches, trade-offs, and characteristics of each framework implementation.
+                </p>
+
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Vanilla JS</th>
+                                <th>TypeScript</th>
+                                <th>jQuery</th>
+                                <th>Vue.js</th>
+                                <th>React.js</th>
+                                <th>Angular</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Bundle Size</strong></td>
+                                <td class="size-small">~15KB</td>
+                                <td class="size-small">~25KB</td>
+                                <td class="size-small">~95KB</td>
+                                <td class="size-medium">~350KB</td>
+                                <td class="size-medium">~280KB</td>
+                                <td class="size-large">~450KB</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Learning Curve</strong></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td class="difficulty-hard">Steep</td>
+                            </tr>
+                            <tr>
+                                <td><strong>TypeScript</strong></td>
+                                <td>Optional</td>
+                                <td>Native</td>
+                                <td>Optional</td>
+                                <td>Integrated</td>
+                                <td>Integrated</td>
+                                <td>Native</td>
+                            </tr>
+                            <tr>
+                                <td><strong>State Management</strong></td>
+                                <td>Manual</td>
+                                <td>Manual</td>
+                                <td>Manual</td>
+                                <td>Pinia</td>
+                                <td>Context API</td>
+                                <td>Services</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Performance</strong></td>
+                                <td class="perf-excellent">Excellent</td>
+                                <td class="perf-excellent">Excellent</td>
+                                <td class="perf-good">Good</td>
+                                <td class="perf-excellent">Excellent</td>
+                                <td class="perf-excellent">Excellent</td>
+                                <td class="perf-good">Good</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Debugging</strong></td>
+                                <td class="eco-basic">Basic</td>
+                                <td class="eco-rich">Advanced</td>
+                                <td class="eco-basic">Basic</td>
+                                <td class="eco-mature">DevTools</td>
+                                <td class="eco-mature">DevTools</td>
+                                <td class="eco-complete">Complete</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="architecture">
+            <div class="container">
+                <h2>Technical Architecture</h2>
+                <div class="architecture-content">
+                    <div class="architecture-description">
+                        <h3>Shared Backend API</h3>
+                        <p>
+                            All frontend implementations connect to the same Go-powered chess backend,
+                            ensuring consistent game logic and features across frameworks.
+                        </p>
+                        <ul>
+                            <li>RESTful API for game management</li>
+                            <li>WebSocket connections for real-time updates</li>
+                            <li>Multiple AI engines and LLM integration</li>
+                            <li>Comprehensive chess rule validation</li>
+                            <li>Docker containerization for easy deployment</li>
+                        </ul>
+                    </div>
+                    <div class="architecture-diagram">
+                        <div class="diagram">
+                            <div class="frontend-layer">
+                                <div class="frontend-box">Frontend Apps</div>
+                                <div class="frontend-items">
+                                    <span>Vanilla JS</span>
+                                    <span>TypeScript</span>
+                                    <span>jQuery</span>
+                                    <span>Vue.js</span>
+                                    <span>React.js</span>
+                                    <span>Angular</span>
+                                </div>
+                            </div>
+                            <div class="api-layer">
+                                <div class="api-box">Go Chess API</div>
+                                <div class="api-features">
+                                    <span>REST + WebSocket</span>
+                                    <span>Chess Engine</span>
+                                    <span>AI Integration</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JS Chess</h3>
+                    <p>A comprehensive comparison of JavaScript frameworks through chess game implementation.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#frameworks">Frameworks</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#comparison">Comparison</a></li>
+                        <li><a href="https://github.com/RumenDamyanov/js-chess" target="_blank">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Frameworks</h4>
+                    <ul>
+                        <li><a href="http://localhost:3001">Vanilla JavaScript</a></li>
+                        <li><a href="http://localhost:3002">TypeScript</a></li>
+                        <li><a href="http://localhost:3003">jQuery</a></li>
+                        <li><a href="http://localhost:3004">Vue.js</a></li>
+                        <li><a href="http://localhost:3005">React.js</a></li>
+                        <li><a href="http://localhost:3006">Angular</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="http://localhost:8080" target="_blank">Backend API</a></li>
+                        <li><a href="http://localhost:8080/health" target="_blank">Health Check</a></li>
+                        <li><a href="https://github.com/RumenDamyanov/js-chess/blob/main/README.md" target="_blank">Documentation</a></li>
+                        <li><a href="https://github.com/RumenDamyanov/js-chess/blob/main/LICENSE.md" target="_blank">License</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 <a href="https://github.com/RumenDamyanov/js-chess">JS Chess</a>. Open source project.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/landing.js"></script>
 </body>
 </html>
