@@ -23,8 +23,8 @@ services:
   # Landing page with app showcase
   chess-landing:
     build:
-      context: ./apps/landing
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/landing/Dockerfile
     container_name: chess-landing
     ports:
       - "3000:80"
@@ -36,8 +36,8 @@ services:
   # Vanilla JavaScript app
   chess-vanilla:
     build:
-      context: ./apps/vanilla-js
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/vanilla-js/Dockerfile
     container_name: chess-vanilla
     ports:
       - "3001:80"
@@ -46,14 +46,27 @@ services:
     networks:
       - chess-network
 
+  # Vanilla TypeScript app
+  chess-vanilla-ts:
+    build:
+      context: .
+      dockerfile: ./apps/vanilla-ts/Dockerfile
+    container_name: chess-vanilla-ts
+    ports:
+      - "3002:80"
+    depends_on:
+      - chess-backend
+    networks:
+      - chess-network
+
   # jQuery app
   chess-jquery:
     build:
-      context: ./apps/jquery
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/jquery/Dockerfile
     container_name: chess-jquery
     ports:
-      - "3002:80"
+      - "3003:80"
     depends_on:
       - chess-backend
     networks:
@@ -62,13 +75,13 @@ services:
   # Vue.js app
   chess-vue:
     build:
-      context: ./apps/vue-js
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/vue-js/Dockerfile
       args:
         - BUILDKIT_INLINE_CACHE=1
     container_name: chess-vue
     ports:
-      - "3003:80"
+      - "3004:80"
     environment:
       - VITE_API_URL=http://localhost:8080
       - VITE_WS_URL=ws://localhost:8080
@@ -80,11 +93,11 @@ services:
   # React.js app
   chess-react:
     build:
-      context: ./apps/react-js
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/react-js/Dockerfile
     container_name: chess-react
     ports:
-      - "3004:80"
+      - "3005:80"
     environment:
       - VITE_API_URL=http://localhost:8080
       - VITE_WS_URL=ws://localhost:8080
@@ -96,11 +109,11 @@ services:
   # Angular app
   chess-angular:
     build:
-      context: ./apps/angular
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/angular/Dockerfile
     container_name: chess-angular
     ports:
-      - "3005:80"
+      - "3006:80"
     environment:
       - API_URL=http://localhost:8080
       - WS_URL=ws://localhost:8080
@@ -120,6 +133,7 @@ services:
     depends_on:
       - chess-landing
       - chess-vanilla
+      - chess-vanilla-ts
       - chess-jquery
       - chess-vue
       - chess-react

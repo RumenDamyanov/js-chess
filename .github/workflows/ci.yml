@@ -4,9 +4,9 @@ permissions:
 
 on:
   push:
-    branches: [ master, main, develop ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master, develop ]
   workflow_dispatch:
 
 env:
@@ -94,6 +94,18 @@ jobs:
             cd ../..
           fi
 
+          # Install Vanilla TypeScript dependencies
+          if [ -f "apps/vanilla-ts/package.json" ]; then
+            echo "Installing Vanilla TypeScript dependencies..."
+            cd apps/vanilla-ts
+            if [ -f "package-lock.json" ]; then
+              npm ci
+            else
+              npm install
+            fi
+            cd ../..
+          fi
+
       - name: Build backend dependencies
         run: |
           echo "Building go-chess backend..."
@@ -138,7 +150,7 @@ jobs:
 
     strategy:
       matrix:
-        app: [vue-js, react-js, angular]
+        app: [vue-js, react-js, angular, vanilla-ts]
 
     steps:
       - name: Checkout repository
@@ -186,6 +198,9 @@ jobs:
             "angular")
               npm run build
               ;;
+            "vanilla-ts")
+              npm run build
+              ;;
           esac
           echo "✅ ${{ matrix.app }} build successful"
 
@@ -208,6 +223,15 @@ jobs:
                 ls -la dist/
               else
                 echo "❌ Angular dist directory missing"
+                exit 1
+              fi
+              ;;
+            "vanilla-ts")
+              if [ -d "dist" ]; then
+                echo "✅ Vanilla TypeScript dist directory created"
+                ls -la dist/
+              else
+                echo "❌ Vanilla TypeScript dist directory missing"
                 exit 1
               fi
               ;;
@@ -285,10 +309,11 @@ jobs:
           services=(
             "3000:Landing Page"
             "3001:Vanilla JS"
-            "3002:jQuery"
-            "3003:Vue.js"
-            "3004:React"
-            "3005:Angular"
+            "3002:Vanilla TypeScript"
+            "3003:jQuery"
+            "3004:Vue.js"
+            "3005:React"
+            "3006:Angular"
           )
 
           for service in "${services[@]}"; do

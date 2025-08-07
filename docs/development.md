@@ -61,7 +61,7 @@ docker-compose up --build
 
 This will start:
 - Backend API on port 8080
-- All frontend apps on ports 3001-3005
+- All frontend apps on ports 3001-3006
 
 #### Option B: Individual Applications
 
@@ -73,10 +73,11 @@ npm run start:backend
 
 # Start frontend applications
 npm run start:vanilla    # Port 3001
-npm run start:jquery     # Port 3002
-npm run start:vue        # Port 3003
-npm run start:react      # Port 3004
-npm run start:angular    # Port 3005
+npm run start:vanilla-ts # Port 3002
+npm run start:jquery     # Port 3003
+npm run start:vue        # Port 3004
+npm run start:react      # Port 3005
+npm run start:angular    # Port 3006
 ```
 
 #### Option C: All Frontends at Once
@@ -144,10 +145,11 @@ After setup, verify everything is working:
 
 1. **Backend API**: Visit <http://localhost:8080/health>
 2. **Vanilla JS**: Visit <http://localhost:3001>
-3. **jQuery**: Visit <http://localhost:3002>
-4. **Vue.js**: Visit <http://localhost:3003>
-5. **React.js**: Visit <http://localhost:3004>
-6. **Angular**: Visit <http://localhost:3005>
+3. **Vanilla TypeScript**: Visit <http://localhost:3002>
+4. **jQuery**: Visit <http://localhost:3003>
+5. **Vue.js**: Visit <http://localhost:3004>
+6. **React.js**: Visit <http://localhost:3005>
+7. **Angular**: Visit <http://localhost:3006>
 
 ## Development Workflow
 

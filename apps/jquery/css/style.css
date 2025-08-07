@@ -12,6 +12,16 @@
     position: relative;
     background: #2c3e50;
     padding: 2px;
+    transition: transform 0.5s ease;
+}
+
+/* Board flipping for black player */
+.chess-board.flipped {
+    transform: rotate(180deg);
+}
+
+.chess-board.flipped .square {
+    transform: rotate(180deg);
 }
 
 /* Coordinate labels hidden */
@@ -558,4 +568,409 @@ main {
 
 .promotion-cancel:hover {
     background: #e9ecef;
+}
+
+/* Layout Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    min-height: 100vh;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Main game area */
+main {
+    display: grid;
+    grid-template-columns: 300px auto 300px;
+    gap: 30px;
+    align-items: start;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.center-panel {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+/* Configuration Panel */
+.game-config {
+    padding: 20px;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee2e6;
+}
+
+.game-config h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.config-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.config-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.config-section h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.config-group {
+    margin-bottom: 15px;
+}
+
+.config-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #495057;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.config-group input[type="text"],
+.config-group input[type="number"],
+.config-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    transition: border-color 0.3s ease;
+}
+
+.config-group input[type="text"]:focus,
+.config-group input[type="number"]:focus,
+.config-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.config-group.checkbox-group {
+    margin-bottom: 12px;
+}
+
+.config-group.checkbox-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+.config-group.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+    transform: scale(1.2);
+}
+
+/* Timer Display */
+.timer-display {
+    padding: 20px;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee2e6;
+}
+
+.timer-display h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.timer-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.timer-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.timer-section.active {
+    background: #e8f5e8;
+    border-left: 4px solid #28a745;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.timer-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.timer-value {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 16px;
+    color: #007bff;
+}
+
+.timer-section.active .timer-value {
+    color: #28a745;
+}
+
+.game-info {
+    padding: 20px;
+    background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee2e6;
+}
+
+.game-info h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.status {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.status > div {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+/* Debug System Styles */
+.btn-debug {
+    background: #6c757d;
+    color: white;
+    border: 1px solid #545b62;
+    margin-left: 10px;
+}
+
+.btn-debug:hover {
+    background: #5a6268;
+    border-color: #4e555b;
+}
+
+.btn-debug.debug-active {
+    background: #28a745;
+    border-color: #1e7e34;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+}
+
+.debug-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    width: 450px;
+    max-height: 70vh;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+}
+
+.debug-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    border-radius: 10px 10px 0 0;
+}
+
+.debug-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.debug-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+}
+
+.debug-close:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.debug-content {
+    padding: 20px;
+}
+
+.debug-master {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.debug-master-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+}
+
+.debug-master-label input {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.debug-categories h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.debug-category {
+    margin-bottom: 12px;
+    padding: 8px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.debug-category:hover {
+    background: #f8f9fa;
+}
+
+.debug-checkbox-label {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: 100%;
+}
+
+.debug-checkbox-label input {
+    margin-right: 8px;
+    margin-bottom: 3px;
+    align-self: flex-start;
+}
+
+.debug-category-name {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    margin-left: 20px;
+    margin-top: -18px;
+}
+
+.debug-category-desc {
+    font-size: 12px;
+    color: #666;
+    margin-left: 20px;
+    font-style: italic;
+}
+
+.debug-actions {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.debug-actions .btn {
+    flex: 1;
+    min-width: 90px;
+}
+
+.debug-info {
+    margin-top: 15px;
+    padding: 10px;
+    background: #e7f3ff;
+    border-radius: 3px;
+    border-left: 4px solid #007bff;
+}
+
+.debug-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.debug-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    font-size: 14px;
+    font-weight: bold;
+    display: none;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }

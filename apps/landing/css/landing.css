@@ -1,13 +1,122 @@
 /* Landing Page Styles */
 
+/* Header Styles - compatible with both .header and .landing-header */
+.header,
+.landing-header {
+    padding: 1rem 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1000;
+}
+
+.header .container,
+.landing-header .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+}
+
+.header .logo h1,
+.landing-header .header-title {
+    font-size: 1.5rem;
+    margin: 0;
+    color: white;
+    font-weight: 700;
+}
+
+.header .logo p,
+.landing-header .header-framework {
+    font-size: 0.9rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.header .navigation,
+.landing-header .header-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.header .nav-link,
+.landing-header .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.header .nav-link:hover,
+.landing-header .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.header .nav-link svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Mobile responsive for landing header */
+@media (max-width: 768px) {
+    .landing-header {
+        padding: 0.375rem 0;
+    }
+
+    .landing-header .header-container {
+        padding: 0 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .landing-header .header-nav {
+        width: 100%;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .landing-header .nav-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .landing-header .nav-link {
+        padding: 0.25rem 0.375rem;
+        font-size: 0.75rem;
+    }
+
+    .landing-header .header-controls {
+        justify-content: center;
+    }
+
+    .hero {
+        min-height: 80vh;
+        padding-top: 1rem;
+    }
+}
+
 .hero {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 90vh;
+    min-height: 85vh;
     display: flex;
     align-items: center;
     color: white;
     position: relative;
     overflow: hidden;
+    padding-top: 2rem;
+    margin-top: -1px; /* Seamless connection with header */
 }
 
 .hero::before {
@@ -197,6 +306,11 @@
 
 .framework-badge.vanilla {
     background: linear-gradient(45deg, #f39c12, #e67e22);
+    color: white;
+}
+
+.framework-badge.typescript {
+    background: linear-gradient(45deg, #3178c6, #235a97);
     color: white;
 }
 
@@ -462,5 +576,339 @@
 
     .container {
         padding: 0 1rem;
+    }
+}
+
+/* Additional styles for new design elements */
+
+/* Hero Buttons */
+.hero-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+/* Hero Visual */
+.hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+.chess-board-demo {
+    position: relative;
+    padding: 2rem;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, 40px);
+    grid-template-rows: repeat(2, 40px);
+    gap: 2px;
+    margin-bottom: 1rem;
+}
+
+.square {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+}
+
+.square.light {
+    background-color: #f0d9b5;
+}
+
+.square.dark {
+    background-color: #b58863;
+}
+
+.floating-icons {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.floating-icons .icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    animation: float 3s ease-in-out infinite;
+}
+
+.floating-icons .icon.js { background: #f7df1e; color: #000; }
+.floating-icons .icon.ts { background: #3178c6; }
+.floating-icons .icon.vue { background: #4fc08d; }
+.floating-icons .icon.react { background: #61dafb; color: #000; }
+.floating-icons .icon.angular { background: #dd0031; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Framework Grid */
+.framework-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+/* Framework Card Enhancements */
+.framework-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.framework-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.framework-icon.vanilla { background: #f7df1e; color: #000; }
+.framework-icon.typescript { background: #3178c6; }
+.framework-icon.jquery { background: #0769ad; }
+.framework-icon.vue { background: #4fc08d; }
+.framework-icon.react { background: #61dafb; color: #000; }
+.framework-icon.angular { background: #dd0031; }
+
+.framework-tag {
+    background: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: auto;
+}
+
+.framework-features {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+}
+
+.framework-features .feature {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.framework-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #6c757d;
+    border: 2px solid #e9ecef;
+}
+
+.btn-outline:hover {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+}
+
+/* Sections */
+.frameworks,
+.features,
+.comparison,
+.architecture {
+    padding: 5rem 0;
+}
+
+.frameworks {
+    background: #f8f9fa;
+}
+
+.features {
+    background: white;
+}
+
+.comparison {
+    background: #f8f9fa;
+}
+
+.architecture {
+    background: white;
+}
+
+/* Comparison Table */
+.comparison-table {
+    margin-top: 3rem;
+    overflow-x: auto;
+}
+
+.comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.comparison-table th {
+    background: #6c757d;
+    color: white;
+    font-weight: 600;
+}
+
+.comparison-table .size-small { color: #28a745; font-weight: 600; }
+.comparison-table .size-medium { color: #ffc107; font-weight: 600; }
+.comparison-table .size-large { color: #dc3545; font-weight: 600; }
+
+.comparison-table .difficulty-easy { color: #28a745; }
+.comparison-table .difficulty-medium { color: #ffc107; }
+.comparison-table .difficulty-hard { color: #dc3545; }
+
+.comparison-table .perf-excellent { color: #28a745; font-weight: 600; }
+.comparison-table .perf-good { color: #17a2b8; font-weight: 600; }
+
+.comparison-table .eco-basic { color: #6c757d; }
+.comparison-table .eco-mature { color: #17a2b8; }
+.comparison-table .eco-rich { color: #28a745; }
+.comparison-table .eco-complete { color: #6f42c1; }
+
+/* Architecture */
+.architecture-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+.architecture-description ul {
+    list-style: none;
+    padding: 0;
+}
+
+.architecture-description li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.architecture-description li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.architecture-diagram {
+    padding: 2rem;
+}
+
+.diagram {
+    text-align: center;
+}
+
+.frontend-layer,
+.api-layer {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.frontend-box,
+.api-box {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.frontend-items,
+.api-features {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.frontend-items span,
+.api-features span {
+    background: #6c757d;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+}
+
+/* Animation Classes */
+.animate-in {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+
+    .framework-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .architecture-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .comparison-table {
+        font-size: 0.9rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
     }
 }
