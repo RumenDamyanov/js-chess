@@ -2,41 +2,58 @@
 class ChessAPI {
     constructor(baseURL = 'http://localhost:8080') {
         this.baseURL = baseURL;
+        Debug.log('apiClient', 'ChessAPI initialized with baseURL:', baseURL);
     }
 
-    async createGame() {
+    async createGame(gameConfig = {}) {
         try {
+            Debug.log('apiClient', 'Creating new game with config:', gameConfig);
+            const requestBody = {};
+
+            // Set AI color based on player color preference
+            if (gameConfig.playerColor) {
+                requestBody.ai_color = gameConfig.playerColor === 'white' ? 'black' : 'white';
+                Debug.log('apiClient', 'Setting AI color to:', requestBody.ai_color);
+            }
+
             const response = await fetch(`${this.baseURL}/api/games`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify(requestBody)
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return await response.json();
+            const result = await response.json();
+            Debug.log('apiClient', 'Game created successfully:', result);
+            return result;
         } catch (error) {
-            console.error('Error creating game:', error);
+            Debug.error('apiClient', 'Error creating game:', error);
             throw error;
         }
     }
 
     async getGame(gameId) {
         try {
+            Debug.log('apiClient', 'Getting game state for ID:', gameId);
             const response = await fetch(`${this.baseURL}/api/games/${gameId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return await response.json();
+            const result = await response.json();
+            Debug.log('apiClient', 'Game state retrieved:', result);
+            return result;
         } catch (error) {
-            console.error('Error getting game:', error);
+            Debug.error('apiClient', 'Error getting game:', error);
             throw error;
         }
     }
 
     async makeMove(gameId, move) {
         try {
+            Debug.log('apiClient', 'Making move for game', gameId, 'move:', move);
             const response = await fetch(`${this.baseURL}/api/games/${gameId}/moves`, {
                 method: 'POST',
                 headers: {
@@ -47,30 +64,35 @@ class ChessAPI {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return await response.json();
+            const result = await response.json();
+            Debug.log('apiClient', 'Move made successfully:', result);
+            return result;
         } catch (error) {
-            console.error('Error making move:', error);
+            Debug.error('apiClient', 'Error making move:', error);
             throw error;
         }
     }
 
     async getValidMoves(gameId, position) {
         try {
+            Debug.log('apiClient', 'Getting valid moves for game:', gameId);
             const response = await fetch(`${this.baseURL}/api/games/${gameId}/legal-moves`);
             if (!response.ok) {
-                console.warn(`Legal moves endpoint returned status ${response.status}: ${response.statusText}`);
+                Debug.warn('apiClient', `Legal moves endpoint returned status ${response.status}: ${response.statusText}`);
                 return { legal_moves: [] };
             }
             const data = await response.json();
+            Debug.log('apiClient', 'Valid moves retrieved:', data);
             return data;
         } catch (error) {
-            console.error('Error getting legal moves:', error);
+            Debug.error('apiClient', 'Error getting legal moves:', error);
             return { legal_moves: [] };
         }
     }
 
     async getAIMove(gameId, level = 'medium', engine = 'random') {
         try {
+            Debug.log('apiClient', 'Requesting AI move for game:', gameId, 'level:', level, 'engine:', engine);
             const response = await fetch(`${this.baseURL}/api/games/${gameId}/ai-move`, {
                 method: 'POST',
                 headers: {
@@ -81,12 +103,46 @@ class ChessAPI {
                     engine: engine
                 })
             });
+
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                Debug.error('apiClient', `AI move failed with status ${response.status}: ${errorText}`);
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
-            return await response.json();
+
+            const data = await response.json();
+            Debug.log('apiClient', 'AI move received:', data);
+            return data;
         } catch (error) {
-            console.error('Error getting AI move:', error);
+            Debug.error('apiClient', 'Error getting AI move:', error);
+            throw error;
+        }
+    }
+
+    async getAIHint(gameId, level = 'medium', engine = 'random') {
+        try {
+            Debug.log('apiClient', 'Requesting AI hint for game:', gameId, 'level:', level, 'engine:', engine);
+            const response = await fetch(`${this.baseURL}/api/games/${gameId}/ai-hint`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    level: level,
+                    engine: engine
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                Debug.error('apiClient', `AI hint failed with status ${response.status}: ${errorText}`);
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+            }
+            const result = await response.json();
+            Debug.log('apiClient', 'AI hint received:', result);
+            return result;
+        } catch (error) {
+            Debug.error('apiClient', 'Error getting AI hint:', error);
             throw error;
         }
     }
@@ -101,6 +157,7 @@ class ChessGame {
         this.selectedSquare = null;
         this.validMoves = [];
         this.isAITurn = false; // Add AI turn lock
+        this.isProcessingMove = false; // Prevent race conditions on fast clicks
 
         this.init();
     }
@@ -112,28 +169,55 @@ class ChessGame {
     }
 
     createBoard() {
+        Debug.log('boardRendering', 'Creating chess board');
         const boardContainer = document.getElementById('chess-board');
         if (!boardContainer) {
-            console.error('Chess board container not found!');
+            Debug.error('boardRendering', 'Chess board container not found!');
             return;
         }
 
         boardContainer.innerHTML = ''; // Clear existing content
 
+        // Get player color from config
+        const config = window.gameConfig || { playerColor: 'white' };
+        const isBlackPlayer = config.playerColor === 'black';
+        Debug.log('boardRendering', 'Creating board for player color:', config.playerColor);
+
         // Create 64 squares (8x8 board)
-        for (let rank = 8; rank >= 1; rank--) {
-            for (let file = 0; file < 8; file++) {
-                const position = String.fromCharCode(97 + file) + rank; // a8, b8, ..., h1
-                const isLight = (rank + file) % 2 === 1;
+        if (isBlackPlayer) {
+            // For black player, reverse the board order
+            Debug.log('boardRendering', 'Creating board with black player perspective');
+            for (let rank = 1; rank <= 8; rank++) {
+                for (let file = 7; file >= 0; file--) {
+                    const position = String.fromCharCode(97 + file) + rank; // a1, b1, ..., h8
+                    const isLight = (rank + file) % 2 === 1;
 
-                const square = document.createElement('div');
-                square.className = `square ${isLight ? 'light' : 'dark'}`;
-                square.setAttribute('data-position', position);
-                square.addEventListener('click', (e) => this.handleSquareClick(e));
+                    const square = document.createElement('div');
+                    square.className = `square ${isLight ? 'light' : 'dark'}`;
+                    square.setAttribute('data-position', position);
+                    square.addEventListener('click', (e) => this.handleSquareClick(e));
 
-                boardContainer.appendChild(square);
+                    boardContainer.appendChild(square);
+                }
+            }
+        } else {
+            // For white player, normal board order
+            Debug.log('boardRendering', 'Creating board with white player perspective');
+            for (let rank = 8; rank >= 1; rank--) {
+                for (let file = 0; file < 8; file++) {
+                    const position = String.fromCharCode(97 + file) + rank; // a8, b8, ..., h1
+                    const isLight = (rank + file) % 2 === 1;
+
+                    const square = document.createElement('div');
+                    square.className = `square ${isLight ? 'light' : 'dark'}`;
+                    square.setAttribute('data-position', position);
+                    square.addEventListener('click', (e) => this.handleSquareClick(e));
+
+                    boardContainer.appendChild(square);
+                }
             }
         }
+        Debug.log('boardRendering', 'Chess board created successfully');
     }
 
     setupEventListeners() {
@@ -159,7 +243,17 @@ class ChessGame {
 
     async startNewGame() {
         try {
-            const game = await this.api.createGame();
+            Debug.log('gameController', 'Starting new game');
+            // End any current game timers
+            if (window.gameConfig) {
+                window.gameConfig.onGameEnd();
+            }
+
+            // Get player color preference from config
+            const playerColor = window.gameConfig?.config.playerColor || 'white';
+            Debug.log('gameController', 'Player color:', playerColor);
+
+            const game = await this.api.createGame({ playerColor });
 
             this.gameId = game.id;
             this.gameState = game;
@@ -167,14 +261,33 @@ class ChessGame {
             this.validMoves = [];
             this.isAITurn = false; // Reset AI turn flag
 
+            Debug.log('gameController', 'New game created with ID:', this.gameId);
+
             this.updateBoard();
             this.updateGameInfo();
             this.updateMoveHistory();
             this.updateControlButtons();
-            this.showMessage(`New game started! Game ID: ${this.gameId}`, 'success');
+            this.updateChat(); // Update chat with new game state
+
+            // Start timers if enabled
+            if (window.gameConfig) {
+                window.gameConfig.onGameStart();
+            }
+
+            if (playerColor === 'white') {
+                this.showMessage(`New game started! You play as White - make your move!`, 'success');
+                Debug.log('gameController', 'Player plays as White, waiting for human move');
+            } else {
+                // For black players: AI plays as white and will move first
+                this.showMessage(`New game started! You play as Black - AI will move first!`, 'success');
+                Debug.log('gameController', 'Player plays as Black, triggering AI move');
+                // Trigger AI move since AI plays white when player is black
+                this.isAITurn = true;
+                setTimeout(() => this.makeAIMove(), 1000);
+            }
         } catch (error) {
             this.showMessage('Failed to start new game. Check if backend is running.', 'error');
-            console.error('Error starting new game:', error);
+            Debug.error('gameController', 'Error starting new game:', error);
         }
     }
 
@@ -185,57 +298,88 @@ class ChessGame {
             return;
         }
 
+        // Prevent multiple clicks during move processing
+        if (this.isProcessingMove) {
+            return;
+        }
+
         const square = event.target.closest('.square');
         const position = square.dataset.position;
+        Debug.log('userInput', 'Square clicked:', position);
 
         if (this.selectedSquare === position) {
             // Deselect if clicking the same square
+            Debug.log('userInput', 'Deselecting square:', position);
             this.clearSelection();
             return;
         }
 
         if (this.selectedSquare && this.isValidMove(this.selectedSquare, position)) {
             // Make a move
-            await this.makeMove(this.selectedSquare, position);
+            Debug.log('userInput', 'Making move from', this.selectedSquare, 'to', position);
+            this.isProcessingMove = true;
+            try {
+                await this.makeMove(this.selectedSquare, position);
+            } finally {
+                this.isProcessingMove = false;
+            }
         } else {
             // Select a new square
+            Debug.log('userInput', 'Selecting new square:', position);
             await this.selectSquare(position);
         }
     }
 
     async selectSquare(position) {
+        Debug.log('chessBoard', 'Selecting square:', position);
         this.clearSelection();
 
         const square = document.querySelector(`[data-position="${position}"]`);
+        if (!square) {
+            Debug.error('chessBoard', `Square not found for position: ${position}`);
+            return;
+        }
+
         const piece = square.dataset.piece || ''; // Get piece notation from data attribute
 
         // Allow selection for human player only (white for now, could be changed for vs human)
         // Note: For testing, let's allow both colors to be selected
         const currentPlayer = this.gameState?.active_color;
+        Debug.log('chessBoard', 'Current player:', currentPlayer, 'piece at position:', piece);
 
         if (piece && this.isPieceOwnedByCurrentPlayer(piece)) {
             this.selectedSquare = position;
             square.classList.add('selected');
+            Debug.log('chessBoard', 'Square selected, getting valid moves');
 
             try {
                 const response = await this.api.getValidMoves(this.gameId, position);
                 // Filter moves that start from the selected position
                 this.validMoves = (response.legal_moves || []).filter(move => move.from === position);
-                console.log(`Found ${this.validMoves.length} valid moves for ${position} (Game ID: ${this.gameId})`);
+                Debug.log('moveValidation', 'Valid moves for', position, ':', this.validMoves);
 
                 this.highlightValidMoves();
             } catch (error) {
-                console.error('Error getting valid moves:', error);
+                Debug.error('moveValidation', 'Error getting valid moves:', error);
                 this.validMoves = [];
                 this.highlightValidMoves();
             }
         } else {
-            console.log(`Cannot select piece: piece="${piece}", owned by current player: ${this.isPieceOwnedByCurrentPlayer(piece)}`);
+            // If there's no piece data, try to refresh the board state
+            if (!piece) {
+                Debug.log('chessBoard', 'No piece found at position, refreshing board state');
+                try {
+                    this.updateBoard();
+                } catch (error) {
+                    Debug.error('chessBoard', 'Error refreshing board state:', error);
+                }
+            }
         }
     }
 
     async makeMove(from, to) {
         try {
+            Debug.log('gameController', 'Making move from', from, 'to', to);
             // Add loading state
             const board = document.getElementById('chess-board');
             this.addLoadingState(board);
@@ -248,8 +392,8 @@ class ChessGame {
             let move;
             if (castlingMove) {
                 // For castling moves, send the notation instead of from/to
-                console.log(`Making castling move: ${castlingMove.notation}`);
                 move = { notation: castlingMove.notation };
+                Debug.log('gameController', 'Castling move detected:', castlingMove.notation);
             } else {
                 // Regular move
                 move = {
@@ -259,43 +403,51 @@ class ChessGame {
 
                 // Check if this is a pawn promotion
                 const piece = this.boardData[from];
-                console.log(`Checking promotion for piece ${piece} moving from ${from} to ${to}`);
                 const isPromotion = this.isPawnPromotion(piece, from, to);
-                console.log(`Is promotion: ${isPromotion}`);
 
                 if (isPromotion) {
-                    console.log('Showing promotion dialog...');
+                    Debug.log('gameController', 'Pawn promotion detected');
                     const promotionPiece = await this.getPromotionChoice();
                     if (!promotionPiece) {
                         // User cancelled promotion
-                        console.log('Promotion cancelled');
+                        Debug.log('gameController', 'Promotion cancelled by user');
                         this.clearSelection();
                         this.removeLoadingState(board);
                         this.setButtonsEnabled(true);
                         return;
                     }
-                    console.log(`Promotion piece selected: ${promotionPiece}`);
                     move.promotion = promotionPiece;
+                    Debug.log('gameController', 'Promotion piece selected:', promotionPiece);
                 }
             }
 
-            console.log(`Making move: ${from} → ${to} for game ${this.gameId}`, move);
             const response = await this.api.makeMove(this.gameId, move);
-            console.log('Move response:', response);
 
             if (response.error) {
                 this.showMessage(response.error, 'error');
                 this.removeLoadingState(board);
                 this.setButtonsEnabled(true);
+                Debug.error('gameController', 'Move failed with error:', response.error);
                 return;
             }
 
+            Debug.log('gameController', 'Move successful, updating game state');
             this.gameState = response;
             this.clearSelection();
             this.updateBoard();
             this.updateGameInfo();
             this.updateMoveHistory();
             this.updateControlButtons();
+            this.updateChat(); // Update chat with new game state
+
+            // Start timer on first move and switch active player
+            if (window.gameConfig) {
+                if (!window.gameConfig.timers.gameStarted) {
+                    window.gameConfig.timers.gameStarted = true;
+                    window.gameConfig.startTimer();
+                }
+                window.gameConfig.onMovesMade();
+            }
 
             // Remove loading state and re-enable buttons
             this.removeLoadingState(board);
@@ -305,11 +457,22 @@ class ChessGame {
             this.showMessage(`Move: ${from} → ${to}`, 'success', 1500);
 
             // Check for game ending conditions
+            const aiColor = this.gameState?.ai_color;
+            Debug.log('gameController', 'Checking game status:', response.status);
+
             if (response.status === 'white_wins') {
-                this.showGameEnd('White wins by checkmate!', 'white');
+                if (aiColor === 'white') {
+                    this.showGameEnd('AI wins by checkmate!', 'white');
+                } else {
+                    this.showGameEnd('You win by checkmate!', 'white');
+                }
                 return;
             } else if (response.status === 'black_wins') {
-                this.showGameEnd('Black wins by checkmate!', 'black');
+                if (aiColor === 'black') {
+                    this.showGameEnd('AI wins by checkmate!', 'black');
+                } else {
+                    this.showGameEnd('You win by checkmate!', 'black');
+                }
                 return;
             } else if (response.status === 'draw') {
                 this.showGameEnd('Game drawn!', 'draw');
@@ -318,17 +481,24 @@ class ChessGame {
                 this.showMessage('Check! Your king is under attack!', 'warning');
             }
 
-            if ((response.active_color === 'black' && (response.status === 'in_progress' || response.status === 'check'))) {
-                // It's black's turn - make an AI move only if human is playing white
-                console.log('Triggering AI move for black...');
+            // Determine if it's AI's turn based on player color configuration
+            const playerColor = window.gameConfig?.config.playerColor || 'white';
+            const currentTurn = response.active_color;
+            const isAITurn = (playerColor === 'white' && currentTurn === 'black') ||
+                           (playerColor === 'black' && currentTurn === 'white');
+
+            Debug.log('gameController', 'Turn analysis - Player color:', playerColor, 'Current turn:', currentTurn, 'Is AI turn:', isAITurn);
+
+            if (isAITurn && (response.status === 'in_progress' || response.status === 'check')) {
+                // It's AI's turn
                 this.isAITurn = true; // Set this BEFORE any async operations
-                console.log('Set isAITurn to true');
                 this.showMessage('AI is thinking...', 'info');
+                Debug.log('gameController', 'Triggering AI move after player move');
                 setTimeout(() => this.makeAIMove(), 1000); // Small delay for better UX
             } else {
-                // Game ended or it's still the current player's turn
-                console.log(`Game state after move: active_color=${response.active_color}, status=${response.status}`);
+                // It's player's turn or game ended
                 this.isAITurn = false; // Make sure AI turn flag is reset
+                Debug.log('gameController', 'Player turn or game ended');
             }
 
         } catch (error) {
@@ -338,18 +508,18 @@ class ChessGame {
             this.setButtonsEnabled(true);
 
             this.showMessage('Invalid move', 'error');
-            console.error('Error making move:', error);
+            Debug.error('gameController', 'Error making move:', error);
         }
     }
 
     async makeAIMove() {
         try {
-            console.log('AI move starting, isAITurn:', this.isAITurn);
-            // Get AI move suggestion using minimax for better gameplay
-            const aiResponse = await this.api.getAIMove(this.gameId, 'hard', 'minimax');
-            console.log('AI move suggestion:', aiResponse);
+            Debug.log('gameController', 'AI making move...');
+            // Get AI move suggestion using a more compatible engine and difficulty
+            const aiResponse = await this.api.getAIMove(this.gameId, 'medium', 'random');
 
             if (aiResponse.move) {
+                Debug.log('gameController', 'AI suggested move:', aiResponse.move);
                 // Execute the AI move
                 const move = {
                     from: aiResponse.move.from,
@@ -357,28 +527,40 @@ class ChessGame {
                 };
 
                 const response = await this.api.makeMove(this.gameId, move);
-                console.log('AI move executed:', response);
 
                 if (response.error) {
                     this.showMessage(`AI move failed: ${response.error}`, 'error');
                     this.isAITurn = false; // Reset on error
+                    Debug.error('gameController', 'AI move failed:', response.error);
                     return;
                 }
 
+                Debug.log('gameController', 'AI move executed successfully');
                 this.gameState = response;
+                this.isAITurn = false; // AI turn complete - reset BEFORE updating UI
                 this.updateBoard();
                 this.updateGameInfo();
                 this.updateMoveHistory();
                 this.updateControlButtons();
-                this.isAITurn = false; // AI turn complete
-                console.log('AI turn completed, set isAITurn to false');
 
                 this.showMessage(`AI played: ${aiResponse.move.notation}`, 'info');
 
+                // Determine victory messages based on AI color
+                const aiColor = this.gameState.ai_color;
+                Debug.log('gameController', 'Checking AI move results, status:', response.status);
+
                 if (response.status === 'white_wins') {
-                    this.showMessage(`Checkmate! AI wins!`, 'error');
+                    if (aiColor === 'white') {
+                        this.showMessage(`Checkmate! AI wins!`, 'error');
+                    } else {
+                        this.showMessage(`Checkmate! You win!`, 'success');
+                    }
                 } else if (response.status === 'black_wins') {
-                    this.showMessage(`Checkmate! You win!`, 'success');
+                    if (aiColor === 'black') {
+                        this.showMessage(`Checkmate! AI wins!`, 'error');
+                    } else {
+                        this.showMessage(`Checkmate! You win!`, 'success');
+                    }
                 } else if (response.status === 'check') {
                     this.showMessage('Check! Your king is under attack!', 'warning');
                 } else if (response.status === 'draw') {
@@ -388,7 +570,7 @@ class ChessGame {
                 }
             }
         } catch (error) {
-            console.error('Error making AI move:', error);
+            Debug.error('gameController', 'Error making AI move:', error);
             this.showMessage('AI move failed', 'error');
             this.isAITurn = false; // Reset AI turn on error
         }
@@ -436,12 +618,16 @@ class ChessGame {
         const isWhitePiece = piece === piece.toUpperCase();
         const currentPlayer = this.gameState?.active_color || 'white';
 
-        console.log(`Piece check: "${piece}", isWhite: ${isWhitePiece}, currentPlayer: ${currentPlayer}`);
+        // Get the player's chosen color from configuration
+        const playerColor = window.gameConfig?.config.playerColor || 'white';
 
-        const owned = (currentPlayer === 'white' && isWhitePiece) ||
-                     (currentPlayer === 'black' && !isWhitePiece);
+        // Allow the player to move pieces of their chosen color when it's their turn
+        const isPiecePlayerColor = (playerColor === 'white' && isWhitePiece) ||
+                                  (playerColor === 'black' && !isWhitePiece);
+        const isPlayerTurn = currentPlayer === playerColor;
 
-        console.log(`Piece owned by current player: ${owned}`);
+        const owned = isPiecePlayerColor && isPlayerTurn;
+
         return owned;
     }
 
@@ -555,6 +741,11 @@ class ChessGame {
     }
 
     showGameEnd(message, winner) {
+        // Stop the game timer
+        if (window.gameConfig) {
+            window.gameConfig.onGameEnd();
+        }
+
         // Calculate game duration and moves
         const moves = this.gameState.move_count || 0;
         const endTime = new Date();
@@ -573,7 +764,13 @@ class ChessGame {
     }
 
     async undoMove() {
-        console.log('undoMove method called');
+        Debug.log('gameController', 'Undo move requested');
+        // Check if undo is enabled in configuration
+        if (window.gameConfig && !window.gameConfig.isUndoEnabled()) {
+            this.showMessage('Undo is disabled in game settings', 'warning');
+            return;
+        }
+
         if (!this.gameState || !this.gameState.move_history || this.gameState.move_history.length === 0) {
             this.showMessage('No moves to undo', 'warning');
             return;
@@ -584,6 +781,19 @@ class ChessGame {
             return;
         }
 
+        // Check if it's appropriate to undo based on player color and current turn
+        const playerColor = window.gameConfig?.config.playerColor || 'white';
+        const currentTurn = this.gameState?.active_color || 'white';
+
+        Debug.log('gameController', 'Undo analysis - Player color:', playerColor, 'Current turn:', currentTurn, 'Move history length:', this.gameState.move_history.length);
+
+        // Player can only undo when it's not their turn (after AI has responded)
+        // or when they have at least one move to undo
+        if (currentTurn === playerColor && this.gameState.move_history.length < 2) {
+            this.showMessage('No moves to undo yet', 'warning');
+            return;
+        }
+
         try {
             this.showMessage('Undoing last move...', 'info');
 
@@ -591,21 +801,30 @@ class ChessGame {
             this.isAITurn = false;
 
             // Create a new game
-            const newGame = await this.api.createGame();
+            const playerColor = window.gameConfig?.config.playerColor || 'white';
+            const newGame = await this.api.createGame({ playerColor });
 
-            // For undo, we typically want to undo both the player's last move AND the AI's last move
-            // so the player can make a different move
+            // Determine how many moves to undo based on player color and current state
             let movesToReplay = this.gameState.move_history.slice();
 
-            // If the last move was by the AI (black), undo both AI and player moves
-            if (this.gameState.active_color === 'white' && movesToReplay.length >= 2) {
-                // Remove last 2 moves (AI move + player move) so player can try again
-                movesToReplay = movesToReplay.slice(0, -2);
-                console.log(`Undoing 2 moves (player + AI): replaying ${movesToReplay.length} moves`);
+            if (playerColor === 'white') {
+                // For white player: undo both player and AI moves so player can try again
+                if (currentTurn === 'white' && movesToReplay.length >= 2) {
+                    // It's white's turn, so undo the last AI (black) move and the player's previous move
+                    movesToReplay = movesToReplay.slice(0, -2);
+                } else if (currentTurn === 'black' && movesToReplay.length >= 1) {
+                    // It's black's turn (AI), so just undo the player's last move
+                    movesToReplay = movesToReplay.slice(0, -1);
+                }
             } else {
-                // Just undo the last move
-                movesToReplay = movesToReplay.slice(0, -1);
-                console.log(`Undoing 1 move: replaying ${movesToReplay.length} moves`);
+                // For black player: undo both AI and player moves so player can try again
+                if (currentTurn === 'black' && movesToReplay.length >= 2) {
+                    // It's black's turn (player), so undo the last AI (white) move and player's previous move
+                    movesToReplay = movesToReplay.slice(0, -2);
+                } else if (currentTurn === 'white' && movesToReplay.length >= 1) {
+                    // It's white's turn (AI), so just undo the player's last move
+                    movesToReplay = movesToReplay.slice(0, -1);
+                }
             }
 
             // Replay the moves
@@ -632,13 +851,19 @@ class ChessGame {
             this.showMessage('Move undone successfully - your turn', 'success');
         } catch (error) {
             this.showMessage('Failed to undo move', 'error');
-            console.error('Undo error:', error);
+            Debug.error('gameController', 'Undo error:', error);
             this.isAITurn = false; // Reset flag on error too
         }
     }
 
     async getHint() {
-        console.log('getHint method called');
+        Debug.log('gameController', 'Getting hint for player');
+        // Check if hints are enabled in configuration
+        if (window.gameConfig && !window.gameConfig.isHintsEnabled()) {
+            this.showMessage('Hints are disabled in game settings', 'warning');
+            return;
+        }
+
         if (this.isAITurn) {
             this.showMessage('AI is already thinking...', 'warning');
             return;
@@ -649,22 +874,35 @@ class ChessGame {
             return;
         }
 
+        // Check if it's the player's turn
+        const playerColor = window.gameConfig?.config.playerColor || 'white';
+        const currentTurn = this.gameState?.active_color || 'white';
+
+        Debug.log('gameController', 'Hint request - Player color:', playerColor, 'Current turn:', currentTurn);
+
+        if (currentTurn !== playerColor) {
+            this.showMessage('Wait for your turn to get a hint', 'warning');
+            return;
+        }
+
         try {
             this.showMessage('Getting hint...', 'info');
-            const hintResponse = await this.api.getAIMove(this.gameId, 'expert', 'minimax');
+            const hintResponse = await this.api.getAIHint(this.gameId, 'medium', 'random');
 
-            if (hintResponse.move) {
-                const move = hintResponse.move;
-                this.showMessage(`Hint: Move ${move.piece} from ${move.from} to ${move.to}`, 'success');
+            if (hintResponse.from && hintResponse.to) {
+                const explanation = hintResponse.explanation || `Move from ${hintResponse.from} to ${hintResponse.to}`;
+                Debug.log('gameController', 'Hint received:', hintResponse);
+                this.showMessage(`Hint: ${explanation}`, 'success');
 
                 // Highlight the suggested move
-                this.highlightHint(move.from, move.to);
+                this.highlightHint(hintResponse.from, hintResponse.to);
             } else {
-                this.showMessage('No hint available', 'warning');
+                Debug.warn('gameController', 'No valid hint received:', hintResponse);
+                this.showMessage('No hint available at this time', 'warning');
             }
         } catch (error) {
-            this.showMessage('Failed to get hint', 'error');
-            console.error('Hint error:', error);
+            Debug.error('gameController', 'Hint error:', error);
+            this.showMessage('Unable to get hint - try again later', 'error');
         }
     }
 
@@ -720,37 +958,41 @@ class ChessGame {
         const undoBtn = document.getElementById('undo-btn');
         const hintBtn = document.getElementById('hint-btn');
 
-        console.log('updateControlButtons called with gameState:', {
-            hasGameState: !!this.gameState,
-            status: this.gameState?.status,
-            moveHistoryLength: this.gameState?.move_history?.length || 0,
-            isAITurn: this.isAITurn,
-            moveCount: this.gameState?.move_count,
-            activeColor: this.gameState?.active_color
-        });
-
-        // Note: AI turn flag is managed by the makeAIMove function, don't reset it here
+        const playerColor = window.gameConfig?.config.playerColor || 'white';
+        const currentTurn = this.gameState?.active_color || 'white';
+        const isPlayerTurn = currentTurn === playerColor;
 
         if (undoBtn) {
-            // Enable undo button if we have a game with moves - be more permissive
+            // Enable undo button if:
+            // - We have a game with moves
+            // - Game is not finished
+            // - Not during AI turn
+            // - Player has made at least one move (for white: >=1 move, for black: >=2 moves)
             const hasGameState = !!this.gameState;
             const hasMovesToUndo = this.gameState?.move_history && this.gameState.move_history.length > 0;
             const gameNotFinished = this.gameState?.status !== 'white_wins' && this.gameState?.status !== 'black_wins' && this.gameState?.status !== 'draw';
 
-            // Only disable if no game state, no moves, game is finished, or actively AI thinking
-            undoBtn.disabled = !hasGameState || !hasMovesToUndo || !gameNotFinished || this.isAITurn;
-            console.log(`Undo button - hasGameState: ${hasGameState}, hasMovesToUndo: ${hasMovesToUndo}, gameNotFinished: ${gameNotFinished}, notAITurn: ${!this.isAITurn}`);
-            console.log(`Undo button disabled: ${undoBtn.disabled}, moves: ${this.gameState?.move_history?.length || 0}, isAITurn: ${this.isAITurn}, status: ${this.gameState?.status}`);
+            let hasValidUndo = false;
+            if (hasMovesToUndo) {
+                const moveCount = this.gameState.move_history.length;
+                // Allow undo after at least 1 move for better UX
+                // Player can undo their own move once AI has responded, or undo AI's move if it's AI's turn
+                hasValidUndo = moveCount >= 1;
+            }
+
+            undoBtn.disabled = !hasGameState || !hasValidUndo || !gameNotFinished || this.isAITurn;
         }
 
         if (hintBtn) {
-            // Enable hint button if game is in progress and not AI's turn
+            // Enable hint button if:
+            // - Game is in progress
+            // - It's the player's turn (not AI's turn)
+            // - Not currently processing AI move
             const hasGameState = !!this.gameState;
             const gameInProgress = this.gameState?.status === 'in_progress' || this.gameState?.status === 'check';
 
-            hintBtn.disabled = !hasGameState || !gameInProgress || this.isAITurn;
-            console.log(`Hint button - hasGameState: ${hasGameState}, gameInProgress: ${gameInProgress}, notAITurn: ${!this.isAITurn}`);
-            console.log(`Hint button disabled: ${hintBtn.disabled}, status: ${this.gameState?.status}, isAITurn: ${this.isAITurn}`);
+            // Hint should be available when it's the player's turn and not during AI processing
+            hintBtn.disabled = !hasGameState || !gameInProgress || this.isAITurn || !isPlayerTurn;
         }
     }
 
@@ -789,6 +1031,13 @@ class ChessGame {
 
     removeLoadingState(element) {
         element.classList.remove('loading');
+    }
+
+    updateChat() {
+        // Update chat with current game state
+        if (typeof chatManager !== 'undefined') {
+            chatManager.setGameState(this.gameId, this.gameState);
+        }
     }
 }
 
