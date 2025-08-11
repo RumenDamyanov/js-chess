@@ -4,8 +4,8 @@ FROM nginx:alpine
 # Copy static files to nginx document root
 COPY ./apps/vanilla-js/ /usr/share/nginx/html/
 
-# Copy shared styles (overwrite the symlink)
-COPY ./shared/styles/ /usr/share/nginx/html/shared/
+# Copy shared styles (ensure nested 'styles' folder to match index.html paths)
+COPY ./shared/styles/ /usr/share/nginx/html/shared/styles/
 
 # Copy custom nginx configuration
 COPY ./apps/vanilla-js/nginx.conf /etc/nginx/conf.d/default.conf

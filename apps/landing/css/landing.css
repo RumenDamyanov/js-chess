@@ -362,6 +362,14 @@
     flex-wrap: wrap;
 }
 
+/* WIP / Disabled states */
+.framework-tag.wip { background: #9ca3af; color:#1f2937; }
+.btn.btn-disabled { background:#e5e7eb; color:#6b7280; cursor: not-allowed; padding:.6rem 1rem; border-radius:6px; font-weight:600; font-size:.85rem; display:inline-flex; align-items:center; justify-content:center; box-shadow:none; border:1px solid #d1d5db; }
+.btn.btn-disabled:hover { transform:none; box-shadow:none; }
+.muted-note { display:block; font-size:.75rem; color:#6b7280; margin-top:.25rem; font-weight:500; }
+.wip-link { color:#6b7280; cursor:default; text-decoration:none; }
+.wip-link:hover { text-decoration:none; }
+
 .features {
     margin-bottom: 5rem;
 }

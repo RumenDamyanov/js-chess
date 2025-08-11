@@ -111,6 +111,7 @@ export interface GameState {
   readonly active_color: PieceColor;
   readonly ai_color?: PieceColor;
   readonly board: string; // FEN-like representation
+  readonly fen?: string; // Full FEN string from backend (preferred over board when present)
   readonly move_count: number;
   readonly move_history: ChessMove[];
   readonly created_at: string;

@@ -236,34 +236,6 @@ main {
     margin-bottom: 15px;
 }
 
-.status {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.status > div {
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-weight: 500;
-}
-
-.status > div:first-child {
-    background: linear-gradient(45deg, #4CAF50, #45a049);
-    color: white;
-}
-
-.status > div:nth-child(2) {
-    background: linear-gradient(45deg, #2196F3, #1976D2);
-    color: white;
-}
-
-.status > div:last-child {
-    background: linear-gradient(45deg, #FF9800, #F57C00);
-    color: white;
-}
 
 /* Button Styles */
 .btn {
@@ -781,24 +753,28 @@ main {
     font-weight: 500;
 }
 
-/* Debug System Styles */
-.btn-debug {
-    background: #6c757d;
-    color: white;
-    border: 1px solid #545b62;
-    margin-left: 10px;
+/* Aligned status gradients (Player, Turn, Status, Move) to match vanilla-js */
+.status > div:nth-child(1) { /* Player */
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: #fff;
+    border: none;
+}
+.status > div:nth-child(2) { /* Turn */
+    background: linear-gradient(45deg, #2196F3, #1976D2);
+    color: #fff;
+    border: none;
+}
+.status > div:nth-child(3) { /* Status */
+    background: linear-gradient(45deg, #FF9800, #F57C00);
+    color: #fff;
+    border: none;
+}
+.status > div:nth-child(4) { /* Move */
+    background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+    color: #fff;
+    border: none;
 }
 
-.btn-debug:hover {
-    background: #5a6268;
-    border-color: #4e555b;
-}
-
-.btn-debug.debug-active {
-    background: #28a745;
-    border-color: #1e7e34;
-    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
-}
 
 .debug-panel {
     position: fixed;

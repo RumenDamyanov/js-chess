@@ -4,138 +4,141 @@
 [![Go Chess API](https://img.shields.io/badge/API-go--chess-blue.svg)](https://github.com/RumenDamyanov/go-chess)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive demonstration of chess frontends built with different JavaScript frameworks, all powered by the [go-chess](https://github.com/RumenDamyanov/go-chess) backend API.
+Multi-framework chess UI demos powered by the Go backend. A shared design system in `shared/styles` keeps visuals consistent across implementations.
 
-## 🎯 Project Overview
+## 🔄 Current Status (Aug 2025)
 
-This project showcases **6 different frontend implementations** of the same chess application, each using a different JavaScript technology:
+Active & stable (included in default Docker / Make builds):
 
-- **Vanilla JS** - Pure JavaScript implementation
-- **Vanilla TypeScript** - Type-safe pure TypeScript implementation ✅
-- **jQuery** - Classic DOM manipulation approach
-- **Vue.js** - Progressive framework implementation
-- **React.js** - Component-based architecture
-- **Angular** - Enterprise-grade framework
+- Landing Page (overview + navigation)
+- Vanilla JS
+- Vanilla TypeScript
+- jQuery
 
-All implementations connect to the same go-chess backend API, demonstrating how different frontend technologies can consume the same RESTful API and WebSocket connections.
+Work‑in‑progress (excluded by default – manual start/build only):
 
-## 🏗️ Project Structure
+- Angular (internally rebuilt with new game logic but public UI marked WIP)
+- React (planned)
+- Vue 3 (planned)
 
-```
-js-chess/
-├── README.md                     # This file
-├── LICENSE.md                    # MIT License
-├── CONTRIBUTING.md               # Contribution guidelines
-├── docker-compose.yml            # Full stack orchestration
-├── .env.example                  # Environment configuration template
-├── .gitignore                    # Git ignore rules
-├── .gitmodules                   # Git submodule configuration
-├──
-├── backend/                      # Go-chess backend (git submodule)
-│   └── go-chess/                 # https://github.com/RumenDamyanov/go-chess
-│
-├── apps/                         # Frontend applications
-│   ├── vanilla-js/               # Pure JavaScript implementation
-│   │   ├── index.html
-│   │   ├── js/
-│   │   ├── css/
-│   │   ├── assets/
-│   │   └── README.md
-│   │
-│   ├── vanilla-ts/               # Pure TypeScript implementation ✅
-│   │   ├── index.html
-│   │   ├── src/                  # TypeScript source files
-│   │   ├── dist/                 # Compiled JavaScript
-│   │   ├── css/
-│   │   ├── tsconfig.json         # TypeScript configuration
-│   │   ├── package.json          # Build configuration
-│   │   └── README.md
-│   │
-│   ├── jquery/                   # jQuery implementation
-│   │   ├── index.html
-│   │   ├── js/
-│   │   ├── css/
-│   │   ├── assets/
-│   │   └── README.md
-│   │
-│   ├── vue/                      # Vue.js implementation
-│   │   ├── package.json
-│   │   ├── vite.config.js
-│   │   ├── src/
-│   │   ├── public/
-│   │   └── README.md
-│   │
-│   ├── react/                    # React.js implementation
-│   │   ├── package.json
-│   │   ├── vite.config.js
-│   │   ├── src/
-│   │   ├── public/
-│   │   └── README.md
-│   │
-│   └── angular/                  # Angular implementation
-│       ├── package.json
-│       ├── angular.json
-│       ├── src/
-│       ├── public/
-│       └── README.md
-│
-├── shared/                       # Shared resources
-│   ├── api/                      # API client libraries
-│   │   ├── chess-api.js          # Vanilla JS API client
-│   │   ├── chess-api.ts          # TypeScript API client
-│   │   └── websocket-client.js   # WebSocket client
-│   │
-│   ├── assets/                   # Common assets
-│   │   ├── pieces/               # Chess piece images
-│   │   ├── sounds/               # Game sounds
-│   │   └── icons/                # UI icons
-│   │
-│   └── styles/                   # Shared stylesheets
-│       ├── chess-board.css       # Board styling
-│       └── common.css            # Common UI styles
-│
-├── docs/                         # Documentation
-│   ├── api-integration.md        # API integration guide
-│   ├── deployment.md             # Deployment instructions
-│   ├── development.md            # Development setup
-│   └── screenshots/              # App screenshots
-│
-├── scripts/                      # Build and deployment scripts
-│   ├── build-all.sh              # Build all applications
-│   ├── start-dev.sh              # Start development environment
-│   ├── docker-setup.sh           # Docker environment setup
-│   └── deploy.sh                 # Production deployment
-│
-└── docker/                       # Docker configurations
-    ├── nginx/                    # Nginx reverse proxy config
-    │   ├── nginx.conf
-    │   └── default.conf
-    │
-    ├── vanilla/                  # Nginx config for vanilla app
-    ├── jquery/                   # Nginx config for jquery app
-    ├── vue/                      # Production build for Vue
-    ├── react/                    # Production build for React
-    └── angular/                  # Production build for Angular
+These three WIP apps are intentionally disabled in aggregate Make targets to speed builds. They will return after framework‑specific rewrites that align with recent backend changes (improved move validation, AI workflow, and forthcoming caching / optimistic update layer).
+
+## ✨ Recent Updates
+
+Latest notable changes (since mid‑2025):
+
+1. Angular rewrite: promotion modal UI, castling handling, SAN move history, AI auto‑move flow, safer undo via replay, self‑capture & illegal move guards.
+2. Unified WIP labeling: Landing page & all active headers show disabled (grey) links for Angular / React / Vue.
+3. Makefile optimization: Default `build`, `up`, `rebuild`, `health`, `logs-frontend`, etc. now exclude Angular / React / Vue (use `start-angular`, `build-react`, etc. individually).
+4. Promotion & castling UX: Consistent notation capture and server‑validated sequencing.
+5. Shared styling: Added disabled navigation/link styles and WIP tag classes.
+
+Planned next steps for the WIP frameworks:
+
+- Introduce a thin shared API client with response caching & diff reconciliation.
+- Implement lightweight state stores (Signals / Zustand pattern equivalents) for faster replays.
+- Add incremental board rendering & piece move animation.
+- Re‑enable once parity with stable implementations is verified via test checklist.
+
+## Frameworks
+
+Stable: Vanilla JS · Vanilla TS · jQuery
+
+WIP (temporarily disabled in default build): Vue 3 · React · Angular
+
+## Repository Layout (excerpt)
+
+```text
+shared/
+    api/                # JS & TS API clients, websocket helpers
+    styles/             # Design system (tokens, common, header, board, chat, theme-toggle.js)
+apps/
+    vanilla-js/
+    vanilla-ts/
+    jquery/
+    vue-js/
+    react-js/
+    angular/
+backend/
+    go-chess/           # Submodule backend
+docker/               # Container & proxy configs
+Makefile              # Convenience targets
 ```
 
-## 🚀 Features
+## Key Features
 
-### Core Chess Features
-- ♟️ **Complete Chess Game**: All rules including castling, en passant, pawn promotion
-- 🤖 **AI Opponents**: Multiple difficulty levels using go-chess AI engines
-- 💬 **LLM AI Chat**: Chat with AI opponents (GPT-4, Claude, Gemini, etc.)
-- 📊 **Move Analysis**: Position evaluation and move suggestions
-- ⏱️ **Real-time Updates**: WebSocket integration for live gameplay
-- 📝 **Game History**: Move tracking and game replay
-- 💾 **Save/Load Games**: PGN and FEN format support
+- Complete chess rules (promotion, castling, en passant)
+- AI move generation + optional AI chat
+- WebSocket live updates
+- Move history & analysis hooks
+- Light/Dark theme (CSS variables + toggle)
 
-### Frontend Implementations
-Each app demonstrates the same features using different approaches:
+## Theming & Shared Styles
 
-| Framework | Key Features | Build Tool | Highlights |
-|-----------|-------------|------------|------------|
-| **Vanilla JS** | Pure DOM manipulation, ES6+ | None | Lightweight, educational |
-| **Vanilla TypeScript** | Type-safe DOM, strict typing | TypeScript | Type safety, modern tooling |
+- Source of truth: `shared/styles/tokens.css`
+- Dark overrides: `[data-theme="dark"]`
+- Runtime path in containers: `/shared/styles/*`
+- HTML references: `shared/styles/tokens.css`
+- Toggle: `JSChessTheme.toggle()` (persists via `localStorage`)
+
+Add new tokens or component CSS in `shared/styles` and rebuild images; all static apps pick up changes automatically. Future preprocessing (PostCSS/Sass) can hook into the placeholder Make target `build-shared-styles`.
+
+## Quick Start (Docker – Active Set Only)
+
+```bash
+git clone --recursive https://github.com/RumenDamyanov/js-chess.git
+cd js-chess
+make install          # Build & start backend + stable frontends
+make urls             # List service URLs (WIP flagged as disabled)
+```
+
+Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 8080 (API)
+
+WIP (manual if needed): 3004 (vue) · 3005 (react) · 3006 (angular)
+
+## Make Targets (selection)
+
+```bash
+make up / down              # Start / stop active set only
+make build / rebuild        # Build / rebuild active set only
+make status / logs          # Container status / aggregated logs
+make start-vanilla          # Start one app
+make build-vanilla-ts       # Build TS vanilla image
+make build-shared-styles    # Placeholder (no-op)
+make start-angular          # (WIP) Start angular only
+make build-react            # (WIP) Build react only
+make build-vue              # (WIP) Build vue only
+```
+
+## Local (no Docker)
+
+```bash
+npm run install:all
+npm run start:backend
+npm run start:vanilla   # or any start:* script
+```
+
+## Core API Endpoints
+
+```text
+POST /api/games               # New game
+GET  /api/games/{id}          # State
+POST /api/games/{id}/moves    # Player move
+POST /api/games/{id}/ai-move  # AI move
+WS   /ws/games/{id}           # Live updates
+```
+
+## Contributing
+
+See `CONTRIBUTING.md`. Ideas: add Svelte/Solid examples, visual regression tests, accessibility passes, PostCSS pipeline.
+
+## License
+
+MIT — see `LICENSE.md`.
+
+---
+⭐ Star the repo if this multi-framework comparison helps you!
+
 | **jQuery** | Classic event handling | None | Familiar, rapid development |
 | **Vue.js** | Reactive components | Vite | Progressive enhancement |
 | **React.js** | Component architecture | Vite | Modern hooks, state management |
@@ -150,66 +153,64 @@ The project includes a complete Docker setup with:
 - **Nginx Proxy**: Reverse proxy routing to different apps
 - **Development Mode**: Hot reload for all frameworks
 
-### Quick Start
+### WIP Framework Access (Optional)
+
+These are disabled in aggregate commands. To experiment locally:
 
 ```bash
-# Clone with submodules
-git clone --recursive https://github.com/RumenDamyanov/js-chess.git
-cd js-chess
-
-# Start everything with Docker
-docker-compose up --build
-
-# Or use the convenience script
-./scripts/start-dev.sh
-
-# Or use Make commands (recommended)
-make install  # First-time setup
-make up       # Start all services
-make urls     # Show all application URLs
+make start-angular   # Starts angular only (port 3006)
+make start-react     # Starts react only (port 3005)
+make start-vue       # Starts vue only (port 3004)
 ```
 
-### Access the Applications
+Expect partial / outdated UX until rewrites land.
 
-- **Landing Page**: http://localhost:3000
-- **Vanilla JS**: http://localhost:3001
-- **Vanilla TypeScript**: http://localhost:3002
-- **jQuery**: http://localhost:3003
-- **Vue.js**: http://localhost:3004
-- **React.js**: http://localhost:3005
-- **Angular**: http://localhost:3006
-- **Backend API**: http://localhost:8080
+## 🎨 Theming & Shared Styles
+
+Unified theming is implemented via CSS Custom Properties in `shared/styles/tokens.css` with a light theme under `:root` and a dark theme scope using `[data-theme="dark"]`. Frontend apps load the same files so visual consistency is guaranteed.
+
+Runtime path expectations inside Docker containers:
+
+- All shared styles are copied to `/usr/share/nginx/html/shared/styles/`
+- HTML references use relative paths like `shared/styles/tokens.css`
+
+Add new design tokens or component styles in the shared directory; all static apps will receive them on the next image rebuild. If a preprocessing pipeline (PostCSS/Sass) is introduced, the placeholder Make target `build-shared-styles` can be extended.
+
+Dark mode can be toggled with the button that calls `JSChessTheme.toggle()` (implemented in `theme-toggle.js`) which persists the user preference in `localStorage`.
 
 ## 🛠️ Make Commands
 
 This project includes a comprehensive Makefile with convenient aliases for Docker operations. All commands are designed to make development workflow smoother and more intuitive.
 
-### Essential Commands
+### Essential Commands (Active Set)
+
 ```bash
 make help          # Show all available commands with descriptions
-make install       # First-time setup - build and start everything
-make up            # Start all containers in detached mode
+make install       # First-time setup - build/start active services
+make up            # Start active services in detached mode
 make start         # Alias for 'up' command
 make down          # Stop and remove all containers
 make stop          # Alias for 'down' command
-make restart       # Restart all containers
+make restart       # Restart active containers
 make status        # Show status of all containers
 make logs          # Show logs from all containers (last 50 lines)
 make health        # Check health of all services
 make urls          # Display all application URLs
 ```
 
-### Development Workflow
+### Development Workflow (Active Set)
+
 ```bash
-make dev           # Start containers with live logs (development mode)
-make build         # Build all containers
-make rebuild       # Clean rebuild of everything (down → clean → build → up)
+make dev           # Start active set with logs
+make build         # Build active containers
+make rebuild       # Clean rebuild (active only)
 make test-api      # Test backend API endpoints
-make test-frontend # Test all frontend endpoints
-make open          # Open all applications in browser (macOS only)
+make test-frontend # Test active frontend endpoints
+make open          # Open active applications (skips WIP)
 ```
 
 ### Individual Service Management
+
 ```bash
 # Start individual services
 make start-backend      # Start only backend (port 8080)
@@ -233,13 +234,14 @@ make build-landing
 
 # Restart individual services
 make restart-backend
-make restart-frontend  # Restart all frontend containers
+make restart-frontend  # Restart active frontend containers
 ```
 
 ### Logging and Debugging
+
 ```bash
 make logs-backend     # Show backend logs only
-make logs-frontend    # Show all frontend logs
+make logs-frontend    # Show active frontend logs
 make shell-backend     # Open shell in backend container
 make shell-angular     # Open shell in Angular container
 make shell-react       # Open shell in React container
@@ -251,6 +253,7 @@ make inspect          # Show detailed container information
 ```
 
 ### Cleanup Commands
+
 ```bash
 make clean            # Stop containers and remove images
 make prune            # Remove unused Docker resources
@@ -260,6 +263,7 @@ make reset-games      # Reset all game data (restart backend)
 ```
 
 ### Monitoring and Debugging Commands
+
 ```bash
 make watch            # Watch container status in real-time
 make stats            # Show container resource usage
@@ -268,6 +272,7 @@ make help-detailed    # Show detailed help with examples
 ```
 
 ### Database and Project Management
+
 ```bash
 make backup-games     # Backup game data (if persistent storage exists)
 make update           # Update project (git pull + submodule update + rebuild)
@@ -278,44 +283,43 @@ make ci-test          # Run complete CI test suite locally
 
 ### Example Workflows
 
-**First-time setup:**
+First-time setup (active set):
+
 ```bash
 git clone --recursive https://github.com/RumenDamyanov/js-chess.git
 cd js-chess
-make install    # Builds everything and starts all services
-make health     # Verify everything is working
+make install
+make health
 ```
 
-**Daily development:**
+Daily development:
+
 ```bash
-make up         # Start all services
-make logs       # Check logs
-# ... do development work ...
-make restart    # Restart after changes
-make down       # Stop when done
+make up
+make logs
+# work...
+make restart
+make down
 ```
 
-**Working on specific framework:**
+Exploring a WIP framework (optional):
+
 ```bash
-make start-backend      # Start backend
-make start-angular      # Start only Angular
-make logs-angular       # Watch Angular logs
-make build-angular      # Rebuild after changes
-make restart-angular    # Restart Angular
+make start-react   # or start-angular / start-vue
+make logs          # Observe logs (other active services already running)
 ```
 
-**Debugging issues:**
+Debugging:
+
 ```bash
-make health            # Check service health
-make logs-backend      # Check backend logs
-make shell-backend     # Debug inside container
-make test-api          # Test API endpoints
-make stats             # Check resource usage
-make inspect           # Show container details
-make clean && make up  # Clean restart
+make health
+make logs-backend
+make test-api
+make clean && make up
 ```
 
 **Database and backup operations:**
+
 ```bash
 make backup-games      # Backup game data
 make reset-games       # Reset all games
@@ -323,6 +327,7 @@ make clean-volumes     # Remove persistent data
 ```
 
 **Project maintenance:**
+
 ```bash
 make update            # Update project from git
 make validate-ci       # Run CI checks locally
@@ -346,16 +351,16 @@ npm run install:all
 # Start backend API
 npm run start:backend
 
-# Start individual frontend apps
+# Start individual frontend apps (active + optional WIP)
 npm run start:vanilla      # Port 3001
 npm run start:vanilla-ts   # Port 3002
 npm run start:jquery       # Port 3003
-npm run start:vue          # Port 3004
-npm run start:react        # Port 3005
-npm run start:angular      # Port 3006
+# (WIP) npm run start:vue     # Port 3004
+# (WIP) npm run start:react   # Port 3005
+# (WIP) npm run start:angular # Port 3006
 
-# Or start all frontends
-npm run start:all
+# Or start all (includes WIP; slower, not typical right now)
+# npm run start:all
 ```
 
 ## 📚 API Integration
@@ -363,12 +368,14 @@ npm run start:all
 All applications use the same go-chess API endpoints:
 
 ### Core Endpoints
+
 - `POST /api/games` - Create new game
 - `GET /api/games/{id}` - Get game state
 - `POST /api/games/{id}/moves` - Make a move
 - `POST /api/games/{id}/ai-move` - Get AI move
 
 ### Advanced Features
+
 - `POST /api/games/{id}/chat` - Chat with AI
 - `GET /api/games/{id}/analysis` - Position analysis
 - `WebSocket /ws/games/{id}` - Real-time updates
@@ -391,6 +398,7 @@ This project demonstrates:
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ### Areas for Contribution
+
 - Additional framework implementations (Svelte, Alpine.js, etc.)
 - Enhanced UI/UX improvements
 - Performance optimizations
@@ -409,9 +417,9 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 - [Vanilla JavaScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-JS-Guide) - Pure JavaScript implementation
 - [Vanilla TypeScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-TS-Guide) - Pure TypeScript implementation ✅
 - [jQuery Implementation](https://github.com/RumenDamyanov/js-chess/wiki/jQuery-Guide) - jQuery-based implementation
-- [Vue.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Vue-Guide) - Vue 3 with Composition API
-- [React.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/React-Guide) - Modern React with hooks
-- [Angular Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Angular-Guide) - Angular with TypeScript
+- (WIP) [Vue.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Vue-Guide) - Pending rewrite
+- (WIP) [React.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/React-Guide) - Pending rewrite
+- (WIP) [Angular Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Angular-Guide) - Internal refactor in progress
 
 ### Complete Wiki Documentation
 
@@ -419,7 +427,7 @@ For comprehensive guides, examples, and advanced topics, visit the [project wiki
 
 ## 👨‍💻 Author
 
-**Rumen Damyanov**
+### Rumen Damyanov
 
 - Email: [contact@rumenx.com](mailto:contact@rumenx.com)
 - GitHub: [@RumenDamyanov](https://github.com/RumenDamyanov)
@@ -431,7 +439,7 @@ For comprehensive guides, examples, and advanced topics, visit the [project wiki
 - Chess piece graphics from [Chess.com](https://chess.com) style
 - Icons from [Feather Icons](https://feathericons.com/)
 
-## � Project Information
+## 📜 Project Information
 
 - 📄 [License](LICENSE.md) - MIT License
 - 🤝 [Contributing](CONTRIBUTING.md) - How to contribute
@@ -439,7 +447,7 @@ For comprehensive guides, examples, and advanced topics, visit the [project wiki
 - 💝 [Funding](FUNDING.md) - Support the project
 - 📝 [Changelog](CHANGELOG.md) - Version history
 
-## �📄 License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 

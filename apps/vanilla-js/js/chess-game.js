@@ -153,7 +153,8 @@ class ChessGame {
     constructor() {
         this.api = new ChessAPI();
         this.gameId = null;
-        this.gameState = null;
+    this.gameState = null;
+    this.currentFEN = null; // latest FEN string from backend
         this.selectedSquare = null;
         this.validMoves = [];
         this.isAITurn = false; // Add AI turn lock
@@ -257,6 +258,9 @@ class ChessGame {
 
             this.gameId = game.id;
             this.gameState = game;
+            if (game.fen) {
+                this.currentFEN = game.fen;
+            }
             this.selectedSquare = null;
             this.validMoves = [];
             this.isAITurn = false; // Reset AI turn flag
@@ -433,6 +437,9 @@ class ChessGame {
 
             Debug.log('gameController', 'Move successful, updating game state');
             this.gameState = response;
+            if (response.fen) {
+                this.currentFEN = response.fen;
+            }
             this.clearSelection();
             this.updateBoard();
             this.updateGameInfo();
@@ -537,6 +544,9 @@ class ChessGame {
 
                 Debug.log('gameController', 'AI move executed successfully');
                 this.gameState = response;
+                if (response.fen) {
+                    this.currentFEN = response.fen;
+                }
                 this.isAITurn = false; // AI turn complete - reset BEFORE updating UI
                 this.updateBoard();
                 this.updateGameInfo();
@@ -632,24 +642,47 @@ class ChessGame {
     }
 
     updateBoard() {
-        if (!this.gameState || !this.gameState.board) return;
+        if (!this.gameState) return;
 
-        // Parse the board string from the API
-        const boardLines = this.gameState.board.split('\n');
-        this.boardData = {}; // Store board data as instance variable
+        this.boardData = {};
 
-        for (let i = 1; i <= 8; i++) {
-            const line = boardLines[i];
-            if (line) {
-                const squares = line.split(' ');
-                for (let j = 0; j < 8; j++) {
-                    const file = String.fromCharCode(97 + j); // a-h
-                    const rank = 9 - i; // 8-1
-                    const position = file + rank;
-                    const piece = squares[j + 1]; // Skip rank number
-                    this.boardData[position] = piece === '.' ? '' : piece;
+        if (this.currentFEN) {
+            // FEN parsing: only first field has piece placement
+            const fenBoard = this.currentFEN.split(' ')[0];
+            const ranks = fenBoard.split('/');
+            for (let rankIndex = 0; rankIndex < ranks.length; rankIndex++) {
+                const rankStr = ranks[rankIndex];
+                let fileIndex = 0;
+                for (let ch of rankStr) {
+                    if (/[1-8]/.test(ch)) {
+                        fileIndex += parseInt(ch);
+                    } else {
+                        const fileChar = String.fromCharCode(97 + fileIndex);
+                        const rank = 8 - rankIndex;
+                        const pos = fileChar + rank;
+                        this.boardData[pos] = ch;
+                        fileIndex++;
+                    }
                 }
             }
+        } else if (this.gameState.board) {
+            // Legacy board string fallback
+            const boardLines = this.gameState.board.split('\n');
+            for (let i = 1; i <= 8; i++) {
+                const line = boardLines[i];
+                if (line) {
+                    const squares = line.split(' ');
+                    for (let j = 0; j < 8; j++) {
+                        const file = String.fromCharCode(97 + j); // a-h
+                        const rank = 9 - i; // 8-1
+                        const position = file + rank;
+                        const piece = squares[j + 1]; // Skip rank number
+                        this.boardData[position] = piece === '.' ? '' : piece;
+                    }
+                }
+            }
+        } else {
+            return;
         }
 
         // Update the visual board
@@ -666,7 +699,12 @@ class ChessGame {
                 'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
             };
 
-            square.textContent = pieceSymbols[piece] || '';
+            if (pieceSymbols[piece]) {
+                const isWhite = piece === piece.toUpperCase();
+                square.innerHTML = `<span class="piece ${isWhite ? 'piece-white' : 'piece-black'}">${pieceSymbols[piece]}</span>`;
+            } else {
+                square.textContent = '';
+            }
         });
     }
 
@@ -690,8 +728,11 @@ class ChessGame {
         }
 
         document.getElementById('game-status').textContent = statusText;
-        document.getElementById('move-count').textContent =
-            this.gameState.move_count || 1;
+        if (window.JSChessHelpers) {
+            window.JSChessHelpers.applyMoveCount(this.gameState.move_count, document.getElementById('move-count'));
+        } else {
+            document.getElementById('move-count').textContent = this.gameState.move_count || 1;
+        }
     }
 
     isPawnPromotion(piece, from, to) {
@@ -706,37 +747,73 @@ class ChessGame {
 
     async getPromotionChoice() {
         return new Promise((resolve) => {
-            // Create promotion dialog
+            const overlay = document.createElement('div');
+            overlay.className = 'promotion-overlay';
+            overlay.setAttribute('role','dialog');
+            overlay.setAttribute('aria-modal','true');
+            overlay.setAttribute('aria-label','Choose promotion piece');
             const dialog = document.createElement('div');
             dialog.className = 'promotion-dialog';
             dialog.innerHTML = `
-                <div class="promotion-content">
-                    <h3>Choose promotion piece:</h3>
-                    <div class="promotion-pieces">
-                        <button class="promotion-btn" data-piece="Q">♕ Queen</button>
-                        <button class="promotion-btn" data-piece="R">♖ Rook</button>
-                        <button class="promotion-btn" data-piece="B">♗ Bishop</button>
-                        <button class="promotion-btn" data-piece="N">♘ Knight</button>
-                    </div>
-                    <button class="promotion-cancel">Cancel</button>
+                <h3 class="promotion-title">Choose promotion piece:</h3>
+                <div class="promotion-pieces">
+                    <button class="promotion-piece" data-piece="Q" aria-label="Promote to Queen">♕<span>Queen</span></button>
+                    <button class="promotion-piece" data-piece="R" aria-label="Promote to Rook">♖<span>Rook</span></button>
+                    <button class="promotion-piece" data-piece="B" aria-label="Promote to Bishop">♗<span>Bishop</span></button>
+                    <button class="promotion-piece" data-piece="N" aria-label="Promote to Knight">♘<span>Knight</span></button>
                 </div>
+                <button class="promotion-cancel" type="button">Cancel</button>
             `;
+            overlay.appendChild(dialog);
 
-            // Add event listeners
-            dialog.querySelectorAll('.promotion-btn').forEach(btn => {
+            const buttons = Array.from(dialog.querySelectorAll('button'));
+            const first = buttons[0];
+            const last = buttons[buttons.length - 1];
+            const prevFocus = document.activeElement;
+
+            function cleanup(result) {
+                document.body.removeChild(overlay);
+                document.removeEventListener('keydown', keyHandler, true);
+                if (prevFocus && typeof prevFocus.focus === 'function') {
+                    prevFocus.focus();
+                }
+                resolve(result);
+            }
+
+            function keyHandler(e) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cleanup(null);
+                } else if (e.key === 'Tab') {
+                    const active = document.activeElement;
+                    if (e.shiftKey) {
+                        if (active === first) {
+                            e.preventDefault();
+                            last.focus();
+                        }
+                    } else {
+                        if (active === last) {
+                            e.preventDefault();
+                            first.focus();
+                        }
+                    }
+                }
+            }
+
+            buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const piece = btn.dataset.piece;
-                    document.body.removeChild(dialog);
-                    resolve(piece);
+                    const piece = btn.getAttribute('data-piece');
+                    cleanup(piece || null);
                 });
             });
+            const cancelBtn = dialog.querySelector('.promotion-cancel');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => cleanup(null));
+            }
 
-            dialog.querySelector('.promotion-cancel').addEventListener('click', () => {
-                document.body.removeChild(dialog);
-                resolve(null);
-            });
-
-            document.body.appendChild(dialog);
+            document.addEventListener('keydown', keyHandler, true);
+            document.body.appendChild(overlay);
+            if (first && typeof first.focus === 'function') first.focus();
         });
     }
 
@@ -997,25 +1074,18 @@ class ChessGame {
     }
 
     showMessage(message, type = 'info', duration = 3000) {
-        // Remove existing messages
-        const existingMessage = document.querySelector('.game-message');
-        if (existingMessage) {
-            existingMessage.remove();
+        if (window.JSChessMessages) {
+            window.JSChessMessages.showMessage(message, type, { duration });
+            return;
         }
-
-        // Create new message
-        const messageEl = document.createElement('div');
-        messageEl.className = `game-message ${type}`;
-        messageEl.textContent = message;
-
-        // Add to page
-        const gameInfo = document.querySelector('.game-info');
-        gameInfo.insertBefore(messageEl, gameInfo.firstChild);
-
-        // Auto-remove after duration or 3 seconds default
-        setTimeout(() => {
-            messageEl.remove();
-        }, duration || 3000);
+        // Fallback minimal implementation
+        const region = document.getElementById('game-messages');
+        if (!region) return;
+        const el = document.createElement('div');
+        el.className = `game-message ${type}`;
+        el.textContent = message;
+        region.appendChild(el);
+        if (duration > 0) setTimeout(()=> el.remove(), duration);
     }
 
     setButtonsEnabled(enabled) {

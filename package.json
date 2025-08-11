@@ -22,25 +22,25 @@
   ],
   "scripts": {
     "install:all": "npm run install:vue && npm run install:react && npm run install:angular",
-    "install:vue": "cd apps/vue && npm install",
-    "install:react": "cd apps/react && npm install",
+    "install:vue": "cd apps/vue-js && npm install",
+    "install:react": "cd apps/react-js && npm install",
     "install:angular": "cd apps/angular && npm install",
 
     "start:backend": "cd backend/go-chess && make run-server",
-    "start:landing": "cd apps/landing && python3 -m http.server 3000",
-    "start:vanilla": "cd apps/vanilla-js && python3 -m http.server 3001",
-    "start:vanilla-ts": "cd apps/vanilla-ts && python3 -m http.server 3002",
-    "start:jquery": "cd apps/jquery && python3 -m http.server 3003",
-    "start:vue": "cd apps/vue-js && npm run dev -- --port 3004",
-    "start:react": "cd apps/react-js && npm run dev -- --port 3005",
-    "start:angular": "cd apps/angular && npm start -- --port 3006",
+  "start:landing": "cd apps/landing && npx http-server -p 3000 --cors -c-1 .",
+  "start:vanilla": "cd apps/vanilla-js && npx http-server -p 3001 --cors -c-1 .",
+  "start:vanilla-ts": "cd apps/vanilla-ts && npx http-server dist -p 3002 --cors -c-1",
+  "start:jquery": "cd apps/jquery && npx http-server -p 3003 --cors -c-1 .",
+  "start:vue": "cd apps/vue-js && npm run dev",
+  "start:react": "cd apps/react-js && npm run dev",
+  "start:angular": "cd apps/angular && npm start",
 
     "start:all": "concurrently \"npm run start:landing\" \"npm run start:vanilla\" \"npm run start:vanilla-ts\" \"npm run start:jquery\" \"npm run start:vue\" \"npm run start:react\" \"npm run start:angular\"",
 
-    "build:all": "npm run build:vue && npm run build:react && npm run build:angular",
-    "build:vue": "cd apps/vue && npm run build",
-    "build:react": "cd apps/react && npm run build",
-    "build:angular": "cd apps/angular && npm run build",
+  "build:all": "npm run build:vue && npm run build:react && npm run build:angular",
+  "build:vue": "cd apps/vue-js && npm run build",
+  "build:react": "cd apps/react-js && npm run build",
+  "build:angular": "cd apps/angular && npm run build",
 
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
@@ -54,13 +54,14 @@
     "lint": "echo 'Run linting in individual app directories'",
     "test": "echo 'Run tests in individual app directories'",
 
-    "clean": "npm run clean:vue && npm run clean:react && npm run clean:angular",
-    "clean:vue": "cd apps/vue && rm -rf node_modules dist",
-    "clean:react": "cd apps/react && rm -rf node_modules dist",
-    "clean:angular": "cd apps/angular && rm -rf node_modules dist"
+  "clean": "npm run clean:vue && npm run clean:react && npm run clean:angular",
+  "clean:vue": "cd apps/vue-js && rm -rf node_modules dist",
+  "clean:react": "cd apps/react-js && rm -rf node_modules dist",
+  "clean:angular": "cd apps/angular && rm -rf node_modules dist"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "http-server": "^14.1.1"
   },
   "engines": {
     "node": ">=18.0.0",
