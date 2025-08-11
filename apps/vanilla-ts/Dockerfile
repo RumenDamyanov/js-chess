@@ -24,8 +24,8 @@ COPY ./apps/vanilla-ts/css /usr/share/nginx/html/css
 # Copy built JavaScript from build stage
 COPY --from=builder /app/dist /usr/share/nginx/html/dist
 
-# Copy shared styles (overwrite the symlink)
-COPY ./shared/styles/ /usr/share/nginx/html/shared/
+# Copy shared styles (ensure nested 'styles' folder to match index.html paths)
+COPY ./shared/styles/ /usr/share/nginx/html/shared/styles/
 
 # Copy custom nginx configuration from build stage
 COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf

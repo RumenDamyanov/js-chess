@@ -419,8 +419,11 @@ export class ChessBoard {
       this.gameState.pieces.forEach(piece => {
         this.placePiece(piece);
       });
+    } else if (this.gameState.fen) {
+      Debug.log('boardRendering', 'Parsing FEN string from gameState.fen:', this.gameState.fen);
+      this.parseFEN(this.gameState.fen);
     } else if (this.gameState.board) {
-      Debug.log('boardRendering', 'Parsing board string:', this.gameState.board.substring(0, 50) + '...');
+      Debug.log('boardRendering', 'Parsing board string fallback (deprecated):', this.gameState.board.substring(0, 50) + '...');
       this.parseBoardString(this.gameState.board);
     } else {
       Debug.log('boardRendering', 'No pieces array or board, using initial position');
@@ -629,7 +632,7 @@ export class ChessBoard {
     Debug.log('boardRendering', '📍 Square element:', square);
 
     const pieceElement = createElement('div', {
-      className: `piece ${piece.color}-${piece.type}`,
+      className: `piece ${piece.color === PieceColor.WHITE ? 'piece-white' : 'piece-black'} ${piece.color}-${piece.type}`,
       textContent: pieceToUnicode(piece.type, piece.color),
       dataset: {
         piece: createPieceString(piece.type, piece.color),

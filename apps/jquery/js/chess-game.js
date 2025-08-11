@@ -286,6 +286,11 @@ class ChessGameJQuery {
 
     async makeMove(from, to) {
         if (!this.gameId) return;
+        if (this.isProcessingMove) {
+            Debug.log('gameController', 'makeMove ignored: processing in progress');
+            return;
+        }
+        this.isProcessingMove = true;
 
         try {
             const board = $('.chess-board');
@@ -375,7 +380,7 @@ class ChessGameJQuery {
                 this.isAITurn = false;
             }
 
-        } catch (error) {
+    } catch (error) {
             // Remove loading state and re-enable buttons on error
             const board = $('.chess-board');
             this.removeLoadingState(board);
@@ -390,6 +395,9 @@ class ChessGameJQuery {
 
             this.showMessage('Invalid move', 'error');
             Debug.error('gameController', 'Error making move:', error);
+        }
+        finally {
+            this.isProcessingMove = false;
         }
     }
 
@@ -506,30 +514,77 @@ class ChessGameJQuery {
 
     async getPromotionChoice() {
         return new Promise((resolve) => {
-            // Create promotion dialog
-            const $dialog = $(`
-                <div class="promotion-dialog" style="
-                    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                    background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                    z-index: 1000; text-align: center;">
-                    <h3>Choose promotion piece:</h3>
-                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-                        <button class="promotion-btn" data-piece="Q" style="font-size: 30px; padding: 10px;">♕</button>
-                        <button class="promotion-btn" data-piece="R" style="font-size: 30px; padding: 10px;">♖</button>
-                        <button class="promotion-btn" data-piece="B" style="font-size: 30px; padding: 10px;">♗</button>
-                        <button class="promotion-btn" data-piece="N" style="font-size: 30px; padding: 10px;">♘</button>
-                    </div>
-                </div>
-            `);
+            const $overlay = $('<div class="promotion-overlay" role="dialog" aria-modal="true" aria-label="Choose promotion piece"></div>');
+            const $dialog = $('<div class="promotion-dialog"></div>');
+            $dialog.append('<h3 class="promotion-title">Choose promotion piece:</h3>');
+            const $pieces = $('<div class="promotion-pieces" />');
+            const pieces = [
+                { p: 'Q', icon: '♕', label: 'Queen' },
+                { p: 'R', icon: '♖', label: 'Rook' },
+                { p: 'B', icon: '♗', label: 'Bishop' },
+                { p: 'N', icon: '♘', label: 'Knight' }
+            ];
+            pieces.forEach(item => {
+                const $btn = $(`<button class="promotion-piece" data-piece="${item.p}" aria-label="Promote to ${item.label}">${item.icon}<span>${item.label}</span></button>`);
+                $btn.on('click', () => {
+                    const piece = $btn.data('piece');
+                    $overlay.remove();
+                    $(document).off('keydown.promotion');
+                    this.restoreFocusAfterDialog();
+                    resolve(piece);
+                });
+                $pieces.append($btn);
+            });
+            const $cancel = $('<button class="promotion-cancel" type="button">Cancel</button>');
+            $cancel.on('click', () => { $overlay.remove(); resolve(null); });
+            $dialog.append($pieces, $cancel);
+            $overlay.append($dialog);
+            $('body').append($overlay);
 
-            $('body').append($dialog);
+            // Accessibility: focus management
+            const focusable = $dialog.find('button');
+            const first = focusable.first();
+            const last = focusable.last();
+            const previouslyFocused = document.activeElement;
+            const firstEl = first.get(0);
+            if (firstEl && typeof firstEl.focus === 'function') firstEl.focus();
 
-            $('.promotion-btn').on('click', function() {
-                const piece = $(this).data('piece');
-                $dialog.remove();
-                resolve(piece);
+            // store for restoration
+            this._prevFocusEl = previouslyFocused;
+
+            $(document).on('keydown.promotion', (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    $overlay.remove();
+                    $(document).off('keydown.promotion');
+                    this.restoreFocusAfterDialog();
+                    resolve(null);
+                } else if (e.key === 'Tab') {
+                    // trap focus
+                    const active = document.activeElement;
+                    if (e.shiftKey) {
+                        if (active === first.get(0)) {
+                            e.preventDefault();
+                            const lastEl = last.get(0);
+                            if (lastEl && typeof lastEl.focus === 'function') lastEl.focus();
+                        }
+                    } else {
+                        if (active === last.get(0)) {
+                            e.preventDefault();
+                            const firstAgain = first.get(0);
+                            if (firstAgain && typeof firstAgain.focus === 'function') firstAgain.focus();
+                        }
+                    }
+                }
             });
         });
+    }
+
+    restoreFocusAfterDialog() {
+        if (this._prevFocusEl && typeof this._prevFocusEl.focus === 'function') {
+            this._prevFocusEl.focus();
+        }
+        this._prevFocusEl = null;
     }
 
     updateBoard() {
@@ -548,9 +603,12 @@ class ChessGameJQuery {
                 const $square = $(`[data-position="${position}"]`);
 
                 if (piece === '.') {
-                    $square.text('').removeData('piece');
+                    $square.html('').removeData('piece');
                 } else {
-                    $square.text(this.getPieceSymbol(piece)).data('piece', piece);
+                    const symbol = this.getPieceSymbol(piece);
+                    const isWhite = piece === piece.toUpperCase();
+                    const colorClass = isWhite ? 'piece-white' : 'piece-black';
+                    $square.html(`<span class="piece ${colorClass}">${symbol}</span>`).data('piece', piece);
                 }
             });
         });
@@ -569,7 +627,11 @@ class ChessGameJQuery {
 
         $('#current-player').text(this.gameState.active_color === 'white' ? 'White' : 'Black');
         $('#game-status').text(this.getStatusText(this.gameState.status));
-        $('#move-count').text(this.gameState.move_count || 1);
+        if (window.JSChessHelpers) {
+            window.JSChessHelpers.applyMoveCount(this.gameState.move_count, '#move-count');
+        } else {
+            $('#move-count').text(this.gameState.move_count || 1);
+        }
     }
 
     getStatusText(status) {
@@ -651,30 +713,17 @@ class ChessGameJQuery {
     }
 
     showMessage(message, type = 'info', duration = 3000) {
-        // Remove existing messages
-        $('.game-message').remove();
-
-        // Create new message
-        const $messageEl = $(`
-            <div class="game-message game-message-${type}" style="
-                margin: 10px 0; padding: 10px; border-radius: 4px; text-align: center; font-weight: bold;
-                background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : type === 'warning' ? '#fff3cd' : '#d1ecf1'};
-                color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : type === 'warning' ? '#856404' : '#0c5460'};
-                border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : type === 'warning' ? '#ffeaa7' : '#bee5eb'};
-                opacity: 0;
-            ">${message}</div>
-        `);
-
-        // Add to page and fade in
-        $('.game-info').prepend($messageEl);
-        $messageEl.animate({ opacity: 1 }, 200);
-
-        // Auto-remove after duration
-        setTimeout(() => {
-            $messageEl.animate({ opacity: 0 }, 200, () => {
-                $messageEl.remove();
-            });
-        }, duration);
+        const region = document.getElementById('game-messages');
+            if (window.JSChessMessages) {
+                window.JSChessMessages.showMessage(message, type, { duration });
+                return;
+            }
+            // fallback
+            const $region = $('#game-messages');
+            if ($region.length === 0) return;
+            const $msg = $('<div/>').addClass('game-message').addClass(type).text(message);
+            $region.append($msg);
+            if (duration > 0) setTimeout(()=> $msg.remove(), duration);
     }
 
     showGameEnd(message, winner) {

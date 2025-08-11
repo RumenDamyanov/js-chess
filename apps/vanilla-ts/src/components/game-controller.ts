@@ -155,7 +155,8 @@ export class GameController {
   async startNewGame(): Promise<void> {
     try {
       this.isProcessingMove = true;
-      this.updateGameStatus('Starting new game...');
+  this.updateGameStatus('Starting new game...');
+  this.showMessage('Starting new game...', 'info', 2000);
 
       // Create new game via API
       const gameState = await this.apiClient.createGame(this.gameConfig.playerColor);
@@ -204,7 +205,7 @@ export class GameController {
     }
 
     Debug.log('moveValidation', '🎯 ATTEMPTING MOVE:', from, '→', to);
-    Debug.log('moveValidation', '🎯 Current board state BEFORE move:', this.gameState.board);
+  Debug.log('moveValidation', '🎯 Current board/FEN BEFORE move:', this.gameState.fen || this.gameState.board);
     Debug.log('moveValidation', '🎯 Board data before move:', this.boardData);
     Debug.log('moveValidation', '🎯 Piece at FROM position:', this.boardData[from]);
     Debug.log('moveValidation', '🎯 Piece at TO position:', this.boardData[to]);
@@ -457,7 +458,8 @@ export class GameController {
     }
 
     if (!this.gameState.move_history || this.gameState.move_history.length === 0) {
-      this.updateGameStatus('No moves to undo');
+  this.updateGameStatus('No moves to undo');
+  this.showMessage('No moves to undo', 'warning', 2500);
       return;
     }
 
@@ -467,12 +469,14 @@ export class GameController {
     // Player can only undo when it's not their turn (after AI has responded)
     // or when they have at least one move to undo
     if (currentTurn === playerColor && this.gameState.move_history.length < 2) {
-      this.updateGameStatus('No moves to undo yet');
+  this.updateGameStatus('No moves to undo yet');
+  this.showMessage('No moves to undo yet', 'warning', 2500);
       return;
     }
 
     try {
-      this.updateGameStatus('Undoing last move...');
+  this.updateGameStatus('Undoing last move...');
+  this.showMessage('Undoing last move...', 'info', 2000);
       this.isProcessingMove = true;
 
       Debug.log('gameController', 'Starting undo process - creating new game');
@@ -531,7 +535,8 @@ export class GameController {
 
       // Update UI
       this.updateGameStatus('Ready');
-      this.updateGameStatus('Move undone successfully');
+  this.updateGameStatus('Move undone successfully');
+  this.showMessage('Move undone successfully', 'success', 2500);
 
       Debug.log('gameController', 'Undo completed successfully');
 
@@ -556,18 +561,21 @@ export class GameController {
     const currentTurn = this.gameState.active_color;
 
     if (currentTurn !== playerColor) {
-      this.updateGameStatus('Wait for your turn to get a hint');
+  this.updateGameStatus('Wait for your turn to get a hint');
+  this.showMessage('Wait for your turn to get a hint', 'warning', 2500);
       return;
     }
 
     // Check if game is over
     if (this.gameState.status !== GameStatus.IN_PROGRESS && this.gameState.status !== GameStatus.CHECK) {
-      this.updateGameStatus('Game is over - no hints available');
+  this.updateGameStatus('Game is over - no hints available');
+  this.showMessage('Game is over - no hints available', 'warning', 2500);
       return;
     }
 
     try {
-      this.updateGameStatus('Getting hint...');
+  this.updateGameStatus('Getting hint...');
+  this.showMessage('Getting hint...', 'info', 2000);
 
       const aiRequest = {
         level: AILevel.MEDIUM,
@@ -597,7 +605,8 @@ export class GameController {
 
       if (moveData) {
         const explanation = moveData.notation || `Move from ${moveData.from} to ${moveData.to}`;
-        this.updateGameStatus(`💡 Hint: ${explanation}`);
+  this.updateGameStatus(`💡 Hint: ${explanation}`);
+  this.showMessage(`Hint: ${explanation}`, 'success', 4000);
 
         Debug.log('gameController', `Hint received: ${explanation}`);
 
@@ -613,12 +622,14 @@ export class GameController {
         this.chessBoard.highlightHint(hintMove);
       } else {
         Debug.log('gameController', 'Invalid hint response structure:', hintResponse);
-        this.updateGameStatus('No hint available at this time');
+  this.updateGameStatus('No hint available at this time');
+  this.showMessage('No hint available at this time', 'warning', 2500);
       }
 
     } catch (error) {
       Debug.error('gameController', 'Failed to get hint:', error);
-      this.updateGameStatus('Unable to get hint - try again later');
+  this.updateGameStatus('Unable to get hint - try again later');
+  this.showMessage('Unable to get hint - try again later', 'error', 3000);
     }
   }
 
@@ -634,7 +645,10 @@ export class GameController {
 
     currentPlayerElement.textContent = this.gameState.active_color;
     gameStatusElement.textContent = this.formatGameStatus(this.gameState.status);
-    moveCountElement.textContent = Math.ceil(this.gameState.move_count / 2).toString();
+  // Use shared helper semantics (fallback if not present in TS bundle context)
+  const raw = this.gameState.move_count;
+  const full = Math.ceil(raw / 2);
+  moveCountElement.textContent = full.toString();
   }
 
   /**
@@ -678,6 +692,26 @@ export class GameController {
   private updateGameStatus(status: string): void {
     const gameStatusElement = getElement('#game-status');
     gameStatusElement.textContent = status;
+  }
+
+  /**
+   * Ephemeral below-board message (mirrors vanilla / jQuery behavior)
+   */
+  private showMessage(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info', duration = 3000): void {
+    // Delegate to shared utility if present
+    const anyWindow = window as any;
+    if (anyWindow.JSChessMessages) {
+      anyWindow.JSChessMessages.showMessage(message, type, { duration });
+      return;
+    }
+    // Fallback minimal implementation
+    const region = document.getElementById('game-messages');
+    if (!region) return;
+    const el = document.createElement('div');
+    el.className = `game-message ${type}`;
+    el.textContent = message;
+    region.appendChild(el);
+    if (duration > 0) setTimeout(()=> el.remove(), duration);
   }
 
   /**
@@ -773,26 +807,50 @@ export class GameController {
    * Parse board string and populate boardData (like vanilla JS)
    */
   private updateBoardData(): void {
-    if (!this.gameState || !this.gameState.board) return;
+    if (!this.gameState) return;
 
-    Debug.log('boardRendering', '🎯 Updating board data from:', this.gameState.board);
-
-    // Parse the board string from the API
-    const boardLines = this.gameState.board.split('\n');
-    this.boardData = {}; // Reset board data
-
-    for (let i = 1; i <= 8; i++) {
-      const line = boardLines[i];
-      if (line) {
-        const squares = line.split(' ');
-        for (let j = 0; j < 8; j++) {
-          const file = String.fromCharCode(97 + j); // a-h
-          const rank = 9 - i; // 8-1
-          const position = file + rank;
-          const piece = squares[j + 1] || '.'; // Skip rank number, default to '.'
-          this.boardData[position] = piece === '.' ? '' : piece;
+    this.boardData = {};
+    if (this.gameState.fen) {
+      Debug.log('boardRendering', '🎯 Updating board data from FEN:', this.gameState.fen);
+      const parts = this.gameState.fen.split(' ');
+      const placement = parts.length > 0 ? parts[0] : '';
+      if (placement) {
+        const ranks = placement.split('/');
+        for (let rankIndex = 0; rankIndex < ranks.length; rankIndex++) {
+          const rankStr = ranks[rankIndex];
+          if (!rankStr) continue;
+            let fileIndex = 0;
+            for (let ch of rankStr) {
+              if (/[1-8]/.test(ch)) {
+                fileIndex += parseInt(ch);
+              } else {
+                const file = String.fromCharCode(97 + fileIndex);
+                const rank = 8 - rankIndex;
+                const pos = file + rank;
+                this.boardData[pos] = ch;
+                fileIndex++;
+              }
+            }
         }
       }
+    } else if (this.gameState.board) {
+      Debug.log('boardRendering', '🎯 Updating board data from legacy board string:', this.gameState.board);
+      const boardLines = this.gameState.board.split('\n');
+      for (let i = 1; i <= 8; i++) {
+        const line = boardLines[i];
+        if (line) {
+          const squares = line.split(' ');
+          for (let j = 0; j < 8; j++) {
+            const file = String.fromCharCode(97 + j); // a-h
+            const rank = 9 - i; // 8-1
+            const position = file + rank;
+            const piece = squares[j + 1] || '.'; // Skip rank number, default to '.'
+            this.boardData[position] = piece === '.' ? '' : piece;
+          }
+        }
+      }
+    } else {
+      return;
     }
 
     Debug.log('boardRendering', '🎯 Board data updated:', this.boardData);
@@ -814,38 +872,69 @@ export class GameController {
    */
   private async getPromotionChoice(): Promise<string | null> {
     return new Promise((resolve) => {
-      // Create promotion dialog
+      const overlay = document.createElement('div');
+      overlay.className = 'promotion-overlay';
+      overlay.setAttribute('role','dialog');
+      overlay.setAttribute('aria-modal','true');
+      overlay.setAttribute('aria-label','Choose promotion piece');
       const dialog = document.createElement('div');
       dialog.className = 'promotion-dialog';
       dialog.innerHTML = `
-        <div class="promotion-content">
-          <h3>Choose promotion piece:</h3>
-          <div class="promotion-pieces">
-            <button class="promotion-btn" data-piece="Q">♕ Queen</button>
-            <button class="promotion-btn" data-piece="R">♖ Rook</button>
-            <button class="promotion-btn" data-piece="B">♗ Bishop</button>
-            <button class="promotion-btn" data-piece="N">♘ Knight</button>
-          </div>
-          <button class="promotion-cancel">Cancel</button>
+        <h3 class="promotion-title">Choose promotion piece:</h3>
+        <div class="promotion-pieces">
+          <button class="promotion-piece" data-piece="Q" aria-label="Promote to Queen">♕<span>Queen</span></button>
+          <button class="promotion-piece" data-piece="R" aria-label="Promote to Rook">♖<span>Rook</span></button>
+          <button class="promotion-piece" data-piece="B" aria-label="Promote to Bishop">♗<span>Bishop</span></button>
+          <button class="promotion-piece" data-piece="N" aria-label="Promote to Knight">♘<span>Knight</span></button>
         </div>
+        <button class="promotion-cancel" type="button">Cancel</button>
       `;
+      overlay.appendChild(dialog);
 
-      // Add event listeners
-      dialog.querySelectorAll('.promotion-btn').forEach(btn => {
+      const buttons = Array.from(dialog.querySelectorAll('button')) as HTMLButtonElement[];
+  const first = buttons[0];
+  const last = buttons[buttons.length - 1];
+      const prevFocus = document.activeElement as HTMLElement | null;
+
+      const cleanup = (result: string | null) => {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        document.removeEventListener('keydown', keyHandler, true);
+        if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
+        resolve(result);
+      };
+
+      const keyHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          cleanup(null);
+        } else if (e.key === 'Tab') {
+          const active = document.activeElement;
+          if (e.shiftKey) {
+            if (first && last && active === first) {
+              e.preventDefault();
+              if (last) last.focus();
+            }
+          } else {
+            if (first && last && active === last) {
+              e.preventDefault();
+              if (first) first.focus();
+            }
+          }
+        }
+      };
+
+      buttons.forEach(btn => {
         btn.addEventListener('click', () => {
-          const piece = (btn as HTMLElement).dataset.piece;
-          document.body.removeChild(dialog);
-          resolve(piece || null);
+          const piece = (btn as HTMLElement).getAttribute('data-piece');
+          cleanup(piece || null);
         });
       });
+      const cancelBtn = dialog.querySelector('.promotion-cancel') as HTMLElement | null;
+      if (cancelBtn) cancelBtn.addEventListener('click', () => cleanup(null));
 
-      dialog.querySelector('.promotion-cancel')?.addEventListener('click', () => {
-        document.body.removeChild(dialog);
-        resolve(null);
-      });
-
-      // Add to page
-      document.body.appendChild(dialog);
+      document.addEventListener('keydown', keyHandler, true);
+      document.body.appendChild(overlay);
+  if (first && typeof first.focus === 'function') first.focus();
     });
   }
 

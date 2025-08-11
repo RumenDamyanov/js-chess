@@ -137,6 +137,9 @@ class GameConfig {
 
         // Update timer display
         this.updateTimerDisplay();
+
+    // Update player display in status panel
+    $('#player-display').text(this.config.playerName || 'Player');
     }
 
     applyConfig() {
@@ -155,6 +158,9 @@ class GameConfig {
         } else {
             $chat.hide();
         }
+
+    // Update player display when config applied (e.g., color change may not matter but name could)
+    $('#player-display').text(this.config.playerName || 'Player');
 
         // Show/hide timer based on setting
         const $timer = $('.timer-display');

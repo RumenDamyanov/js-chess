@@ -455,19 +455,26 @@ main {
     font-weight: 500;
 }
 
-.status > div:first-child {
+/* Aligned status gradients (Player, Turn, Status, Move) to match vanilla-js */
+.status > div:nth-child(1) { /* Player */
     background: linear-gradient(45deg, #4CAF50, #45a049);
-    color: white;
+    color: #fff;
+    border: none;
 }
-
-.status > div:nth-child(2) {
+.status > div:nth-child(2) { /* Turn */
     background: linear-gradient(45deg, #2196F3, #1976D2);
-    color: white;
+    color: #fff;
+    border: none;
 }
-
-.status > div:last-child {
+.status > div:nth-child(3) { /* Status */
     background: linear-gradient(45deg, #FF9800, #F57C00);
-    color: white;
+    color: #fff;
+    border: none;
+}
+.status > div:nth-child(4) { /* Move */
+    background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+    color: #fff;
+    border: none;
 }
 
 /* Button Styles */
@@ -806,67 +813,6 @@ main {
     background: #e9ecef;
 }
 
-/* Debug Panel Styles */
-.debug-btn {
-    font-size: 16px;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    position: relative;
-    border: 2px solid transparent;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Default disabled state - grayscale and flat */
-.debug-btn:not(.debug-enabled) {
-    filter: grayscale(100%);
-    background: #f8f9fa !important;
-    color: #6c757d !important;
-    box-shadow: none;
-    transform: none;
-}
-
-.debug-btn:not(.debug-enabled):hover {
-    background: #e9ecef !important;
-    color: #495057 !important;
-    transform: scale(1.05);
-    filter: grayscale(80%);
-}
-
-/* Enabled state - full color and pressed effect */
-.debug-btn.debug-enabled {
-    background: #27ae60 !important;
-    color: white !important;
-    border-color: #219a52;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transform: translateY(1px);
-}
-
-.debug-btn.debug-enabled:hover {
-    background: #229954 !important;
-    transform: translateY(1px) scale(1.05);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), inset 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-/* Pulse animation for enabled state */
-.debug-btn.debug-enabled::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #27ae60, #2ecc71);
-    border-radius: 6px;
-    z-index: -1;
-    animation: debugPulse 2s ease-in-out infinite;
-    opacity: 0.6;
-}
-
-@keyframes debugPulse {
-    0%, 100% { transform: scale(1); opacity: 0.6; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-}
 
 .debug-panel {
     position: fixed;

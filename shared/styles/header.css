@@ -1,8 +1,8 @@
 /* Shared Header Styles for All Chess Apps */
 
 .app-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--color-bg-body-gradient);
+    color: var(--color-text-inverse);
     padding: 1rem 0;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
     position: relative;
@@ -76,6 +76,19 @@
     border-radius: 6px;
     transition: all 0.2s ease;
     font-size: 0.875rem;
+
+.nav-link.nav-link-disabled {
+    color: #9ca3af !important;
+    cursor: default;
+    pointer-events: none;
+    background: transparent !important;
+    font-style: italic;
+}
+
+.nav-link.nav-link-disabled.active {
+    font-weight: 600;
+    color: #a3a3a3 !important;
+}
     font-weight: 500;
     display: inline-flex;
     align-items: center;
@@ -92,7 +105,7 @@
 
 .nav-link.active {
     background: rgba(255, 255, 255, 0.2);
-    color: white;
+    color: var(--color-text-inverse);
 }
 
 .nav-separator {
@@ -116,7 +129,7 @@
     padding: 0.5rem 1rem;
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
+    color: var(--color-text-inverse);
 }
 
 .header-controls .btn:hover {

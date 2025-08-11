@@ -10,9 +10,9 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-bg-body-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
     min-height: 100vh;
-    color: #333;
+    color: var(--color-text-primary, #333333);
 }
 
 /* Common button styles */
@@ -41,14 +41,14 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
+    background: var(--color-btn-primary-bg);
+    color: var(--color-text-inverse);
 }
 
 .btn-secondary {
-    background: #f8f9fa;
-    color: #495057;
-    border: 1px solid #dee2e6;
+    background: var(--color-btn-secondary-bg);
+    color: var(--color-btn-secondary-text);
+    border: 1px solid var(--color-btn-secondary-border);
 }
 
 .btn-small {
@@ -127,19 +127,19 @@ body {
 .font-bold { font-weight: 700; }
 
 /* Common color utilities */
-.text-primary { color: #667eea; }
-.text-secondary { color: #6c757d; }
-.text-success { color: #28a745; }
-.text-danger { color: #dc3545; }
-.text-warning { color: #ffc107; }
-.text-info { color: #17a2b8; }
+.text-primary { color: var(--color-brand-start); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-success { color: var(--color-success); }
+.text-danger { color: var(--color-danger); }
+.text-warning { color: var(--color-warning); }
+.text-info { color: var(--color-info); }
 
-.bg-primary { background-color: #667eea; }
-.bg-secondary { background-color: #6c757d; }
-.bg-success { background-color: #28a745; }
-.bg-danger { background-color: #dc3545; }
-.bg-warning { background-color: #ffc107; }
-.bg-info { background-color: #17a2b8; }
+.bg-primary { background-color: var(--color-brand-start); }
+.bg-secondary { background-color: var(--color-text-secondary); }
+.bg-success { background-color: var(--color-success); }
+.bg-danger { background-color: var(--color-danger); }
+.bg-warning { background-color: var(--color-warning); }
+.bg-info { background-color: var(--color-info); }
 
 /* Common form styles */
 .form-group {
@@ -202,6 +202,76 @@ body {
     border-top: 1px solid #dee2e6;
 }
 
+/* Unified form element baseline (improves contrast & theming) */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    background: var(--color-bg-surface);
+    color: var(--color-text-field, #000);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-brand-start);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+}
+
+/* Unified Status Block Styling */
+.status {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.status > div {
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    position: relative;
+}
+
+/* Semantic accents mapped by order (keeps existing markup) */
+.status > div:nth-child(1) { border-left: 4px solid var(--color-success); }
+.status > div:nth-child(2) { border-left: 4px solid var(--color-info); }
+.status > div:nth-child(3) { border-left: 4px solid var(--color-warning); }
+.status > div:nth-child(4) { border-left: 4px solid var(--color-info); }
+
+/* Debug Button Normalization */
+.btn-debug,
+.debug-btn {
+    background: var(--color-btn-secondary-bg);
+    color: var(--color-btn-secondary-text);
+    border: 1px solid var(--color-btn-secondary-border);
+    box-shadow: none;
+    filter: none;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.btn-debug.debug-active,
+.debug-btn.debug-enabled {
+    background: var(--color-success);
+    color: var(--color-text-inverse);
+    border-color: var(--color-success);
+}
+
+.btn-debug.debug-active:hover,
+.debug-btn.debug-enabled:hover {
+    filter: brightness(1.05);
+}
+
 /* Loading states */
 .loading {
     display: inline-flex;
@@ -249,4 +319,138 @@ body {
     .card {
         padding: 1rem;
     }
+}
+
+/* Shared board wrapper + below-board messages (moved from vanilla specific) */
+.board-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-messages-region {
+    width: 100%;
+    max-width: 480px;
+    margin: 8px auto 4px;
+    display: flex;
+    flex-direction: column-reverse; /* newest visually on top */
+    gap: 6px;
+    min-height: 0;
+}
+
+.game-message-stack { display: contents; }
+
+.game-messages-region .game-message { margin: 0; }
+
+/* Ephemeral game messages */
+.game-message {
+    margin-bottom: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.3;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-surface-alt, var(--color-bg-surface));
+    color: var(--color-text-primary);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    animation: fadeSlide 0.25s ease;
+}
+.game-message.success { border-left: 4px solid var(--color-success); }
+.game-message.error { border-left: 4px solid var(--color-danger); }
+.game-message.warning { border-left: 4px solid var(--color-warning); }
+.game-message.info { border-left: 4px solid var(--color-info); }
+.game-message.removing { opacity: 0; transition: opacity .5s ease; }
+
+@keyframes fadeSlide { from { opacity:0; transform: translateY(-6px);} to { opacity:1; transform: translateY(0);} }
+
+/* Pawn Promotion (shared) */
+.promotion-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.promotion-dialog {
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem 1.5rem;
+    width: clamp(260px, 90vw, 420px);
+    box-shadow: var(--shadow-elevated);
+    text-align: center;
+    position: relative;
+    animation: fadeSlide .25s ease;
+}
+
+.promotion-dialog h3, .promotion-title {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: .5px;
+}
+
+.promotion-pieces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: .75rem;
+    margin: .25rem 0 1rem;
+}
+
+.promotion-piece, .promotion-btn {
+    background: var(--color-bg-surface-alt);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: .75rem .5rem;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .25rem;
+    font-weight: 600;
+    transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.promotion-piece span, .promotion-btn span { font-size: .55rem; letter-spacing: .5px; text-transform: uppercase; }
+
+.promotion-piece:hover, .promotion-btn:hover {
+    background: var(--color-btn-primary-bg);
+    color: var(--color-text-inverse);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+.promotion-piece:active, .promotion-btn:active { transform: translateY(0); }
+
+.promotion-cancel {
+    background: var(--color-btn-secondary-bg);
+    color: var(--color-btn-secondary-text);
+    border: 1px solid var(--color-btn-secondary-border);
+    border-radius: var(--radius-md);
+    padding: .5rem .9rem;
+    font-size: .8rem;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: .5px;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+.promotion-cancel:hover { filter: brightness(0.95); }
+.promotion-cancel:active { filter: brightness(0.9); }
+
+@media (max-width: 480px) {
+    .promotion-pieces { grid-template-columns: repeat(2, 1fr); }
+    .promotion-piece, .promotion-btn { font-size: 1.15rem; padding: .6rem .4rem; }
 }
