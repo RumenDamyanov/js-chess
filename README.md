@@ -14,22 +14,22 @@ Active & stable (included in default Docker / Make builds):
 - Vanilla JS
 - Vanilla TypeScript
 - jQuery
+- Vue 3
 
 Work‑in‑progress (excluded by default – manual start/build only):
 
-- Angular (internally rebuilt with new game logic but public UI marked WIP)
-- React (planned)
-- Vue 3 (planned)
+- Angular (planned – WIP)
+- React (planned – WIP)
 
-These three WIP apps are intentionally disabled in aggregate Make targets to speed builds. They will return after framework‑specific rewrites that align with recent backend changes (improved move validation, AI workflow, and forthcoming caching / optimistic update layer).
+These two WIP apps are intentionally disabled in aggregate Make targets to speed builds. They will return after framework‑specific rewrites that align with recent backend changes (improved move validation, AI workflow, and forthcoming caching / optimistic update layer).
 
 ## ✨ Recent Updates
 
 Latest notable changes (since mid‑2025):
 
 1. Angular rewrite: promotion modal UI, castling handling, SAN move history, AI auto‑move flow, safer undo via replay, self‑capture & illegal move guards.
-2. Unified WIP labeling: Landing page & all active headers show disabled (grey) links for Angular / React / Vue.
-3. Makefile optimization: Default `build`, `up`, `rebuild`, `health`, `logs-frontend`, etc. now exclude Angular / React / Vue (use `start-angular`, `build-react`, etc. individually).
+2. Unified WIP labeling: Landing page & all active headers show disabled (grey) links for Angular / React.
+3. Makefile optimization: Default `build`, `up`, `rebuild`, `health`, `logs-frontend`, etc. now exclude Angular / React (use `start-angular`, `build-react`, etc. individually). Vue is included.
 4. Promotion & castling UX: Consistent notation capture and server‑validated sequencing.
 5. Shared styling: Added disabled navigation/link styles and WIP tag classes.
 
@@ -42,9 +42,9 @@ Planned next steps for the WIP frameworks:
 
 ## Frameworks
 
-Stable: Vanilla JS · Vanilla TS · jQuery
+Stable: Vanilla JS · Vanilla TS · jQuery · Vue 3
 
-WIP (temporarily disabled in default build): Vue 3 · React · Angular
+WIP (temporarily disabled in default build): React · Angular
 
 ## Repository Layout (excerpt)
 
@@ -92,9 +92,9 @@ make install          # Build & start backend + stable frontends
 make urls             # List service URLs (WIP flagged as disabled)
 ```
 
-Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 8080 (API)
+Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (Vue) · 8080 (API)
 
-WIP (manual if needed): 3004 (vue) · 3005 (react) · 3006 (angular)
+WIP (manual if needed): 3005 (react) · 3006 (angular)
 
 ## Make Targets (selection)
 
@@ -107,7 +107,7 @@ make build-vanilla-ts       # Build TS vanilla image
 make build-shared-styles    # Placeholder (no-op)
 make start-angular          # (WIP) Start angular only
 make build-react            # (WIP) Build react only
-make build-vue              # (WIP) Build vue only
+make build-vue              # Build vue only
 ```
 
 ## Local (no Docker)
@@ -355,7 +355,7 @@ npm run start:backend
 npm run start:vanilla      # Port 3001
 npm run start:vanilla-ts   # Port 3002
 npm run start:jquery       # Port 3003
-# (WIP) npm run start:vue     # Port 3004
+npm run start:vue          # Port 3004
 # (WIP) npm run start:react   # Port 3005
 # (WIP) npm run start:angular # Port 3006
 
@@ -363,75 +363,20 @@ npm run start:jquery       # Port 3003
 # npm run start:all
 ```
 
-## 📚 API Integration
+## � Documentation
 
-All applications use the same go-chess API endpoints:
-
-### Core Endpoints
-
-- `POST /api/games` - Create new game
-- `GET /api/games/{id}` - Get game state
-- `POST /api/games/{id}/moves` - Make a move
-- `POST /api/games/{id}/ai-move` - Get AI move
-
-### Advanced Features
-
-- `POST /api/games/{id}/chat` - Chat with AI
-- `GET /api/games/{id}/analysis` - Position analysis
-- `WebSocket /ws/games/{id}` - Real-time updates
-
-See the [API Integration Guide](https://github.com/RumenDamyanov/js-chess/wiki/API-Integration) for detailed documentation.
-
-## 🎓 Learning Objectives
-
-This project demonstrates:
-
-1. **API Integration**: How different frameworks consume RESTful APIs
-2. **WebSocket Handling**: Real-time communication patterns
-3. **State Management**: Different approaches across frameworks
-4. **Component Architecture**: Framework-specific design patterns
-5. **Build Systems**: Modern tooling for each technology
-6. **Deployment**: Docker containerization and orchestration
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Areas for Contribution
-
-- Additional framework implementations (Svelte, Alpine.js, etc.)
-- Enhanced UI/UX improvements
-- Performance optimizations
-- Test coverage improvements
-- Documentation enhancements
-
-## 📖 Documentation
-
-- [Quick Start Guide](https://github.com/RumenDamyanov/js-chess/wiki/Quick-Start)
 - [Project Structure](https://github.com/RumenDamyanov/js-chess/wiki/Project-Structure)
-- [API Integration Guide](https://github.com/RumenDamyanov/js-chess/wiki/API-Integration)
+- [API Integration](https://github.com/RumenDamyanov/js-chess/wiki/API-Integration)
 - [Deployment Guide](https://github.com/RumenDamyanov/js-chess/wiki/Deployment-Guide)
 
-### Framework-Specific Guides
+Guides by implementation:
 
-- [Vanilla JavaScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-JS-Guide) - Pure JavaScript implementation
-- [Vanilla TypeScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-TS-Guide) - Pure TypeScript implementation ✅
-- [jQuery Implementation](https://github.com/RumenDamyanov/js-chess/wiki/jQuery-Guide) - jQuery-based implementation
-- (WIP) [Vue.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Vue-Guide) - Pending rewrite
-- (WIP) [React.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/React-Guide) - Pending rewrite
-- (WIP) [Angular Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Angular-Guide) - Internal refactor in progress
-
-### Complete Wiki Documentation
-
-For comprehensive guides, examples, and advanced topics, visit the [project wiki](https://github.com/RumenDamyanov/js-chess/wiki).
-
-## 👨‍💻 Author
-
-### Rumen Damyanov
-
-- Email: [contact@rumenx.com](mailto:contact@rumenx.com)
-- GitHub: [@RumenDamyanov](https://github.com/RumenDamyanov)
-- Backend API: [go-chess](https://github.com/RumenDamyanov/go-chess)
+- [Vanilla JavaScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-JS-Guide)
+- [Vanilla TypeScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-TS-Guide)
+- [jQuery](https://github.com/RumenDamyanov/js-chess/wiki/jQuery-Guide)
+- [Vue 3](https://github.com/RumenDamyanov/js-chess/wiki/Vue-Guide)
+- (WIP) [React](https://github.com/RumenDamyanov/js-chess/wiki/React-Guide)
+- (WIP) [Angular](https://github.com/RumenDamyanov/js-chess/wiki/Angular-Guide)
 
 ## 🙏 Acknowledgments
 
