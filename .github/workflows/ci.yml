@@ -148,9 +148,9 @@ jobs:
 
     strategy:
       matrix:
-        # NOTE: angular, react-js, vue-js temporarily excluded (WIP / delisted)
-        # To re-enable, add them back to this list.
-        app: [vanilla-ts]
+        # NOTE: angular and react-js temporarily excluded (WIP / delisted)
+        # Vue is enabled alongside vanilla-ts.
+        app: [vanilla-ts, vue-js]
 
     steps:
       - name: Checkout repository
@@ -166,7 +166,7 @@ jobs:
 
       - name: Install dependencies for ${{ matrix.app }}
         run: |
-          # Only vanilla-ts currently in matrix; other frameworks commented out.
+          # Install deps for app in matrix
           if [ -f "apps/${{ matrix.app }}/package.json" ]; then
             echo "Installing ${{ matrix.app }} dependencies..."
             cd apps/${{ matrix.app }}
@@ -182,7 +182,7 @@ jobs:
       - name: Build ${{ matrix.app }} application
         run: |
           cd apps/${{ matrix.app }}
-          # Only vanilla-ts active; other cases retained (commented) for easy re-enable.
+          # Build application
           npm run build
           echo "✅ ${{ matrix.app }} build successful"
 
@@ -224,14 +224,14 @@ jobs:
       - name: Build Docker images
         run: |
           echo "Building Docker images (active services only)..."
-          # Excluding WIP frameworks: chess-vue, chess-react, chess-angular (Dockerfiles removed)
-          docker compose build --parallel chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery
+          # Excluding WIP frameworks: chess-react, chess-angular
+          docker compose build --parallel chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue
           echo "✅ Active Docker images built successfully"
 
       - name: Start services
         run: |
-          echo "Starting active services (excluding WIP vue/react/angular)..."
-          docker compose up -d chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery
+          echo "Starting active services (excluding WIP react/angular)..."
+          docker compose up -d chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue
 
           echo "Waiting for services to start..."
           sleep 30
@@ -270,6 +270,7 @@ jobs:
             "3001:Vanilla JS"
             "3002:Vanilla TypeScript"
             "3003:jQuery"
+            "3004:Vue JS"
           )
 
           for service in "${services[@]}"; do
@@ -322,7 +323,7 @@ jobs:
           docker compose logs backend
 
           echo "=== Frontend Logs ==="
-          docker compose logs landing chess-vanilla chess-vanilla-ts chess-jquery || true
+          docker compose logs landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue || true
 
       - name: Cleanup
         if: always()

@@ -127,3 +127,6 @@ dist/
 # Miscellaneous
 wiki/
 *.patch
+
+# AI tools
+.ai/*
