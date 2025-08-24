@@ -20,6 +20,10 @@
     transform: rotate(180deg);
 }
 
+/* Suppress animation for initial orientation application when loading as black */
+.chess-board.no-animate { transition: none !important; }
+.chess-board.no-animate .square { transition: none !important; }
+
 .chess-board.flipped .square {
     transform: rotate(180deg);
 }
@@ -254,6 +258,37 @@ main {
     flex-direction: column;
     gap: 20px;
 }
+
+/* Modernized Save Slots & PGN cards */
+.save-slots.card-like, .pgn-card.card-like {
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg,10px);
+    padding: 14px 16px 18px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.save-slots.card-like h3, .pgn-card.card-like h3 { margin-top:0; margin-bottom:10px; font-size:1.05rem; letter-spacing:.5px; }
+
+.slots-grid { display:grid; gap:10px; grid-template-columns:1fr; }
+.slot { background: var(--color-bg-surface-alt); color: var(--color-text-primary); border:1px solid var(--color-border); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:6px; transition:background .2s ease, border-color .2s ease; }
+.slot:hover { background: var(--color-bg-surface); border-color: var(--color-brand-start); }
+.slot-label { font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; opacity:.8; }
+.slot-time { font-size:.7rem; opacity:.7; }
+.slot-actions { display:flex; gap:6px; flex-wrap:wrap; }
+
+.pgn-output { width:100%; min-height:120px; resize:vertical; font-family:var(--font-mono,monospace); font-size:.7rem; padding:6px 8px; border:1px solid var(--color-border); border-radius:6px; background:var(--color-bg-surface-alt); color:var(--color-text-primary); outline:none; }
+.pgn-output:focus { border-color: var(--color-brand-start); box-shadow:0 0 0 3px rgba(102,126,234,.25); }
+.pgn-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.pgn-input { width:100%; min-height:80px; font-family:var(--font-mono,monospace); font-size:.7rem; padding:6px 8px; border:1px solid var(--color-border); border-radius:6px; background:var(--color-bg-surface); }
+.pgn-import { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+.import-hint { font-size:.6rem; opacity:.65; }
+
+/* Dark theme fine tuning */
+[data-theme="dark"] .pgn-output { background: var(--color-bg-surface); }
+[data-theme="dark"] .slot { background: var(--color-bg-surface); }
+
 
 /* Configuration Panel */
 .game-config {
@@ -502,6 +537,11 @@ main {
 .btn-secondary:hover {
     background: linear-gradient(145deg, #545b62, #3d4449);
     box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.btn-smaller {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
 }
 
 /* Move History */

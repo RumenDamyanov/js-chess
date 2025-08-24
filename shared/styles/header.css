@@ -76,12 +76,6 @@
     border-radius: 6px;
     transition: all 0.2s ease;
     font-size: 0.875rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    white-space: nowrap;
-}
 
 .nav-link.nav-link-disabled {
     color: #9ca3af !important;
@@ -94,6 +88,12 @@
 .nav-link.nav-link-disabled.active {
     font-weight: 600;
     color: #a3a3a3 !important;
+}
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
 }
 
 .nav-link:hover {

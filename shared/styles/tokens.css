@@ -1,113 +1,64 @@
+/* Design Tokens & CSS Custom Properties */
+/* Light theme defaults */
 :root {
-  /* Brand Gradient */
-  --color-brand-start: #667eea;
-  --color-brand-end: #764ba2;
-
-  /* Backgrounds */
-  --color-bg-body-gradient: linear-gradient(135deg, var(--color-brand-start) 0%, var(--color-brand-end) 100%);
-  --color-bg-surface: #ffffff;
-  --color-bg-surface-alt: #f8f9fa;
-
-  /* Chess Board */
-  --color-board-border: #2c3e50;
-  --color-square-light: #f0d9b5;
-  --color-square-dark: #b58863;
-  --color-square-selected: #7fb3d3;
-  --color-square-selected-outline: #4a90a4;
-  --color-square-highlight: #ffffcc;
-  --color-square-move-dot: rgba(0, 0, 0, 0.3);
-  --color-square-capture: rgba(255, 0, 0, 0.6);
-  --color-piece-white: #ffffff;
-  --color-piece-black: #000000;
-
-  /* Text */
-  --color-text-primary: #333333;
-  --color-text-secondary: #666666;
-  --color-text-inverse: #ffffff;
-  --color-text-muted: #888888;
-  --color-text-field: #000000; /* Explicit field text color (light theme) */
-
-  /* Status / Semantic */
-  --color-success: #28a745;
-  --color-danger: #dc3545;
-  --color-warning: #ffc107;
-  --color-info: #17a2b8;
-
-  /* Borders */
-  --color-border: #dee2e6;
-  --color-border-subtle: #e0e0e0;
-
-  /* Buttons */
-  --color-btn-primary-bg: linear-gradient(45deg, var(--color-brand-start), var(--color-brand-end));
-  --color-btn-secondary-bg: #f8f9fa;
-  --color-btn-secondary-text: #495057;
-  --color-btn-secondary-border: #dee2e6;
-
-  /* Chat */
-  --color-chat-header-bg: linear-gradient(135deg, var(--color-brand-start) 0%, var(--color-brand-end) 100%);
-  --color-chat-header-bg-hover: linear-gradient(135deg, #5a6fd8 0%, #6a3093 100%);
-  --color-chat-user-msg-bg: linear-gradient(135deg, var(--color-brand-start) 0%, var(--color-brand-end) 100%);
-  --color-chat-ai-msg-bg: #ffffff;
-  --color-chat-ai-msg-border: #e0e0e0;
-  --color-chat-reaction-bg: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
-  --color-chat-scroll-thumb: #d0d0d0;
-  --color-chat-scroll-thumb-hover: #b0b0b0;
-  --color-chat-input-border: #e0e0e0;
-  --color-chat-input-focus: rgba(102, 126, 234, 0.1);
-  --color-chat-disabled-bg: #f5f5f5;
-
-  /* Effects */
-  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.2);
-  --shadow-card: 0 4px 20px rgba(0,0,0,0.1);
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-
-  /* Animation / Misc */
-  --transition-fast: 0.2s ease;
-  --transition-medium: 0.3s ease;
+	--color-brand-start:#667eea;
+	--color-brand-end:#764ba2;
+	--color-bg-body-gradient:linear-gradient(135deg,var(--color-brand-start) 0%,var(--color-brand-end) 100%);
+	--color-bg-surface:#ffffff;
+	--color-bg-surface-alt:#f8f9fb;
+	--color-text-primary:#222831;
+	--color-text-secondary:#5a6270;
+	--color-text-inverse:#ffffff;
+	--color-border:#d9dee3;
+	--color-success:#22a06b;
+	--color-danger:#d9534f;
+	--color-warning:#ffb400;
+	--color-info:#3d8bfd;
+	--color-btn-primary-bg:linear-gradient(135deg,#667eea,#764ba2);
+	--color-btn-secondary-bg:#eef1f5;
+	--color-btn-secondary-border:#d0d7e2;
+	--color-btn-secondary-text:#2f3642;
+	--color-square-light:#f0d9b5;
+	--color-square-dark:#b58863;
+	--color-square-selected:#ffe58a;
+	--color-square-selected-outline:#d48806;
+	--color-square-highlight:#91d5ff;
+	--color-square-move-dot:rgba(0,0,0,.35);
+	--color-square-capture:rgba(255,0,0,.25);
+	--color-piece-white:#ffffff;
+	--color-piece-black:#222831;
+	--radius-sm:4px;
+	--radius-md:6px;
+	--radius-lg:10px;
+	--shadow-elevated:0 4px 16px rgba(0,0,0,0.12);
+	--transition-fast:.18s ease;
 }
 
 /* Dark theme overrides */
 [data-theme="dark"] {
-  --color-bg-body-gradient: radial-gradient(circle at top left, #1e2430, #10141a 70%);
-  --color-bg-surface: #1e242c;
-  --color-bg-surface-alt: #161b22;
-
-  --color-text-primary: #e4e8ef;
-  --color-text-secondary: #a0acb9;
-  --color-text-muted: #7a8694;
-  --color-text-inverse: #ffffff;
-
-  --color-board-border: #506077;
-  --color-square-light: #b8c2cc;
-  --color-square-dark: #5a6572;
-  --color-square-selected: #4f82a0;
-  --color-square-selected-outline: #79b1cc;
-  --color-square-highlight: #f2e7a1;
-  --color-square-move-dot: rgba(255, 255, 255, 0.35);
-  --color-square-capture: rgba(255, 90, 90, 0.6);
-  --color-piece-white: #ffffff;
-  --color-piece-black: #000000;
-
-  --color-border: #2d3742;
-  --color-border-subtle: #2a323c;
-  --color-chat-ai-msg-bg: #1f262e;
-  --color-chat-ai-msg-border: #2d3742;
-  --color-chat-scroll-thumb: #3a4652;
-  --color-chat-scroll-thumb-hover: #465463;
-  --color-chat-input-border: #2d3742;
-  --color-chat-disabled-bg: #2a323c;
-  --color-chat-input-focus: rgba(102,126,234,0.25);
-
-  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.6);
-  --shadow-card: 0 4px 20px rgba(0,0,0,0.5);
+	--color-bg-body-gradient:linear-gradient(135deg,#1f2937 0%, #111827 100%);
+	--color-bg-surface:#1e2530;
+	--color-bg-surface-alt:#26303d;
+	--color-text-primary:#f2f5f9;
+	--color-text-secondary:#9ca3af;
+	--color-border:#374151;
+	--color-btn-secondary-bg:#2d3746;
+	--color-btn-secondary-border:#3b4756;
+	--color-btn-secondary-text:#f2f5f9;
+	--color-square-light:#b58863; /* keep board contrast */
+	--color-square-dark:#2c3e50;
+	--color-square-selected:#8b6f2d;
+	--color-square-selected-outline:#ffd666;
+	--color-square-highlight:#2563eb;
+	--color-square-move-dot:rgba(255,255,255,.35);
+	--color-square-capture:rgba(255,76,76,.35);
+	--color-piece-white:#f8fafc;
+	--color-piece-black:#0f172a;
 }
 
-/* Optional automatic prefers-color-scheme */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-  }
+html,body { color-scheme: light dark; }
+
+/* Smooth theme transition */
+body, .card, .game-config, .timer-info, .move-history, .game-info, .save-slots, .pgn-card {
+	transition: background-color .3s ease, color .3s ease, border-color .3s ease;
 }

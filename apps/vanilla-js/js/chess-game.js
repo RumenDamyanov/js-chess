@@ -40,6 +40,7 @@ class ChessAPI {
             Debug.log('apiClient', 'Getting game state for ID:', gameId);
             const response = await fetch(`${this.baseURL}/api/games/${gameId}`);
             if (!response.ok) {
+                if(response.status===404) throw new Error('game_not_found');
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const result = await response.json();
@@ -62,6 +63,7 @@ class ChessAPI {
                 body: JSON.stringify(move)
             });
             if (!response.ok) {
+                if(response.status===404) throw new Error('game_not_found');
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const result = await response.json();
@@ -78,6 +80,7 @@ class ChessAPI {
             Debug.log('apiClient', 'Getting valid moves for game:', gameId);
             const response = await fetch(`${this.baseURL}/api/games/${gameId}/legal-moves`);
             if (!response.ok) {
+                if(response.status===404) throw new Error('game_not_found');
                 Debug.warn('apiClient', `Legal moves endpoint returned status ${response.status}: ${response.statusText}`);
                 return { legal_moves: [] };
             }
@@ -106,6 +109,7 @@ class ChessAPI {
 
             if (!response.ok) {
                 const errorText = await response.text();
+                if(response.status===404) throw new Error('game_not_found');
                 Debug.error('apiClient', `AI move failed with status ${response.status}: ${errorText}`);
                 throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
@@ -135,6 +139,7 @@ class ChessAPI {
 
             if (!response.ok) {
                 const errorText = await response.text();
+                if(response.status===404) throw new Error('game_not_found');
                 Debug.error('apiClient', `AI hint failed with status ${response.status}: ${errorText}`);
                 throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             }
@@ -242,7 +247,7 @@ class ChessGame {
         }
     }
 
-    async startNewGame() {
+    async startNewGame(options = {}) {
         try {
             Debug.log('gameController', 'Starting new game');
             // End any current game timers
@@ -278,16 +283,20 @@ class ChessGame {
                 window.gameConfig.onGameStart();
             }
 
+            const suppressAIMove = !!options.suppressAIMove;
+
             if (playerColor === 'white') {
                 this.showMessage(`New game started! You play as White - make your move!`, 'success');
                 Debug.log('gameController', 'Player plays as White, waiting for human move');
             } else {
                 // For black players: AI plays as white and will move first
-                this.showMessage(`New game started! You play as Black - AI will move first!`, 'success');
-                Debug.log('gameController', 'Player plays as Black, triggering AI move');
-                // Trigger AI move since AI plays white when player is black
-                this.isAITurn = true;
-                setTimeout(() => this.makeAIMove(), 1000);
+                this.showMessage(`New game started! You play as Black - ${suppressAIMove ? 'replaying moves...' : 'AI will move first!'}`, 'success');
+                Debug.log('gameController', 'Player plays as Black', suppressAIMove ? '(AI move suppressed for replay)' : '(triggering AI move)');
+                if (!suppressAIMove) {
+                    // Trigger AI move since AI plays white when player is black
+                    this.isAITurn = true;
+                    setTimeout(() => this.makeAIMove(), 1000);
+                }
             }
         } catch (error) {
             this.showMessage('Failed to start new game. Check if backend is running.', 'error');
@@ -906,16 +915,36 @@ class ChessGame {
 
             // Replay the moves
             for (const move of movesToReplay) {
-                await this.api.makeMove(newGame.id, {
-                    from: move.from,
-                    to: move.to
-                });
+                try {
+                    let payload;
+                    // Preserve castling by sending notation if available
+                    if (move.type === 'castling' || (move.notation && /O-O/.test(move.notation))) {
+                        payload = { notation: move.notation };
+                    } else {
+                        payload = { from: move.from, to: move.to };
+                        // Preserve promotion piece if original move was a promotion
+                        if (move.promotion) {
+                            payload.promotion = move.promotion;
+                        } else if (move.notation && /=/.test(move.notation)) {
+                            // Derive promotion piece from notation like e8=Q
+                            const promoMatch = move.notation.match(/=([QRBNqrbn])/);
+                            if (promoMatch) payload.promotion = promoMatch[1].toUpperCase();
+                        }
+                    }
+                    await this.api.makeMove(newGame.id, payload);
+                } catch (e) {
+                    Debug.warn && Debug.warn('undoReplay', 'Failed to replay move during undo', move, e);
+                    break; // Stop replaying further if a move fails
+                }
             }
 
             // Update to the new game state
             const updatedGame = await this.api.getGame(newGame.id);
             this.gameId = newGame.id;
             this.gameState = updatedGame;
+            if (updatedGame.fen) {
+                this.currentFEN = updatedGame.fen; // ensure board reflects undone position
+            }
 
             // Make sure AI turn flag is false after undo
             this.isAITurn = false;
@@ -1112,6 +1141,9 @@ class ChessGame {
 }
 
 // Initialize the game when the page loads
+// IMPORTANT: assign to window.chessGame so other modules (pgn-saves, autosave, PGN export, chat)
+// can reliably access the active game instance. Previous code instantiated anonymously which
+// prevented save slots & PGN logic from detecting an "active game" (gameId stayed undefined there).
 document.addEventListener('DOMContentLoaded', () => {
-    new ChessGame();
+    window.chessGame = new ChessGame();
 });

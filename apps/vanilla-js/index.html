@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess - Vanilla JavaScript</title>
     <!-- Shared global styles -->
-    <link rel="stylesheet" href="shared/styles/tokens.css">
+    <link rel="stylesheet" href="shared/styles/tokens.css?v=dev1">
     <link rel="stylesheet" href="shared/styles/common.css">
     <link rel="stylesheet" href="shared/styles/header.css">
     <link rel="stylesheet" href="shared/styles/chess-board.css">
@@ -29,7 +29,7 @@
                     <li><a href="http://localhost:3001" class="nav-link active">📦 Vanilla</a></li>
                     <li><a href="http://localhost:3002" class="nav-link">📘 TypeScript</a></li>
                     <li><a href="http://localhost:3003" class="nav-link">💙 jQuery</a></li>
-                    <li><a href="http://localhost:3004" class="nav-link">💚 Vue</a></li>
+                    <li><span class="nav-link nav-link-disabled" title="Work in progress">💚 Vue (WIP)</span></li>
                     <li><span class="nav-link nav-link-disabled" title="Work in progress">⚛️ React (WIP)</span></li>
                     <li><span class="nav-link nav-link-disabled" title="Work in progress">🅰️ Angular (WIP)</span></li>
                 </ul>
@@ -123,6 +123,39 @@
                         </div>
                     </div>
                 </div>
+
+                                <div class="save-slots card-like" id="save-slots-card">
+                    <h3>💾 Save Slots</h3>
+                    <div class="slots-grid">
+                        <div class="slot" data-slot="1">
+                            <div class="slot-label">Slot 1</div>
+                            <div class="slot-time" id="slot-1-time">Empty</div>
+                            <div class="slot-actions">
+                                <button class="btn btn-smaller" data-action="save" data-slot="1">Save</button>
+                                <button class="btn btn-smaller" data-action="load" data-slot="1">Load</button>
+                                <button class="btn btn-smaller" data-action="delete" data-slot="1">✕</button>
+                            </div>
+                        </div>
+                        <div class="slot" data-slot="2">
+                            <div class="slot-label">Slot 2</div>
+                            <div class="slot-time" id="slot-2-time">Empty</div>
+                            <div class="slot-actions">
+                                <button class="btn btn-smaller" data-action="save" data-slot="2">Save</button>
+                                <button class="btn btn-smaller" data-action="load" data-slot="2">Load</button>
+                                <button class="btn btn-smaller" data-action="delete" data-slot="2">✕</button>
+                            </div>
+                        </div>
+                        <div class="slot" data-slot="3">
+                            <div class="slot-label">Slot 3</div>
+                            <div class="slot-time" id="slot-3-time">Empty</div>
+                            <div class="slot-actions">
+                                <button class="btn btn-smaller" data-action="save" data-slot="3">Save</button>
+                                <button class="btn btn-smaller" data-action="load" data-slot="3">Load</button>
+                                <button class="btn btn-smaller" data-action="delete" data-slot="3">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="board-wrapper">
@@ -145,6 +178,11 @@
 
                 <div id="timer-display" class="timer-info">
                     <h3>⏱️ Game Timer</h3>
+                    <div class="card-actions actions-grid" style="margin-bottom:8px;">
+                        <button id="timer-pause-btn" class="btn btn-small" title="Pause or resume the active timer">Pause</button>
+                        <button id="timer-reset-btn" class="btn btn-small" title="Reset both timers to initial state">Reset</button>
+                        <div class="orientation-indicator">Orientation: <span id="orientation-indicator">White</span></div>
+                    </div>
                     <div class="timer-content">
                         <div class="timer-row">
                             <span class="timer-label">White:</span>
@@ -164,6 +202,25 @@
                             <span class="move-number">-</span>
                             <span class="move-notation">Game started</span>
                         </div>
+                    </div>
+                </div>
+
+                <div class="pgn-card card-like" id="pgn-card">
+                    <h3>📄 PGN</h3>
+                    <textarea id="pgn-output" class="pgn-output" readonly placeholder="Play moves to generate PGN"></textarea>
+                    <div class="pgn-actions">
+                        <button class="btn btn-smaller" id="pgn-copy-btn" aria-label="Copy PGN to clipboard" disabled>Copy</button>
+                        <button class="btn btn-smaller" id="pgn-download-btn" aria-label="Download PGN as file" disabled>Download</button>
+                        <button class="btn btn-smaller" id="pgn-refresh-btn" aria-label="Regenerate PGN from move history" disabled>Refresh</button>
+                        <button class="btn btn-smaller" id="pgn-import-toggle" aria-expanded="false" aria-controls="pgn-import-panel">Import</button>
+                    </div>
+                    <div id="pgn-import-panel" class="pgn-import" style="display:none;" role="region" aria-label="PGN import panel">
+                        <textarea id="pgn-import-input" class="pgn-input" placeholder="Paste PGN with coordinate moves (e2e4 e7e5 ...)"></textarea>
+                        <div class="pgn-actions">
+                            <button class="btn btn-smaller" id="pgn-import-run" disabled>Load PGN</button>
+                            <button class="btn btn-smaller" id="pgn-import-clear" disabled>Clear</button>
+                        </div>
+                        <div class="import-hint">Note: Only simple coordinate moves are supported for import.</div>
                     </div>
                 </div>
             </div>
@@ -196,12 +253,13 @@
         </div>
     </div>
 
-    <script src="shared/styles/theme-toggle.js"></script>
-    <script src="shared/assets/js/helpers.js"></script>
-    <script src="shared/assets/js/messages.js"></script>
+    <script src="shared/styles/theme-toggle.js?v=dev1"></script>
+    <script src="shared/assets/js/helpers.js?v=dev1"></script>
+    <script src="shared/assets/js/messages.js?v=dev1"></script>
     <script src="js/config.js"></script>
     <script src="js/debug.js"></script>
     <script src="js/chess-game.js"></script>
+    <script src="js/pgn-saves.js"></script>
     <script src="js/chat.js"></script>
 </body>
 </html>

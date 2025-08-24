@@ -23,6 +23,7 @@ class GameConfig {
 
         this.flipTimeout = null; // Track pending flip animation timeouts
         this.flipInProgress = false; // Track if board flip is currently animating
+    this.initialOrientationApplied = false; // Prevent repeated flip animation on initial load when black
 
         this.init();
     }
@@ -33,6 +34,7 @@ class GameConfig {
         this.loadSettings();
         this.updateDisplay();
         this.applyConfig();
+    this.updateOrientationIndicator();
     }
 
     // Cookie helper methods
@@ -63,6 +65,7 @@ class GameConfig {
         // Player settings
         document.getElementById('player-name').addEventListener('input', (e) => {
             this.config.playerName = e.target.value || 'Player 1';
+            localStorage.setItem('player-name', this.config.playerName);
             this.updatePlayerDisplay();
             this.saveSettings();
         });
@@ -70,6 +73,7 @@ class GameConfig {
         document.getElementById('player-color').addEventListener('change', (e) => {
             this.config.playerColor = e.target.value;
             this.updateBoardOrientation();
+            this.updateOrientationIndicator();
             this.saveSettings();
         });
 
@@ -116,10 +120,29 @@ class GameConfig {
             this.resetTimers();
             this.saveSettings();
         });
+
+        // Timer controls (optional elements)
+        const pauseBtn = document.getElementById('timer-pause-btn');
+        const resetBtn = document.getElementById('timer-reset-btn');
+        if (pauseBtn) {
+            pauseBtn.addEventListener('click', () => {
+                if (this.paused) {
+                    this.resumeTimer();
+                } else {
+                    this.pauseTimer();
+                }
+            });
+        }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => this.resetTimers());
+        }
     }
 
     loadSettings() {
-        const saved = this.getCookie('chess-config');
+    // Prefer localStorage for player name to avoid cookie stripping, fallback to cookie config
+    const storedName = localStorage.getItem('player-name');
+    if(storedName) this.config.playerName = storedName;
+    const saved = this.getCookie('chess-config');
         if (saved) {
             try {
                 this.config = { ...this.config, ...saved };
@@ -158,11 +181,25 @@ class GameConfig {
 
     updateBoardOrientation() {
         const chessBoard = document.getElementById('chess-board');
+        const desiredBlack = this.config.playerColor === 'black';
         if (chessBoard) {
-            if (this.config.playerColor === 'black') {
-                chessBoard.classList.add('flipped');
+            // First time application: apply orientation without animation to avoid flip flash on reload
+            if (!this.initialOrientationApplied) {
+                if (desiredBlack) {
+                    chessBoard.classList.add('no-animate');
+                    chessBoard.classList.add('flipped');
+                    // Force reflow then remove no-animate so future flips animate
+                    requestAnimationFrame(() => {
+                        chessBoard.offsetHeight; // reflow
+                        chessBoard.classList.remove('no-animate');
+                    });
+                } else {
+                    chessBoard.classList.remove('flipped');
+                }
+                this.initialOrientationApplied = true;
             } else {
-                chessBoard.classList.remove('flipped');
+                // Subsequent user-triggered changes: animate as normal
+                if (desiredBlack) chessBoard.classList.add('flipped'); else chessBoard.classList.remove('flipped');
             }
         }
 
@@ -171,19 +208,23 @@ class GameConfig {
             clearTimeout(this.flipTimeout);
         }
 
-        // Mark flip as in progress
-        this.flipInProgress = true;
+    // Only mark animation logic for true user-triggered flips (not initial silent orientation)
+    this.flipInProgress = this.initialOrientationApplied;
 
         // Trigger board recreation with new orientation
         if (window.chessGame && window.chessGame.createBoard) {
             window.chessGame.createBoard();
             if (window.chessGame.gameState) {
                 window.chessGame.updateBoard();
-
-                // Wait for CSS transition to complete (0.5s) before updating logic
-                this.flipTimeout = setTimeout(() => {
+                if (this.flipInProgress) {
+                    // Wait for CSS transition to complete (0.5s) before updating logic
+                    this.flipTimeout = setTimeout(() => {
+                        this.completeColorChangeLogic();
+                    }, 500);
+                } else {
+                    // Immediate logic update when no animation
                     this.completeColorChangeLogic();
-                }, 500); // Match the CSS transition duration
+                }
             }
         }
     }
@@ -199,6 +240,7 @@ class GameConfig {
 
             // Mark flip as complete
             this.flipInProgress = false;
+        this.updateOrientationIndicator();
         }
     }    checkAIMoveAfterColorChange() {
         // Only check if we have an active game
@@ -279,10 +321,10 @@ class GameConfig {
 
         this.stopTimer();
         this.timers.startTime = Date.now();
+    this.paused = false;
+    this.updatePauseButtonLabel();
 
-        this.timers.interval = setInterval(() => {
-            this.updateTimers();
-        }, 1000);
+    this.startOrResumeInterval();
 
         this.updateTimerDisplay();
     }
@@ -308,10 +350,12 @@ class GameConfig {
 
         this.timers.activePlayer = this.config.playerColor;
         this.updateTimerDisplay();
+    this.paused = false;
+    this.updatePauseButtonLabel();
     }
 
     updateTimers() {
-        if (!this.config.enableTimer || !this.timers.startTime) return;
+    if (!this.config.enableTimer || !this.timers.startTime || this.paused) return;
 
         const now = Date.now();
         const elapsed = Math.floor((now - this.timers.startTime) / 1000);
@@ -373,6 +417,39 @@ class GameConfig {
         this.timers.activePlayer = this.timers.activePlayer === 'white' ? 'black' : 'white';
         this.timers.startTime = Date.now();
         this.updateTimerDisplay();
+    }
+
+    // Pause / Resume helpers
+    pauseTimer() {
+        if (this.timers.interval) {
+            clearInterval(this.timers.interval);
+            this.timers.interval = null;
+        }
+        this.paused = true;
+        this.updatePauseButtonLabel();
+    }
+
+    resumeTimer() {
+        if (!this.config.enableTimer || !this.timers.startTime) return;
+        this.paused = false;
+        this.updatePauseButtonLabel();
+        this.startOrResumeInterval();
+    }
+
+    startOrResumeInterval() {
+        if (this.timers.interval || this.paused) return;
+        this.timers.interval = setInterval(() => this.updateTimers(), 1000);
+    }
+
+    updatePauseButtonLabel() {
+        const btn = document.getElementById('timer-pause-btn');
+        if (btn) btn.textContent = this.paused ? 'Resume' : 'Pause';
+    }
+
+    // Orientation indicator update (called after color changes)
+    updateOrientationIndicator() {
+        const el = document.getElementById('orientation-indicator');
+        if (el) el.textContent = this.config.playerColor === 'white' ? 'White' : 'Black';
     }
 
     onTimeOut(player) {

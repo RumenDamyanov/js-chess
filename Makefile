@@ -16,11 +16,13 @@ PROJECT_NAME := js-chess
 COMPOSE_FILE := docker-compose.yml
 BACKEND_IMAGE := chess-backend
 
-# NOTE: Angular / React remain WIP and are intentionally excluded
-# from default aggregate targets. Vue has been re-enabled for local runs.
-ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-landing chess-vue
-WIP_SERVICES := chess-angular chess-react # (disabled from aggregate commands)
-FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-landing chess-vue
+# NOTE: Angular / React / Vue are currently marked WIP and intentionally excluded
+# from default aggregate build / start / health targets to speed up development.
+# To re-enable, add the services back to ACTIVE_SERVICES (and related port lists)
+# or invoke their individual targets (e.g., make start-angular, make build-react).
+ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-landing
+WIP_SERVICES := chess-angular chess-react chess-vue # (disabled from aggregate commands)
+FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-landing
 
 ##@ General Commands
 
@@ -44,14 +46,14 @@ logs-backend: ## Show backend logs only
 	@docker-compose logs -f chess-backend
 
 .PHONY: logs-frontend
-logs-frontend: ## Show active frontend logs (WIP: angular/react excluded)
-	@docker-compose logs -f chess-jquery chess-vanilla chess-vanilla-ts chess-landing chess-vue
+logs-frontend: ## Show active frontend logs (WIP: angular/react/vue excluded)
+	@docker-compose logs -f chess-jquery chess-vanilla chess-vanilla-ts chess-landing
 
 ##@ Development Commands
 
 .PHONY: up
 up: ## Start active (non-WIP) containers in detached mode
-	@echo "$(GREEN)Starting active containers (excluding angular/react)...$(RESET)"
+	@echo "$(GREEN)Starting active containers (excluding angular/react/vue)...$(RESET)"
 	@docker-compose up -d $(ACTIVE_SERVICES)
 	@echo "$(GREEN)✅ Active containers started!$(RESET)"
 	@echo "$(YELLOW)Access URLs:$(RESET)"
@@ -59,7 +61,7 @@ up: ## Start active (non-WIP) containers in detached mode
 	@echo "  Vanilla JS:          http://localhost:3001"
 	@echo "  Vanilla TypeScript:  http://localhost:3002"
 	@echo "  jQuery:              http://localhost:3003"
-	@echo "  Vue.js:              http://localhost:3004"
+	@echo "  (WIP) Vue.js:        http://localhost:3004  # disabled"
 	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
 	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
 	@echo "  Backend API:         http://localhost:8080"
@@ -69,7 +71,7 @@ start: up ## Alias for 'up' command
 
 .PHONY: dev
 dev: ## Start active containers (build if needed) and stream logs (WIP excluded)
-	@echo "$(GREEN)Starting development environment (excluding angular/react)...$(RESET)"
+	@echo "$(GREEN)Starting development environment (excluding angular/react/vue)...$(RESET)"
 	@docker-compose up --build $(ACTIVE_SERVICES)
 
 .PHONY: down
@@ -97,7 +99,7 @@ restart-frontend: ## Restart active frontend containers (WIP excluded)
 
 .PHONY: build
 build: ## Build active containers only (backend + non-WIP frontends)
-	@echo "$(GREEN)Building active containers (excluding angular/react)...$(RESET)"
+	@echo "$(GREEN)Building active containers (excluding angular/react/vue)...$(RESET)"
 	@docker-compose build $(ACTIVE_SERVICES)
 	@echo "$(GREEN)✅ Active containers built$(RESET)"
 
@@ -109,7 +111,7 @@ build-backend: ## Build only the backend container
 
 .PHONY: build-frontend
 build-frontend: ## Build active frontend containers (WIP excluded)
-	@echo "$(GREEN)Building active frontend containers (excluding angular/react)...$(RESET)"
+	@echo "$(GREEN)Building active frontend containers (excluding angular/react/vue)...$(RESET)"
 	@docker-compose build $(FRONTEND_IMAGES)
 	@echo "$(GREEN)✅ Active frontend containers built$(RESET)"
 
@@ -149,7 +151,7 @@ build-shared-styles: ## (No-op placeholder) Process shared CSS design tokens if 
 
 .PHONY: rebuild
 rebuild: ## Complete rebuild of active containers only (WIP excluded)
-	@echo "$(YELLOW)Performing complete rebuild (excluding angular/react)...$(RESET)"
+	@echo "$(YELLOW)Performing complete rebuild (excluding angular/react/vue)...$(RESET)"
 	@docker-compose down --rmi local --volumes --remove-orphans
 	@docker-compose build --no-cache $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)
@@ -159,14 +161,14 @@ rebuild: ## Complete rebuild of active containers only (WIP excluded)
 	@echo "  Vanilla JS:          http://localhost:3001"
 	@echo "  Vanilla TS:          http://localhost:3002"
 	@echo "  jQuery:              http://localhost:3003"
-	@echo "  Vue.js:              http://localhost:3004"
+	@echo "  (WIP) Vue.js:        http://localhost:3004  # disabled"
 	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
 	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
 	@echo "  Backend API:         http://localhost:8080"
 
 .PHONY: restart
 restart: ## Soft rebuild (active containers only, cache enabled)
-	@echo "$(YELLOW)Performing soft restart of active containers (excluding angular/react)...$(RESET)"
+	@echo "$(YELLOW)Performing soft restart of active containers (excluding angular/react/vue)...$(RESET)"
 	@docker-compose down
 	@docker-compose build $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)
@@ -272,8 +274,9 @@ test-api: ## Test backend API endpoints
 	@curl -s http://localhost:8080/health || echo "Backend not responding"
 
 .PHONY: test-frontend
+test-frontend: ## Test active frontend endpoints (WIP excluded)
 	@echo "$(BLUE)Testing active frontend endpoints...$(RESET)"
-	@for port in 3000 3001 3002 3003 3004; do \
+	@for port in 3000 3001 3002 3003; do \
 		echo "$(YELLOW)Testing http://localhost:$$port$(RESET)"; \
 
 .PHONY: validate-ci
@@ -316,11 +319,12 @@ inspect: ## Show detailed container information
 	@docker-compose ps --format "table {{.Service}}\t{{.Status}}\t{{.Ports}}"
 
 .PHONY: health
+health: ## Check health of active services (WIP excluded)
 	@echo "$(BLUE)Service Health Check (active only):$(RESET)"
 	@echo "$(YELLOW)Backend API:$(RESET)"
 	@curl -s http://localhost:8080/health && echo " ✅" || echo " ❌"
 	@echo "$(YELLOW)Frontend Services:$(RESET)"
-	@for port in 3000 3001 3002 3003 3004; do \
+	@for port in 3000 3001 3002 3003; do \
 		printf "  Port $$port: "; \
 		curl -s -o /dev/null -w "%{http_code}" http://localhost:$$port && echo " ✅" || echo " ❌"; \
 	done
@@ -359,18 +363,16 @@ open: ## Open active applications in browser (macOS, WIP excluded)
 	@open http://localhost:3001  # Vanilla JS
 	@open http://localhost:3002  # Vanilla TypeScript
 	@open http://localhost:3003  # jQuery
-	@open http://localhost:3004  # Vue.js
-	@echo "(Skipping WIP angular/react)"
+	@echo "(Skipping WIP angular/react/vue)"
 
 .PHONY: urls
-
 urls: ## Display active application URLs (WIP excluded)
 	@echo "$(BLUE)Application URLs (active set):$(RESET)"
 	@echo "  $(YELLOW)Landing Page:$(RESET)        http://localhost:3000"
 	@echo "  $(YELLOW)Vanilla JS:$(RESET)          http://localhost:3001"
 	@echo "  $(YELLOW)Vanilla TypeScript:$(RESET)  http://localhost:3002"
 	@echo "  $(YELLOW)jQuery:$(RESET)              http://localhost:3003"
-	@echo "  $(YELLOW)Vue.js:$(RESET)              http://localhost:3004"
+	@echo "  $(YELLOW)(WIP) Vue.js:$(RESET)        http://localhost:3004 (disabled)"
 	@echo "  $(YELLOW)(WIP) React.js:$(RESET)      http://localhost:3005 (disabled)"
 	@echo "  $(YELLOW)(WIP) Angular:$(RESET)       http://localhost:3006 (disabled)"
 	@echo "  $(YELLOW)Backend API:$(RESET)         http://localhost:8080"
