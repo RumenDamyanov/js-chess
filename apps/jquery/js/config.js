@@ -33,6 +33,7 @@ class GameConfig {
         this.loadSettings();
         this.updateDisplay();
         this.applyConfig();
+    this.updateOrientationIndicator();
     }
 
     // Cookie helper methods
@@ -71,6 +72,7 @@ class GameConfig {
             this.config.playerColor = e.target.value;
             this.saveSettings();
             this.applyConfig();
+            this.updateOrientationIndicator();
         });
 
         // Enable/disable checkboxes
@@ -106,6 +108,22 @@ class GameConfig {
             this.config.timeLimit = parseInt(e.target.value);
             this.saveSettings();
         });
+
+        // Timer controls (if present)
+        const $pauseBtn = $('#timer-pause-btn');
+        const $resetBtn = $('#timer-reset-btn');
+        if ($pauseBtn.length) {
+            $pauseBtn.on('click', () => {
+                if (this.paused) {
+                    this.resumeTimer();
+                } else {
+                    this.pauseTimer();
+                }
+            });
+        }
+        if ($resetBtn.length) {
+            $resetBtn.on('click', () => this.resetTimers());
+        }
     }
 
     loadSettings() {
@@ -188,9 +206,9 @@ class GameConfig {
         if (!this.config.enableTimer) return;
 
         this.timers.startTime = new Date();
-        this.timers.interval = setInterval(() => {
-            this.updateTimer();
-        }, 1000);
+    this.paused = false;
+    this.updatePauseButtonLabel();
+    this.startOrResumeInterval();
     }
 
     stopTimer() {
@@ -200,8 +218,29 @@ class GameConfig {
         }
     }
 
+    pauseTimer() {
+        if (this.timers.interval) {
+            clearInterval(this.timers.interval);
+            this.timers.interval = null;
+        }
+        this.paused = true;
+        this.updatePauseButtonLabel();
+    }
+
+    resumeTimer() {
+        if (!this.config.enableTimer || !this.timers.startTime) return;
+        this.paused = false;
+        this.updatePauseButtonLabel();
+        this.startOrResumeInterval();
+    }
+
+    startOrResumeInterval() {
+        if (this.timers.interval || this.paused) return;
+        this.timers.interval = setInterval(() => this.updateTimer(), 1000);
+    }
+
     updateTimer() {
-        if (!this.config.enableTimer) return;
+    if (!this.config.enableTimer || this.paused) return;
 
         const now = new Date();
         const elapsedSeconds = Math.floor((now - this.timers.startTime) / 1000);
@@ -236,6 +275,32 @@ class GameConfig {
         this.timers.activePlayer = this.timers.activePlayer === 'white' ? 'black' : 'white';
         this.timers.startTime = new Date();
         this.updateTimerDisplay();
+    }
+
+    resetTimers() {
+        this.stopTimer();
+        if (this.config.timerMode === 'count-down') {
+            const timeLimit = this.config.timeLimit * 60;
+            this.timers.white = timeLimit;
+            this.timers.black = timeLimit;
+        } else {
+            this.timers.white = 0;
+            this.timers.black = 0;
+        }
+        this.timers.activePlayer = this.config.playerColor;
+        this.updateTimerDisplay();
+        this.paused = false;
+        this.updatePauseButtonLabel();
+    }
+
+    updatePauseButtonLabel() {
+        const $btn = $('#timer-pause-btn');
+        if ($btn.length) $btn.text(this.paused ? 'Resume' : 'Pause');
+    }
+
+    updateOrientationIndicator() {
+        const $el = $('#orientation-indicator');
+        if ($el.length) $el.text(this.config.playerColor === 'white' ? 'White' : 'Black');
     }
 
     formatTime(seconds) {

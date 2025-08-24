@@ -282,6 +282,11 @@ main {
     box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
 }
 
+.btn-smaller {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
 /* Move History */
 .move-history {
     padding: 20px;
