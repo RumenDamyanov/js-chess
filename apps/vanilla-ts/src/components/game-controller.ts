@@ -34,6 +34,8 @@ export interface GameControllerEvents {
 /**
  * Main game controller that coordinates all components
  */
+export interface StartGameOptions { suppressAIMove?: boolean }
+
 export class GameController {
   private apiClient: ChessAPIClient;
   private configManager: ConfigManager;
@@ -152,7 +154,7 @@ export class GameController {
   /**
    * Start a new game
    */
-  async startNewGame(): Promise<void> {
+  async startNewGame(options: StartGameOptions = {}): Promise<void> {
     try {
       this.isProcessingMove = true;
   this.updateGameStatus('Starting new game...');
@@ -185,7 +187,7 @@ export class GameController {
       this.emit('gameStarted', gameState);
 
       // If AI plays first, make the first move
-      if (gameState.active_color !== this.gameConfig.playerColor) {
+      if (gameState.active_color !== this.gameConfig.playerColor && !options.suppressAIMove) {
         setTimeout(() => this.makeAIMove(), 1000);
       }
 
@@ -515,16 +517,25 @@ export class GameController {
       // Replay the moves
       let currentGameState = newGameState;
       for (const move of movesToReplay) {
-        const moveRequest: MakeMoveRequest = {
-          from: move.from,
-          to: move.to
-        };
-
-        if (move.promotion) {
-          (moveRequest as any).promotion = move.promotion;
+        try {
+          let moveRequest: MakeMoveRequest;
+          const isCastle = move.type === 'castling' || /O-O/.test(move.notation || '');
+          if (isCastle) {
+            moveRequest = { from: move.from, to: move.to, notation: move.notation } as any;
+          } else {
+            moveRequest = { from: move.from, to: move.to };
+            if (move.promotion) {
+              (moveRequest as any).promotion = move.promotion;
+            } else if (move.notation && /=/.test(move.notation)) {
+              const m = move.notation.match(/=([QRBN])?/);
+              if (m && m[1]) (moveRequest as any).promotion = m[1];
+            }
+          }
+          currentGameState = await this.apiClient.makeMove(currentGameState.id, moveRequest);
+        } catch (e) {
+          Debug.warn('gameController', 'Replay move failed during undo', move, e);
+          break;
         }
-
-        currentGameState = await this.apiClient.makeMove(currentGameState.id, moveRequest);
       }
 
       // Update to the final state after replay
@@ -547,6 +558,9 @@ export class GameController {
       this.isProcessingMove = false;
     }
   }
+
+  /** Public helpers for PGN & save modules */
+  getGameId(): number | null { return this.gameState?.id || null; }
 
   /**
    * Get AI hint for current position

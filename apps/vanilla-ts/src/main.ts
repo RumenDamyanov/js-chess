@@ -3,6 +3,7 @@
  */
 
 import { GameController } from './components/game-controller.js';
+import { initPGNSaves } from './components/pgn-saves.js';
 import { Debug } from './utils/debug.js';
 import { DebugUIManager } from './components/debug-ui-manager.js';
 
@@ -149,6 +150,8 @@ let chessApp: ChessApp;
  */
 function initializeApp(): void {
   chessApp = new ChessApp();
+  // Initialize PGN/save manager now that controller exists
+  try { initPGNSaves(chessApp.getGameController()); } catch {}
 
   // Make app globally accessible for debugging
   (window as any).chessApp = chessApp;

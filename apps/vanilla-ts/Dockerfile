@@ -24,8 +24,9 @@ COPY ./apps/vanilla-ts/css /usr/share/nginx/html/css
 # Copy built JavaScript from build stage
 COPY --from=builder /app/dist /usr/share/nginx/html/dist
 
-# Copy shared styles (ensure nested 'styles' folder to match index.html paths)
+# Copy shared styles & assets (helpers/messages)
 COPY ./shared/styles/ /usr/share/nginx/html/shared/styles/
+COPY ./shared/assets/ /usr/share/nginx/html/shared/assets/
 
 # Copy custom nginx configuration from build stage
 COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf
