@@ -221,10 +221,14 @@ jobs:
 
       - name: Build Docker images
         run: |
-          echo "Building Docker images (active services only)..."
+          echo "Building Docker images (active services only) sequentially to avoid npm 429 rate limits..."
           # Excluding WIP frameworks: chess-react, chess-angular
-          docker compose build --parallel chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue
-          echo "✅ Active Docker images built successfully"
+          set -e
+          for svc in chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue; do
+            echo "--- Building $svc ---"
+            docker compose build $svc
+          done
+          echo "✅ Active Docker images built successfully (sequential)"
 
       - name: Start services
         run: |

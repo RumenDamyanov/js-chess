@@ -11,7 +11,8 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@shared': path.resolve(__dirname, './shared')
+  '@shared': path.resolve(__dirname, './shared'), // app-local shared (CSS overrides etc.)
+  '@root-shared': path.resolve(__dirname, '../..', 'shared') // repository root shared (design system + assets)
     }
   },
   build: {

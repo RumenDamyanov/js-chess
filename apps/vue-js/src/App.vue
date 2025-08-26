@@ -186,11 +186,12 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { usePersistentConfig } from './composables/usePersistentConfig.js'
 import ChatComponent from './components/ChatComponent.vue'
 import GameConfigPanel from './components/GameConfigPanel.vue'
-// Side-effect import of shared PGN helpers (exposes window.JSChessPGN)
-// Adjusted path: shared assets copied to /app/shared/assets in Docker build
-import '../shared/assets/js/helpers.js'
-import '../shared/assets/js/pgn-core.js'
-import '../shared/assets/js/messages.js'
+// Side‑effect imports of shared root assets (helpers / PGN / messages) that attach
+// utilities onto window (Debug, JSChessPGN, JSChessMessages, etc.).
+// Use @root-shared alias so local dev (outside Docker) resolves the repository root shared/.
+import '@root-shared/assets/js/helpers.js'
+import '@root-shared/assets/js/pgn-core.js'
+import '@root-shared/assets/js/messages.js'
 
 // Reactive state
 const gameId = ref('')
