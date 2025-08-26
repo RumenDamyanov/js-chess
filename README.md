@@ -14,37 +14,43 @@ Active & stable (included in default Docker / Make builds):
 - Vanilla JS
 - Vanilla TypeScript
 - jQuery
-- Vue 3
+- Vue 3 (now feature‑aligned: timers, save slots, board + dark mode, shared debug)
 
-Work‑in‑progress (excluded by default – manual start/build only):
+Work‑in‑progress / planned (manual start or placeholders only):
 
-- Angular (planned – WIP)
-- React (planned – WIP)
+- Angular (refactor toward new shared UI patterns)
+- React (planned)
+- UI5 (JS) – placeholder link (landing + headers)
+- UI5 (TS) – placeholder link (landing + headers)
 
-These two WIP apps are intentionally disabled in aggregate Make targets to speed builds. They will return after framework‑specific rewrites that align with recent backend changes (improved move validation, AI workflow, and forthcoming caching / optimistic update layer).
+The WIP / planned entries are excluded from aggregate Make targets to keep build times low. UI5 variants are placeholders to illustrate upcoming framework diversity; ports will be assigned once scaffolds land.
 
 ## ✨ Recent Updates
 
-Latest notable changes (since mid‑2025):
+Latest notable changes (late Aug 2025):
 
-1. Angular rewrite: promotion modal UI, castling handling, SAN move history, AI auto‑move flow, safer undo via replay, self‑capture & illegal move guards.
-2. Unified WIP labeling: Landing page & all active headers show disabled (grey) links for Angular / React.
-3. Makefile optimization: Default `build`, `up`, `rebuild`, `health`, `logs-frontend`, etc. now exclude Angular / React (use `start-angular`, `build-react`, etc. individually). Vue is included.
-4. Promotion & castling UX: Consistent notation capture and server‑validated sequencing.
-5. Shared styling: Added disabled navigation/link styles and WIP tag classes.
+1. Vue 3 brought to full parity (timers pause/resume/reset, save slots, status blocks, chat, move history, board styling, dark mode tokens).
+2. Cross‑framework visual unification: consolidated board, timers, status panels, PGN display, buttons, and dark mode across Vanilla JS / TS / jQuery / Vue.
+3. Landing page redesign: compact hero + 2×4 grid (adds UI5 JS/TS placeholders) with consistent tech icon badges.
+4. Icon system refactor: replaced emojis with CSS `.tech-icon` badges; distinct Home vs Vanilla (JS) colors; consistent navigation across apps.
+5. Unified debug panel: category‑based logging (cookie persisted) with reduced AI verbosity (`aiEngine` category) and legacy bespoke panels removed.
+6. Message system tuning: shorter display duration & smaller queue to prevent overflow; chat overflow clipping improvements.
+7. Accessibility & semantics: aria labels/states for timer controls, disabled nav placeholders, live region message handling.
+8. Documentation in progress: README updated (Vue stable, planned UI5 variants); upcoming wiki additions for UI5 guides.
 
-Planned next steps for the WIP frameworks:
+Planned next steps:
 
-- Introduce a thin shared API client with response caching & diff reconciliation.
-- Implement lightweight state stores (Signals / Zustand pattern equivalents) for faster replays.
-- Add incremental board rendering & piece move animation.
-- Re‑enable once parity with stable implementations is verified via test checklist.
+- Implement UI5 (JS/TS) scaffold (OpenUI5) with shared styling integration.
+- React & Angular modernization aligned with new shared components.
+- Lightweight API response cache + diff reconciliation layer.
+- Incremental board rendering & piece animation pipeline.
+- Additional automated visual regression & accessibility checks.
 
 ## Frameworks
 
 Stable: Vanilla JS · Vanilla TS · jQuery · Vue 3
 
-WIP (temporarily disabled in default build): React · Angular
+WIP / Planned: React · Angular · UI5 (JS) · UI5 (TS)
 
 ## Repository Layout (excerpt)
 
@@ -92,9 +98,9 @@ make install          # Build & start backend + stable frontends
 make urls             # List service URLs (WIP flagged as disabled)
 ```
 
-Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (Vue) · 8080 (API)
+Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (vue 3) · 8080 (API)
 
-WIP (manual if needed): 3005 (react) · 3006 (angular)
+WIP (manual if needed): 3005 (react) · 3006 (angular) · (UI5 JS/TS TBD)
 
 ## Make Targets (selection)
 
@@ -252,6 +258,43 @@ make stats            # Show container resource usage
 make inspect          # Show detailed container information
 ```
 
+### Shared In-Browser Debug Panel
+
+All frontends load a single lightweight debug script: `shared/assets/js/debug.js` which injects:
+
+- Header bug button (toggles panel)
+- Master enable switch (persists via cookie `debug_enabled`)
+- Per-category toggles (cookies `debug_<category>`)
+- Actions: Enable All, Disable All, Clear Console, Test All
+
+Categories:
+`gameController`, `chessBoard`, `apiClient`, `configManager`, `chatManager`, `moveValidation`, `boardRendering`, `userInput`, `aiEngine`
+
+Console helpers (alias to shared Debug):
+
+```js
+debug.enable();
+debug.disable();
+debug.enableCategory('aiEngine');
+debug.toggleCategory('moveValidation');
+debug.test(); // Emits sample logs for every category
+```
+
+Direct calls inside code (preferred over raw console.log for conditional noise suppression):
+
+```js
+Debug.log('aiEngine', 'Scheduling AI move', { gameId, depth });
+Debug.warn('moveValidation', 'Illegal move attempt', move);
+Debug.error('apiClient', 'Request failed', err);
+```
+
+Notes:
+
+- Vue verbose AI logs removed; now gated behind `aiEngine`.
+- TypeScript app legacy bespoke panel removed; adapter proxies old API to shared system.
+- Panel CSS lives in `shared/styles/common.css` (`.debug-panel`, `.debug-actions`, notifications, active button outline).
+- Minimal footprint: no frameworks, pure DOM + cookies.
+
 ### Cleanup Commands
 
 ```bash
@@ -355,28 +398,86 @@ npm run start:backend
 npm run start:vanilla      # Port 3001
 npm run start:vanilla-ts   # Port 3002
 npm run start:jquery       # Port 3003
-npm run start:vue          # Port 3004
+# npm run start:vue       # Port 3004
 # (WIP) npm run start:react   # Port 3005
 # (WIP) npm run start:angular # Port 3006
+# (Planned) UI5 (JS/TS) scripts will be added after scaffolding
 
 # Or start all (includes WIP; slower, not typical right now)
 # npm run start:all
 ```
 
-## � Documentation
+## 📚 API Integration
 
+All applications use the same go-chess API endpoints:
+
+### Core Endpoints
+
+- `POST /api/games` - Create new game
+- `GET /api/games/{id}` - Get game state
+- `POST /api/games/{id}/moves` - Make a move
+- `POST /api/games/{id}/ai-move` - Get AI move
+
+### Advanced Features
+
+- `POST /api/games/{id}/chat` - Chat with AI
+- `GET /api/games/{id}/analysis` - Position analysis
+- `WebSocket /ws/games/{id}` - Real-time updates
+
+See the [API Integration Guide](https://github.com/RumenDamyanov/js-chess/wiki/API-Integration) for detailed documentation.
+
+## 🎓 Learning Objectives
+
+This project demonstrates:
+
+1. **API Integration**: How different frameworks consume RESTful APIs
+2. **WebSocket Handling**: Real-time communication patterns
+3. **State Management**: Different approaches across frameworks
+4. **Component Architecture**: Framework-specific design patterns
+5. **Build Systems**: Modern tooling for each technology
+6. **Deployment**: Docker containerization and orchestration
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Areas for Contribution
+
+- Additional framework implementations (Svelte, Alpine.js, etc.)
+- Enhanced UI/UX improvements
+- Performance optimizations
+- Test coverage improvements
+- Documentation enhancements
+
+## 📖 Documentation
+
+- [Quick Start Guide](https://github.com/RumenDamyanov/js-chess/wiki/Quick-Start)
 - [Project Structure](https://github.com/RumenDamyanov/js-chess/wiki/Project-Structure)
-- [API Integration](https://github.com/RumenDamyanov/js-chess/wiki/API-Integration)
+- [API Integration Guide](https://github.com/RumenDamyanov/js-chess/wiki/API-Integration)
 - [Deployment Guide](https://github.com/RumenDamyanov/js-chess/wiki/Deployment-Guide)
 
-Guides by implementation:
+### Framework-Specific Guides
 
-- [Vanilla JavaScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-JS-Guide)
-- [Vanilla TypeScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-TS-Guide)
-- [jQuery](https://github.com/RumenDamyanov/js-chess/wiki/jQuery-Guide)
-- [Vue 3](https://github.com/RumenDamyanov/js-chess/wiki/Vue-Guide)
-- (WIP) [React](https://github.com/RumenDamyanov/js-chess/wiki/React-Guide)
-- (WIP) [Angular](https://github.com/RumenDamyanov/js-chess/wiki/Angular-Guide)
+- [Vanilla JavaScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-JS-Guide) - Pure JavaScript implementation
+- [Vanilla TypeScript](https://github.com/RumenDamyanov/js-chess/wiki/Vanilla-TS-Guide) - Pure TypeScript implementation ✅
+- [jQuery Implementation](https://github.com/RumenDamyanov/js-chess/wiki/jQuery-Guide) - jQuery-based implementation
+- [Vue.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Vue-Guide) - Stable parity
+- (WIP) [React.js Implementation](https://github.com/RumenDamyanov/js-chess/wiki/React-Guide) - Pending rewrite
+- (WIP) [Angular Implementation](https://github.com/RumenDamyanov/js-chess/wiki/Angular-Guide) - Internal refactor in progress
+- (Planned) UI5 (JS) Implementation - Placeholder (guide to be added)
+- (Planned) UI5 (TS) Implementation - Placeholder (guide to be added)
+
+### Complete Wiki Documentation
+
+For comprehensive guides, examples, and advanced topics, visit the [project wiki](https://github.com/RumenDamyanov/js-chess/wiki).
+
+## 👨‍💻 Author
+
+### Rumen Damyanov
+
+- Email: [contact@rumenx.com](mailto:contact@rumenx.com)
+- GitHub: [@RumenDamyanov](https://github.com/RumenDamyanov)
+- Backend API: [go-chess](https://github.com/RumenDamyanov/go-chess)
 
 ## 🙏 Acknowledgments
 

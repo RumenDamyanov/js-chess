@@ -1,7 +1,8 @@
 // Shared ephemeral message system (idempotent)
 (function(){
 	if(window.JSChessMessages) return;
-	const QUEUE_LIMIT=6;
+	// Reduced queue to limit on-screen verbosity (was 6)
+	const QUEUE_LIMIT=3;
 	function ensureRegion(){
 		let region=document.getElementById('game-messages');
 		if(!region){
@@ -20,7 +21,8 @@
 		msg.textContent=text;
 		region.prepend(msg); // newest visually on top due to normal column
 		while(region.children.length>QUEUE_LIMIT){ region.lastChild.remove(); }
-		const duration = opts.duration || 2000;
+		// Shorter lifespan to clear non-essential noise sooner (was 2000ms)
+		const duration = opts.duration || 1500;
 		setTimeout(()=>{ msg.classList.add('removing'); setTimeout(()=>msg.remove(),500); }, duration);
 	}
 	window.JSChessMessages={ showMessage };

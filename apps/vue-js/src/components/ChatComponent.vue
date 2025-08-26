@@ -264,5 +264,5 @@ export default {
 </script>
 
 <style scoped>
-/* Uses shared/chat.css loaded via index.html; no local overrides needed */
+@import '@shared/chat.css';
 </style>
