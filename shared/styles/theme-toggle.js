@@ -1,43 +1,24 @@
+// Lightweight theme toggle shared across apps (idempotent)
 (function(){
-  const STORAGE_KEY = 'jschess-theme';
-  const root = document.documentElement;
+	if(window.JSChessTheme) return;
+	const STORAGE_KEY='jschess-theme';
+	const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+	let current = localStorage.getItem(STORAGE_KEY) || (prefersDark ? 'dark' : 'light');
 
-  function applyTheme(theme){
-    if(theme === 'light') {
-      root.setAttribute('data-theme','light');
-    } else if(theme === 'dark') {
-      root.setAttribute('data-theme','dark');
-    } else {
-      root.removeAttribute('data-theme');
-    }
-  }
+	function apply(theme){
+		current = theme === 'dark' ? 'dark' : 'light';
+		if(current==='dark') document.documentElement.setAttribute('data-theme','dark');
+		else document.documentElement.removeAttribute('data-theme');
+		localStorage.setItem(STORAGE_KEY,current);
+		const btn=document.getElementById('theme-toggle-btn');
+		if(btn){ btn.textContent = current==='dark' ? '☀️ Light' : '🌙 Dark'; }
+	}
 
-  function getPreferred(){
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if(stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
+	window.JSChessTheme = {
+		toggle(){ apply(current==='dark'?'light':'dark'); },
+		set: apply,
+		get(){ return current; }
+	};
 
-  function toggle(){
-    const current = root.getAttribute('data-theme') || getPreferred();
-    const next = current === 'dark' ? 'light' : 'dark';
-    localStorage.setItem(STORAGE_KEY, next);
-    applyTheme(next);
-    updateButton(next);
-  }
-
-  function updateButton(theme){
-    const btn = document.getElementById('theme-toggle-btn');
-    if(!btn) return;
-    btn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
-    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
-  }
-
-  // Init
-  const initial = getPreferred();
-  applyTheme(initial);
-  requestAnimationFrame(()=>updateButton(initial));
-
-  // Expose
-  window.JSChessTheme = { toggle, apply: applyTheme };
+	document.addEventListener('DOMContentLoaded', ()=> apply(current));
 })();

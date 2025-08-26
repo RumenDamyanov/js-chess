@@ -19,6 +19,7 @@ export class ConfigManager {
   private timers: TimerState;
   private flipTimeout: number | null = null;
   private flipInProgress: boolean = false;
+  private paused: boolean = false;
   private eventListeners: Partial<ConfigManagerEvents> = {};
 
   constructor() {
@@ -101,6 +102,35 @@ export class ConfigManager {
       this.config.timeLimit = parseInt(timeLimitSelect.value, 10);
       this.saveAndApplyConfig();
     });
+
+    // Timer controls
+    const resetBtn = document.getElementById('timer-reset-btn');
+    if (resetBtn) {
+      addEventListenerTyped(resetBtn as HTMLButtonElement, 'click', () => this.resetTimers());
+    }
+    const pauseBtn = document.getElementById('timer-pause-btn');
+    if (pauseBtn) {
+      addEventListenerTyped(pauseBtn as HTMLButtonElement, 'click', () => {
+        if (this.paused) {
+          this.resumeTimer();
+        } else {
+          this.pauseTimer();
+        }
+      });
+    }
+
+    // Optional controls for parity (no-ops if not wired yet)
+    const flipBtn = document.getElementById('flip-btn');
+    if (flipBtn) {
+      addEventListenerTyped(flipBtn as HTMLButtonElement, 'click', () => this.flipBoard());
+    }
+    const restoreBtn = document.getElementById('restore-btn');
+    if (restoreBtn) {
+      addEventListenerTyped(restoreBtn as HTMLButtonElement, 'click', () => {
+        // Placeholder: autosave/restore parity can be added later
+        // Keep button present and enabled state managed elsewhere if implemented
+      });
+    }
   }
 
   /**
@@ -168,6 +198,10 @@ export class ConfigManager {
     // Update player display
     getElement('#player-display').textContent = this.config.playerName;
 
+  // Update orientation indicator
+  const indicator = document.getElementById('orientation-indicator');
+  if (indicator) indicator.textContent = this.config.playerColor === PieceColor.WHITE ? 'White' : 'Black';
+
     // Update timer mode display
     this.updateTimerModeDisplay();
   }
@@ -182,6 +216,7 @@ export class ConfigManager {
     if (this.config.enableTimer) {
       timerDisplay.style.display = 'block';
       timeLimitGroup.style.display = this.config.timerMode === TimerMode.COUNT_DOWN ? 'block' : 'none';
+  this.updatePauseButtonLabel();
     } else {
       timerDisplay.style.display = 'none';
     }
@@ -240,6 +275,10 @@ export class ConfigManager {
     setTimeout(() => {
       chessBoard.classList.toggle('flipped', this.config.playerColor === PieceColor.BLACK);
 
+  // Update orientation indicator immediately after flip
+  const indicator = document.getElementById('orientation-indicator');
+  if (indicator) indicator.textContent = this.config.playerColor === PieceColor.WHITE ? 'White' : 'Black';
+
       setTimeout(() => {
         chessBoard.classList.remove('flipping');
         this.flipInProgress = false;
@@ -256,6 +295,8 @@ export class ConfigManager {
     this.timers.gameStarted = true;
     this.timers.startTime = Date.now();
     this.timers.activePlayer = PieceColor.WHITE;
+  this.paused = false;
+  this.updatePauseButtonLabel();
 
     if (this.config.timerMode === TimerMode.COUNT_DOWN) {
       this.timers.white = this.config.timeLimit * 60;
@@ -270,7 +311,7 @@ export class ConfigManager {
     if (!this.config.enableTimer || !this.timers.gameStarted) return;
 
     this.timers.activePlayer = activePlayer;
-    this.updateTimerInterval();
+  if (!this.paused) this.updateTimerInterval();
     this.saveTimerState();
   }
 
@@ -279,6 +320,8 @@ export class ConfigManager {
       clearInterval(this.timers.interval);
       this.timers.interval = null;
     }
+  this.paused = true;
+  this.updatePauseButtonLabel();
     this.saveTimerState();
   }
 
@@ -288,11 +331,14 @@ export class ConfigManager {
     this.timers.black = this.config.timerMode === TimerMode.COUNT_DOWN ? this.config.timeLimit * 60 : 0;
     this.timers.gameStarted = false;
     this.timers.startTime = null;
+  this.paused = false;
     this.updateTimerDisplay();
+  this.updatePauseButtonLabel();
     this.saveTimerState();
   }
 
   private updateTimerInterval(): void {
+  if (this.paused) return;
     this.pauseTimer();
 
     this.timers.interval = window.setInterval(() => {
@@ -357,6 +403,58 @@ export class ConfigManager {
 
   getTimerState(): TimerState {
     return { ...this.timers };
+  }
+
+  /**
+   * Apply a previously saved timer snapshot (used on restore)
+   */
+  applyTimerSnapshot(snapshot: Partial<TimerState>): void {
+    if (!snapshot) return;
+    this.pauseTimer();
+    this.timers.white = snapshot.white ?? this.timers.white;
+    this.timers.black = snapshot.black ?? this.timers.black;
+    this.timers.activePlayer = snapshot.activePlayer ?? this.timers.activePlayer;
+    this.timers.gameStarted = snapshot.gameStarted ?? false;
+    this.timers.startTime = snapshot.startTime ?? null;
+    this.updateTimerDisplay();
+    this.saveTimerState();
+    this.paused = true; // restored timers are paused until user resumes
+    this.updatePauseButtonLabel();
+  }
+
+  /**
+   * Resume timer from paused state
+   */
+  resumeTimer(): void {
+    if (!this.config.enableTimer || !this.timers.gameStarted) return;
+    // Compute a startTime that preserves the current value
+    const now = Date.now();
+    if (this.config.timerMode === TimerMode.COUNT_UP) {
+      const current = this.timers.activePlayer === PieceColor.WHITE ? this.timers.white : this.timers.black;
+      this.timers.startTime = now - Math.floor(current * 1000);
+    } else {
+      const currentRemaining = this.timers.activePlayer === PieceColor.WHITE ? this.timers.white : this.timers.black;
+      // elapsed so far = (limit - currentRemaining)
+      const elapsedMs = Math.max(0, (this.config.timeLimit * 60 - currentRemaining) * 1000);
+      this.timers.startTime = now - elapsedMs;
+    }
+    this.paused = false;
+    this.updatePauseButtonLabel();
+    this.updateTimerInterval();
+  }
+
+  /**
+   * Update Pause/Resume button label based on state
+   */
+  private updatePauseButtonLabel(): void {
+    const btn = document.getElementById('timer-pause-btn');
+    if (!btn) return;
+  const isPaused = this.paused;
+  // Update visible label
+  btn.textContent = isPaused ? 'Resume' : 'Pause';
+  // Accessibility state (aria-pressed = true means currently paused)
+  btn.setAttribute('aria-pressed', String(isPaused));
+  btn.setAttribute('aria-label', isPaused ? 'Resume game timer' : 'Pause game timer');
   }
 
   /**

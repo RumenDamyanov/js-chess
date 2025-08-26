@@ -125,6 +125,7 @@ class ChessGameJQuery {
         this.api = new ChessAPI();
         this.gameId = null;
         this.gameState = null;
+    this.currentFEN = null; // latest FEN from backend
         this.selectedSquare = null;
         this.validMoves = [];
         this.isAITurn = false;
@@ -211,12 +212,15 @@ class ChessGameJQuery {
         }
     }
 
-    async startNewGame() {
+    async startNewGame(options = {}) {
         try {
-            const game = await this.api.createGame();
+            const playerColor = window.gameConfig?.config.playerColor || 'white';
+            const suppressAIMove = !!options.suppressAIMove;
+            const game = await this.api.createGame({ playerColor });
 
             this.gameId = game.id;
             this.gameState = game;
+            if (game.fen) this.currentFEN = game.fen;
             this.selectedSquare = null;
             this.validMoves = [];
             this.isAITurn = false;
@@ -226,7 +230,15 @@ class ChessGameJQuery {
             this.updateMoveHistory();
             this.updateControlButtons();
             this.updateChat(); // Update chat with new game state
-            this.showMessage(`New game started! Game ID: ${this.gameId}`, 'success');
+            if (playerColor === 'white') {
+                this.showMessage(`New game started! You play as White - make your move!`, 'success');
+            } else {
+                this.showMessage(`New game started! You play as Black - ${suppressAIMove ? 'replaying moves...' : 'AI will move first!'}`,'success');
+                if (!suppressAIMove) {
+                    this.isAITurn = true;
+                    setTimeout(()=> this.makeAIMove(), 800);
+                }
+            }
         } catch (error) {
             this.showMessage('Failed to start new game. Check if backend is running.', 'error');
             Debug.error('gameController', 'Error starting new game:', error);
@@ -334,6 +346,7 @@ class ChessGameJQuery {
             }
 
             this.gameState = response;
+            if (response.fen) this.currentFEN = response.fen;
             this.clearSelection();
             this.updateBoard();
             this.updateGameInfo();
@@ -371,11 +384,13 @@ class ChessGameJQuery {
                 this.showMessage('Check! Your king is under attack!', 'warning');
             }
 
-            if ((response.active_color === 'black' && (response.status === 'in_progress' || response.status === 'check'))) {
-                // It's black's turn - make an AI move
+            const playerColor = window.gameConfig?.config.playerColor || 'white';
+            const currentTurn = response.active_color;
+            const isAITurn = (playerColor === 'white' && currentTurn === 'black') || (playerColor === 'black' && currentTurn === 'white');
+            if (isAITurn && (response.status === 'in_progress' || response.status === 'check')) {
                 this.isAITurn = true;
-                this.showMessage('AI is thinking...', 'info');
-                setTimeout(() => this.makeAIMove(), 1000); // Small delay for better UX
+                this.showMessage('AI is thinking...','info');
+                setTimeout(()=> this.makeAIMove(), 900);
             } else {
                 this.isAITurn = false;
             }
@@ -807,18 +822,33 @@ class ChessGameJQuery {
                 }
             }
 
-            // Replay the moves
+            // Replay the moves with castling & promotion preservation
             for (const move of movesToReplay) {
-                await this.api.makeMove(newGame.id, {
-                    from: move.from,
-                    to: move.to
-                });
+                try {
+                    let payload;
+                    if (move.type === 'castling' || (move.notation && /O-O/.test(move.notation))) {
+                        payload = { notation: move.notation };
+                    } else {
+                        payload = { from: move.from, to: move.to };
+                        if (move.promotion) {
+                            payload.promotion = move.promotion;
+                        } else if (move.notation && /=/.test(move.notation)) {
+                            const promoMatch = move.notation.match(/=([QRBNqrbn])/);
+                            if (promoMatch) payload.promotion = promoMatch[1].toUpperCase();
+                        }
+                    }
+                    await this.api.makeMove(newGame.id, payload);
+                } catch(e) {
+                    Debug.warn && Debug.warn('undoReplay','Failed to replay move', move, e);
+                    break;
+                }
             }
 
             // Update to the new game state
             const updatedGame = await this.api.getGame(newGame.id);
             this.gameId = newGame.id;
             this.gameState = updatedGame;
+            if (updatedGame.fen) this.currentFEN = updatedGame.fen;
 
             // Make sure AI turn flag is false after undo
             this.isAITurn = false;
@@ -915,5 +945,5 @@ class ChessGameJQuery {
 
 // Initialize the game when document is ready
 $(document).ready(function() {
-    new ChessGameJQuery();
+    window.chessGame = new ChessGameJQuery();
 });

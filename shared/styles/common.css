@@ -15,6 +15,34 @@ body {
     color: var(--color-text-primary, #333333);
 }
 
+/* Debug panel (shared) */
+.debug-panel { position:fixed; top:64px; right:16px; width:260px; max-height:70vh; overflow:auto; background:rgba(0,0,0,0.85); color:#fff; font-size:12px; padding:12px 14px; border-radius:8px; box-shadow:0 4px 18px rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index:1100; }
+.debug-panel h3 { margin:0 0 8px; font-size:14px; }
+.debug-panel .debug-close { float:right; background:none; border:none; color:#fff; font-size:16px; cursor:pointer; }
+.debug-panel .debug-category { margin:4px 0; }
+.debug-panel label { display:flex; flex-direction:column; gap:2px; cursor:pointer; }
+.debug-category-name { font-weight:600; }
+.debug-category-desc { font-size:11px; opacity:0.65; }
+.debug-master { margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.15); }
+.debug-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.debug-actions .btn { background:#444; border:1px solid #666; color:#fff; font-size:11px; padding:4px 8px; }
+.debug-actions .btn:hover { background:#555; }
+.debug-info { margin-top:10px; font-size:10px; opacity:0.6; }
+.debug-notification { position:fixed; top:40px; right:16px; background:#222; color:#fff; padding:6px 10px; border-radius:4px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,0.4); z-index:1200; }
+.btn.btn-debug.debug-active { outline:2px solid #ffd54f; }
+
+/* Generic inline notification (info/warn/error) utility */
+.app-notification { position:fixed; right:16px; min-width:200px; max-width:320px; padding:10px 14px; font-size:13px; font-weight:500; z-index:1300; border-radius:6px; box-shadow:0 4px 14px rgba(0,0,0,0.25); backdrop-filter:blur(4px); }
+.app-notification.info { top:16px; background:rgba(40,120,255,0.9); color:#fff; }
+.app-notification.error { top:16px; background:rgba(200,40,40,0.92); color:#fff; }
+.app-notification.success { top:16px; background:rgba(40,160,80,0.9); color:#fff; }
+
+/* Dark theme fine-tune */
+[data-theme="dark"] .debug-panel { background:rgba(30,30,35,0.9); border:1px solid rgba(255,255,255,0.08); }
+[data-theme="dark"] .debug-actions .btn { background:#333; border-color:#555; }
+[data-theme="dark"] .debug-actions .btn:hover { background:#3d3d3d; }
+[data-theme="dark"] #debug-notification.debug-notification { background:#333; }
+
 /* Common button styles */
 .btn {
     padding: 0.75rem 1.5rem;
@@ -49,6 +77,11 @@ body {
     background: var(--color-btn-secondary-bg);
     color: var(--color-btn-secondary-text);
     border: 1px solid var(--color-btn-secondary-border);
+}
+
+.btn-smaller {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
 }
 
 .btn-small {
@@ -185,6 +218,22 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+/* Generic lightweight card variant used by vanilla/jQuery apps */
+.card-like {
+    background: var(--color-bg-surface, #fff);
+    border: 1px solid var(--color-border, #d9dee3);
+    border-radius: var(--radius-lg, 10px);
+    padding: 16px 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.card-like h3 { margin: 0 0 6px; font-size: 1.05rem; font-weight:600; }
+
 
 .card-header {
     margin-bottom: 1rem;

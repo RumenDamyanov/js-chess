@@ -16,11 +16,13 @@ PROJECT_NAME := js-chess
 COMPOSE_FILE := docker-compose.yml
 BACKEND_IMAGE := chess-backend
 
-# NOTE: Angular / React remain WIP and are intentionally excluded
-# from default aggregate targets. Vue has been re-enabled for local runs.
-ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-landing chess-vue
+# NOTE: Angular / React are currently marked WIP and intentionally excluded
+# from default aggregate build / start / health targets to speed up development.
+# To re-enable them, add the services back to ACTIVE_SERVICES (and related port lists)
+# or invoke their individual targets (e.g., make start-angular, make build-react).
+ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
 WIP_SERVICES := chess-angular chess-react # (disabled from aggregate commands)
-FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-landing chess-vue
+FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
 
 ##@ General Commands
 
@@ -45,7 +47,7 @@ logs-backend: ## Show backend logs only
 
 .PHONY: logs-frontend
 logs-frontend: ## Show active frontend logs (WIP: angular/react excluded)
-	@docker-compose logs -f chess-jquery chess-vanilla chess-vanilla-ts chess-landing chess-vue
+	@docker-compose logs -f chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
 
 ##@ Development Commands
 
@@ -90,7 +92,7 @@ restart-backend: ## Restart only the backend container
 .PHONY: restart-frontend
 restart-frontend: ## Restart active frontend containers (WIP excluded)
 	@echo "$(YELLOW)Restarting active frontend containers...$(RESET)"
-	@docker-compose restart chess-jquery chess-vanilla chess-vanilla-ts chess-landing
+	@docker-compose restart chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
 	@echo "$(GREEN)✅ Active frontend containers restarted$(RESET)"
 
 ##@ Build Commands
@@ -272,9 +274,12 @@ test-api: ## Test backend API endpoints
 	@curl -s http://localhost:8080/health || echo "Backend not responding"
 
 .PHONY: test-frontend
+test-frontend: ## Test active frontend endpoints (WIP excluded)
 	@echo "$(BLUE)Testing active frontend endpoints...$(RESET)"
 	@for port in 3000 3001 3002 3003 3004; do \
 		echo "$(YELLOW)Testing http://localhost:$$port$(RESET)"; \
+		curl -s -o /dev/null -w "Status: %{http_code}\n" http://localhost:$$port || echo "Port $$port not responding"; \
+	done
 
 .PHONY: validate-ci
 validate-ci: ## Run local CI validation checks
@@ -283,8 +288,7 @@ validate-ci: ## Run local CI validation checks
 
 .PHONY: ci-test
 ci-test: validate-ci test-api test-frontend ## Run complete CI test suite locally
-		curl -s -o /dev/null -w "Status: %{http_code}\n" http://localhost:$$port || echo "Port $$port not responding"; \
-	done
+	@echo "$(GREEN)CI test suite completed (frontend + API checks).$(RESET)"
 
 ##@ Database and Backend Management
 
@@ -316,6 +320,7 @@ inspect: ## Show detailed container information
 	@docker-compose ps --format "table {{.Service}}\t{{.Status}}\t{{.Ports}}"
 
 .PHONY: health
+health: ## Check health of active services (WIP excluded)
 	@echo "$(BLUE)Service Health Check (active only):$(RESET)"
 	@echo "$(YELLOW)Backend API:$(RESET)"
 	@curl -s http://localhost:8080/health && echo " ✅" || echo " ❌"
@@ -363,7 +368,6 @@ open: ## Open active applications in browser (macOS, WIP excluded)
 	@echo "(Skipping WIP angular/react)"
 
 .PHONY: urls
-
 urls: ## Display active application URLs (WIP excluded)
 	@echo "$(BLUE)Application URLs (active set):$(RESET)"
 	@echo "  $(YELLOW)Landing Page:$(RESET)        http://localhost:3000"

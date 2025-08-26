@@ -76,12 +76,6 @@
     border-radius: 6px;
     transition: all 0.2s ease;
     font-size: 0.875rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    white-space: nowrap;
-}
 
 .nav-link.nav-link-disabled {
     color: #9ca3af !important;
@@ -94,6 +88,12 @@
 .nav-link.nav-link-disabled.active {
     font-weight: 600;
     color: #a3a3a3 !important;
+}
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -152,6 +152,18 @@
     cursor: not-allowed;
     transform: none;
 }
+
+/* Consistent tech icons (replaces emoji to avoid fallback issues) */
+.tech-icon {width:14px;height:14px;display:inline-block;border-radius:3px;position:relative;top:1px;box-shadow:0 0 0 1px rgba(0,0,0,0.4) inset,0 0 2px rgba(0,0,0,0.4);}
+.tech-js {background:#f7df1e;}
+.tech-ts {background:#3178c6;}
+.tech-jq {background:#0769ad;}
+.tech-vue {background:#42b883;}
+.tech-react {background:#20232a;}
+.tech-angular {background:#dd0031;}
+.tech-ui5-js {background:#b04848;}
+.tech-ui5-ts {background:#2b5d9b;}
+.tech-home {background:#8e5cff;}
 
 /* Responsive design */
 @media (max-width: 768px) {

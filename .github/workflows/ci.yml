@@ -150,8 +150,7 @@ jobs:
 
     strategy:
       matrix:
-        # NOTE: angular and react-js temporarily excluded (WIP / delisted)
-        # Vue is enabled alongside vanilla-ts.
+        # NOTE: angular & react-js still excluded (WIP). vue-js is now stable and re-enabled.
         app: [vanilla-ts, vue-js]
 
     steps:
@@ -168,7 +167,7 @@ jobs:
 
       - name: Install dependencies for ${{ matrix.app }}
         run: |
-          # Install deps for app in matrix
+          # Install dependencies if package.json exists for the matrix app.
           if [ -f "apps/${{ matrix.app }}/package.json" ]; then
             echo "Installing ${{ matrix.app }} dependencies..."
             cd apps/${{ matrix.app }}
@@ -184,7 +183,6 @@ jobs:
       - name: Build ${{ matrix.app }} application
         run: |
           cd apps/${{ matrix.app }}
-          # Build application
           npm run build
           echo "✅ ${{ matrix.app }} build successful"
 
@@ -225,10 +223,14 @@ jobs:
 
       - name: Build Docker images
         run: |
-          echo "Building Docker images (active services only)..."
+          echo "Building Docker images (active services only) sequentially to avoid npm 429 rate limits..."
           # Excluding WIP frameworks: chess-react, chess-angular
-          docker compose build --parallel chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue
-          echo "✅ Active Docker images built successfully"
+          set -e
+          for svc in chess-backend chess-landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue; do
+            echo "--- Building $svc ---"
+            docker compose build $svc
+          done
+          echo "✅ Active Docker images built successfully (sequential)"
 
       - name: Start services
         run: |
@@ -272,7 +274,7 @@ jobs:
             "3001:Vanilla JS"
             "3002:Vanilla TypeScript"
             "3003:jQuery"
-            "3004:Vue JS"
+            "3004:Vue 3"
           )
 
           for service in "${services[@]}"; do
@@ -325,7 +327,7 @@ jobs:
           docker compose logs backend
 
           echo "=== Frontend Logs ==="
-          docker compose logs landing chess-vanilla chess-vanilla-ts chess-jquery chess-vue || true
+          docker compose logs landing chess-vanilla chess-vanilla-ts chess-jquery || true
 
       - name: Cleanup
         if: always()

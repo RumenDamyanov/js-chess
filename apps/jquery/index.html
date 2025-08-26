@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="shared/styles/header.css">
     <link rel="stylesheet" href="shared/styles/chess-board.css">
     <link rel="stylesheet" href="shared/styles/chat.css">
+    <link rel="stylesheet" href="shared/styles/board-toolbar.css">
     <!-- App-specific overrides -->
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' style='font-size:14px'>♛</text></svg>">
 </head>
 <body>
@@ -25,21 +26,21 @@
 
             <nav class="header-nav">
                 <ul class="nav-links">
-                    <li><a href="http://localhost:3000" class="nav-link">🏠 Home</a></li>
+                    <li><a href="http://localhost:3000" class="nav-link"><span class="tech-icon tech-home"></span> Home</a></li>
                     <li><span class="nav-separator"></span></li>
-                    <li><a href="http://localhost:3001" class="nav-link">📦 Vanilla</a></li>
-                    <li><a href="http://localhost:3002" class="nav-link">📘 TypeScript</a></li>
-                    <li><a href="http://localhost:3003" class="nav-link active">💙 jQuery</a></li>
-                    <li><a href="http://localhost:3004" class="nav-link">💚 Vue</a></li>
-                    <li><span class="nav-link nav-link-disabled" title="Work in progress">⚛️ React (WIP)</span></li>
-                    <li><span class="nav-link nav-link-disabled" title="Work in progress">🅰️ Angular (WIP)</span></li>
+                    <li><a href="http://localhost:3001" class="nav-link" title="Vanilla JavaScript"><span class="tech-icon tech-js"></span> Vanilla (JS)</a></li>
+                    <li><a href="http://localhost:3002" class="nav-link" title="Vanilla TypeScript"><span class="tech-icon tech-ts"></span> Vanilla (TS)</a></li>
+                    <li><a href="http://localhost:3003" class="nav-link active" title="jQuery"><span class="tech-icon tech-jq"></span> jQuery</a></li>
+                    <li><a href="http://localhost:3004" class="nav-link" title="Vue"><span class="tech-icon tech-vue"></span> Vue</a></li>
+                    <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-react"></span> React</span></li>
+                    <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-angular"></span> Angular</span></li>
+                    <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-ui5-js"></span> UI5 (JS)</span></li>
+                    <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-ui5-ts"></span> UI5 (TS)</span></li>
                 </ul>
 
                 <div class="header-controls">
                     <button id="theme-toggle-btn" class="btn btn-secondary" onclick="JSChessTheme.toggle()" aria-label="Toggle theme">🌙 Dark</button>
-                    <button id="new-game-btn" class="btn btn-primary">New Game</button>
-                    <button id="undo-btn" class="btn">Undo</button>
-                    <button id="hint-btn" class="btn">Hint</button>
+                    <!-- Debug button injected by shared debug.js -->
                 </div>
             </nav>
         </div>
@@ -114,10 +115,48 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="save-slots card-like" id="save-slots-card">
+                    <h3>💾 Save Slots</h3>
+                    <div class="slots-grid">
+                        <div class="slot" data-slot="1">
+                            <div class="slot-label">Slot 1</div>
+                            <div class="slot-time" id="slot-1-time">Empty</div>
+                            <div class="slot-actions">
+                                <button class="btn btn-smaller" data-action="save" data-slot="1">Save</button>
+                                <button class="btn btn-smaller" data-action="load" data-slot="1">Load</button>
+                                <button class="btn btn-smaller" data-action="delete" data-slot="1">✕</button>
+                            </div>
+                        </div>
+                        <div class="slot" data-slot="2">
+                            <div class="slot-label">Slot 2</div>
+                            <div class="slot-time" id="slot-2-time">Empty</div>
+                            <div class="slot-actions">
+                                <button class="btn btn-smaller" data-action="save" data-slot="2">Save</button>
+                                <button class="btn btn-smaller" data-action="load" data-slot="2">Load</button>
+                                <button class="btn btn-smaller" data-action="delete" data-slot="2">✕</button>
+                            </div>
+                        </div>
+                        <div class="slot" data-slot="3">
+                            <div class="slot-label">Slot 3</div>
+                            <div class="slot-time" id="slot-3-time">Empty</div>
+                            <div class="slot-actions">
+                                <button class="btn btn-smaller" data-action="save" data-slot="3">Save</button>
+                                <button class="btn btn-smaller" data-action="load" data-slot="3">Load</button>
+                                <button class="btn btn-smaller" data-action="delete" data-slot="3">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="center-panel">
                 <div class="board-wrapper">
+                    <div class="board-toolbar" id="board-toolbar">
+                        <button id="new-game-btn" class="btn btn-primary">New Game</button>
+                        <button id="undo-btn" class="btn" disabled>Undo</button>
+                        <button id="hint-btn" class="btn" disabled>Hint</button>
+                    </div>
                     <div class="chess-board" id="chess-board">
                         <!-- Chess board squares will be generated by jQuery -->
                     </div>
@@ -136,17 +175,22 @@
                     </div>
                 </div>
 
-                <div class="timer-display">
-                    <h3>⏱️ Timer</h3>
-                    <div class="timer-sections">
-                        <div class="timer-section white">
+                <div id="timer-display" class="timer-info">
+                    <h3>⏱️ Game Timer</h3>
+                    <div class="timer-content">
+                        <div class="timer-row">
                             <span class="timer-label">White:</span>
-                            <span id="white-timer" class="timer-value">00:00</span>
+                            <span id="white-timer" class="timer">00:00</span>
                         </div>
-                        <div class="timer-section black">
+                        <div class="timer-row">
                             <span class="timer-label">Black:</span>
-                            <span id="black-timer" class="timer-value">00:00</span>
+                            <span id="black-timer" class="timer">00:00</span>
                         </div>
+                        <div class="timer-actions">
+                            <button id="timer-pause-btn" class="btn btn-smaller" aria-pressed="false" title="Pause or resume the active timer">Pause</button>
+                            <button id="timer-reset-btn" class="btn btn-smaller" title="Reset both timers to initial state">Reset</button>
+                        </div>
+                        <div class="orientation-indicator">Orientation: <span id="orientation-indicator">White</span></div>
                     </div>
                 </div>
 
@@ -157,6 +201,25 @@
                             <span class="move-number">-</span>
                             <span class="move-notation">Game started</span>
                         </div>
+                    </div>
+                </div>
+
+                <div class="pgn-card card-like" id="pgn-card">
+                    <h3>📄 PGN</h3>
+                    <textarea id="pgn-output" class="pgn-output" readonly placeholder="Play moves to generate PGN"></textarea>
+                    <div class="pgn-actions">
+                        <button class="btn btn-smaller" id="pgn-copy-btn" aria-label="Copy PGN to clipboard" disabled>Copy</button>
+                        <button class="btn btn-smaller" id="pgn-download-btn" aria-label="Download PGN as file" disabled>Download</button>
+                        <button class="btn btn-smaller" id="pgn-refresh-btn" aria-label="Regenerate PGN from move history" disabled>Refresh</button>
+                        <button class="btn btn-smaller" id="pgn-import-toggle" aria-expanded="false" aria-controls="pgn-import-panel">Import</button>
+                    </div>
+                    <div id="pgn-import-panel" class="pgn-import" style="display:none;" role="region" aria-label="PGN import panel">
+                        <textarea id="pgn-import-input" class="pgn-input" placeholder="Paste PGN with coordinate moves (e2e4 e7e5 ...)"></textarea>
+                        <div class="pgn-actions">
+                            <button class="btn btn-smaller" id="pgn-import-run" disabled>Load PGN</button>
+                            <button class="btn btn-smaller" id="pgn-import-clear" disabled>Clear</button>
+                        </div>
+                        <div class="import-hint">Note: Only simple coordinate moves are supported for import.</div>
                     </div>
                 </div>
             </div>
@@ -190,11 +253,15 @@
     </div>
 
     <script src="shared/styles/theme-toggle.js"></script>
-    <script src="shared/assets/js/helpers.js"></script>
-    <script src="shared/assets/js/messages.js"></script>
+    <!-- Use root-level shared assets (helpers + messages) -->
+    <script src="../../shared/assets/js/helpers.js"></script>
+    <script src="../../shared/assets/js/messages.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/debug.js"></script>
+    <script src="shared/assets/js/debug.js"></script>
     <script src="js/chess-game.js"></script>
+    <!-- Shared PGN/save core -->
+    <script src="../../shared/assets/js/pgn-core.js"></script>
+    <script src="js/pgn-saves.js"></script>
     <script src="js/chat.js"></script>
 </body>
 </html>

@@ -3,8 +3,9 @@ FROM nginx:alpine
 # Copy static files
 COPY ./apps/jquery/ /usr/share/nginx/html
 
-# Copy shared styles (ensure nested 'styles' folder to match index.html paths)
+# Copy shared styles & assets (helpers, messages, etc.)
 COPY ./shared/styles/ /usr/share/nginx/html/shared/styles/
+COPY ./shared/assets/ /usr/share/nginx/html/shared/assets/
 
 # Copy custom nginx configuration
 COPY ./apps/jquery/nginx.conf /etc/nginx/conf.d/default.conf

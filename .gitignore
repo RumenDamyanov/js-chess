@@ -129,4 +129,4 @@ wiki/
 *.patch
 
 # AI tools
-.ai/*
+.ai/
