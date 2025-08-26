@@ -5,26 +5,21 @@
 import { GameController } from './components/game-controller.js';
 import { initPGNSaves } from './components/pgn-saves.js';
 import { Debug } from './utils/debug.js';
-import { DebugUIManager } from './components/debug-ui-manager.js';
 
 /**
  * Application class - manages the overall application lifecycle
  */
 class ChessApp {
   private gameController: GameController;
-  private debugUIManager: DebugUIManager;
+  // Debug UI manager removed – shared debug panel now injected globally
 
   constructor() {
     // Initialize debug system first
     Debug.init();
 
     Debug.log('gameController', '🚀 ChessApp constructor starting...');
-    this.gameController = new GameController();
-    Debug.log('gameController', '✅ GameController created');
-
-    // Initialize debug UI
-    this.debugUIManager = new DebugUIManager();
-    Debug.log('gameController', '✅ Debug UI Manager created');
+  this.gameController = new GameController();
+  Debug.log('gameController', '✅ GameController created');
 
     this.setupGlobalEventListeners();
     Debug.log('gameController', '✅ Global event listeners set up');
@@ -134,12 +129,6 @@ class ChessApp {
     return this.gameController;
   }
 
-  /**
-   * Get debug UI manager instance
-   */
-  getDebugUIManager(): DebugUIManager {
-    return this.debugUIManager;
-  }
 }
 
 // Global application instance

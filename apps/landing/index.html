@@ -10,81 +10,48 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' style='font-size:14px'>♛</text></svg>">
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <h1>🏁 JS Chess</h1>
-                <p>Framework Showcase</p>
-            </div>
-            <nav class="navigation">
-                <a href="#frameworks" class="nav-link">Frameworks</a>
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#comparison" class="nav-link">Comparison</a>
-                <a href="https://github.com/RumenDamyanov/js-chess" class="nav-link" target="_blank">
-                    <span>GitHub</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                    </svg>
+        <header class="app-header">
+            <div class="header-container">
+                <a href="#top" class="header-brand">
+                    <span class="header-title">♟️ JS Chess</span>
+                    <span class="header-framework">Showcase</span>
                 </a>
-            </nav>
-        </div>
-    </header>
+                <nav class="header-nav">
+                    <ul class="nav-links">
+                        <li><a href="http://localhost:3001" class="nav-link" title="Vanilla JavaScript"><span class="tech-icon tech-js"></span> Vanilla (JS)</a></li>
+                        <li><a href="http://localhost:3002" class="nav-link" title="Vanilla TypeScript"><span class="tech-icon tech-ts"></span> Vanilla (TS)</a></li>
+                        <li><a href="http://localhost:3003" class="nav-link" title="jQuery"><span class="tech-icon tech-jq"></span> jQuery</a></li>
+                        <li><a href="http://localhost:3004" class="nav-link" title="Vue.js"><span class="tech-icon tech-vue"></span> Vue</a></li>
+                        <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-react"></span> React</span></li>
+                        <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-angular"></span> Angular</span></li>
+                        <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-js"></span> UI5 (JS)</span></li>
+                        <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-ts"></span> UI5 (TS)</span></li>
+                        <li><span class="nav-separator"></span></li>
+                        <li><a href="https://github.com/RumenDamyanov/js-chess" class="nav-link" target="_blank">GitHub</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
 
     <main>
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <h2>One Chess Game, Six JavaScript Implementations</h2>
-                    <p class="hero-description">
-                        Explore how the same chess application is built using different JavaScript frameworks and approaches.
-                        Compare implementation patterns, performance, and developer experience across
-                        Vanilla JS, TypeScript, jQuery, Vue.js, React.js, and Angular.
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="#frameworks" class="btn btn-primary">Explore Frameworks</a>
-                        <a href="https://github.com/RumenDamyanov/js-chess" class="btn btn-secondary" target="_blank">
-                            View Source Code
-                        </a>
-                    </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="chess-board-demo">
-                        <div class="board">
-                            <!-- Chess board visual representation -->
-                            <div class="square light"></div>
-                            <div class="square dark"></div>
-                            <div class="square light"></div>
-                            <div class="square dark"></div>
-                            <div class="square light"></div>
-                            <div class="square dark"></div>
-                            <div class="square light"></div>
-                            <div class="square dark"></div>
-                            <!-- Add more squares as needed -->
-                        </div>
-                        <div class="floating-icons">
-                            <div class="icon js">JS</div>
-                            <div class="icon ts">TS</div>
-                            <div class="icon vue">Vue</div>
-                            <div class="icon react">React</div>
-                            <div class="icon angular">Angular</div>
+                <section class="hero hero-compact">
+                    <div class="container">
+                        <div class="hero-content">
+                            <h2>Multi‑Framework Chess Showcase</h2>
+                            <p class="hero-description">Compare eight implementations (4 live, 4 in progress) of the same chess experience across popular front‑end stacks.</p>
+                            <a href="#frameworks" class="btn btn-primary">Jump to Demos ↓</a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
+                </section>
 
         <section id="frameworks" class="frameworks">
             <div class="container">
-                <h2>Framework Implementations</h2>
-                <p class="section-description">
-                    Each implementation provides the same chess functionality with full game rules,
-                    AI opponents, real-time multiplayer, and chat features.
-                </p>
-
-                <div class="framework-grid">
+                <h2>Demo Applications</h2>
+                <p class="section-description">All demos share rules, AI, and backend. UI variants highlight framework patterns. Two UI5 variants are in preparation.</p>
+                <div class="framework-grid grid-2x4">
                     <div class="framework-card">
                         <div class="framework-header">
-                            <div class="framework-icon vanilla">JS</div>
+                            <div class="framework-icon vanilla" title="Vanilla JavaScript">JS</div>
                             <h3>Vanilla JavaScript</h3>
                             <span class="framework-tag">Pure JS</span>
                         </div>
@@ -105,7 +72,7 @@
 
                     <div class="framework-card">
                         <div class="framework-header">
-                            <div class="framework-icon typescript">TS</div>
+                            <div class="framework-icon typescript" title="Vanilla TypeScript">TS</div>
                             <h3>TypeScript</h3>
                             <span class="framework-tag">Type-Safe</span>
                         </div>
@@ -126,7 +93,7 @@
 
                     <div class="framework-card">
                         <div class="framework-header">
-                            <div class="framework-icon jquery">jQ</div>
+                            <div class="framework-icon jquery" title="jQuery">jQ</div>
                             <h3>jQuery</h3>
                             <span class="framework-tag">Classic</span>
                         </div>
@@ -149,10 +116,12 @@
                         <div class="framework-header">
                             <div class="framework-icon vue">Vue</div>
                             <h3>Vue.js 3</h3>
+                <span class="framework-tag">Stable</span>
                         </div>
                         <p class="framework-description">
-                Modern Vue.js 3 with Composition API, TypeScript integration,
-                Pinia for state management, and reactive data binding.
+                            Modern Vue.js 3 with Composition API, TypeScript integration,
+                            Pinia for state management, and reactive data binding.
+                <strong class="muted-note">(Production-ready demo)</strong>
                         </p>
                         <div class="framework-features">
                             <span class="feature">Composition API</span>
@@ -160,15 +129,15 @@
                             <span class="feature">Reactivity</span>
                         </div>
                         <div class="framework-actions">
-                <a href="http://localhost:3004" class="btn btn-primary">Try Demo</a>
-                <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/vue-js" class="btn btn-outline" target="_blank">View Code</a>
+                            <a href="http://localhost:3004" class="btn btn-primary">Try Demo</a>
+                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/vue-js" class="btn btn-outline" target="_blank">View Code</a>
                         </div>
                     </div>
 
-            <div class="framework-card">
+            <div class="framework-card wip dimmed">
                         <div class="framework-header">
-                            <div class="framework-icon react">React</div>
-                            <h3>React.js 18</h3>
+                <div class="framework-icon react">React</div>
+                <h3>React.js 18</h3>
                 <span class="framework-tag wip">WIP</span>
                         </div>
                         <p class="framework-description">
@@ -182,16 +151,16 @@
                             <span class="feature">TypeScript</span>
                         </div>
                         <div class="framework-actions">
-                <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
+                            <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
                             <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/react-js" class="btn btn-outline" target="_blank">View Code</a>
                         </div>
                     </div>
 
-            <div class="framework-card">
+            <div class="framework-card wip dimmed">
                         <div class="framework-header">
                             <div class="framework-icon angular">Angular</div>
                             <h3>Angular 17+</h3>
-                <span class="framework-tag wip">WIP</span>
+                            <span class="framework-tag wip">WIP</span>
                         </div>
                         <p class="framework-description">
                             Enterprise-grade Angular with standalone components,
@@ -203,11 +172,45 @@
                             <span class="feature">RxJS</span>
                             <span class="feature">Full TypeScript</span>
                         </div>
-                        <div class="framework-actions">
-                <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
-                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/angular" class="btn btn-outline" target="_blank">View Code</a>
+                                                <div class="framework-actions">
+                                                        <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
+                                                        <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/angular" class="btn btn-outline" target="_blank">View Code</a>
                         </div>
                     </div>
+                        <div class="framework-card wip dimmed">
+                            <div class="framework-header">
+                                <div class="framework-icon ui5" title="UI5 JavaScript" style="background:#552b2b;">UI5</div>
+                                <h3>UI5 (JavaScript)</h3>
+                                <span class="framework-tag wip">WIP</span>
+                            </div>
+                            <p class="framework-description">OpenUI5 vanilla JS flavor showcasing enterprise component model, theming, and MVC structure integration (in progress).</p>
+                            <div class="framework-features">
+                                <span class="feature">MVC</span>
+                                <span class="feature">Theming</span>
+                                <span class="feature">i18n</span>
+                            </div>
+                            <div class="framework-actions">
+                                <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
+                                <span class="btn btn-outline btn-disabled" title="WIP">View Code</span>
+                            </div>
+                        </div>
+                        <div class="framework-card wip dimmed">
+                            <div class="framework-header">
+                                <div class="framework-icon ui5" title="UI5 TypeScript" style="background:#1e3550;">UI5</div>
+                                <h3>UI5 (TypeScript)</h3>
+                                <span class="framework-tag wip">WIP</span>
+                            </div>
+                            <p class="framework-description">OpenUI5 with TypeScript typings, decorators exploration, and strict model interfaces (in progress).</p>
+                            <div class="framework-features">
+                                <span class="feature">Types</span>
+                                <span class="feature">Components</span>
+                                <span class="feature">Tooling</span>
+                            </div>
+                            <div class="framework-actions">
+                                <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
+                                <span class="btn btn-outline btn-disabled" title="WIP">View Code</span>
+                            </div>
+                        </div>
                 </div>
             </div>
         </section>
@@ -370,6 +373,8 @@
                                     <span>Vue.js</span>
                                     <span>React.js</span>
                                     <span>Angular</span>
+                                    <span>UI5 (JS)</span>
+                                    <span>UI5 (TS)</span>
                                 </div>
                             </div>
                             <div class="api-layer">
@@ -406,12 +411,14 @@
                 <div class="footer-section">
                     <h4>Frameworks</h4>
                     <ul>
-                        <li><a href="http://localhost:3001">Vanilla JavaScript</a></li>
-                        <li><a href="http://localhost:3002">TypeScript</a></li>
+                        <li><a href="http://localhost:3001">Vanilla (JS)</a></li>
+                        <li><a href="http://localhost:3002">Vanilla (TS)</a></li>
                         <li><a href="http://localhost:3003">jQuery</a></li>
-                        <li><a href="http://localhost:3004">Vue.js</a></li>
-                        <li><span class="wip-link" title="Work in progress">React.js (WIP)</span></li>
-                        <li><span class="wip-link" title="Work in progress">Angular (WIP)</span></li>
+                        <li><a href="http://localhost:3004">Vue</a></li>
+                        <li><span class="wip-link" title="Work in progress">React</span></li>
+                        <li><span class="wip-link" title="Work in progress">Angular</span></li>
+                        <li><span class="wip-link" title="Work in progress">UI5 (JS)</span></li>
+                        <li><span class="wip-link" title="Work in progress">UI5 (TS)</span></li>
                     </ul>
                 </div>
                 <div class="footer-section">

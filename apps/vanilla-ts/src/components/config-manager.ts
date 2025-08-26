@@ -449,7 +449,12 @@ export class ConfigManager {
   private updatePauseButtonLabel(): void {
     const btn = document.getElementById('timer-pause-btn');
     if (!btn) return;
-    btn.textContent = this.paused ? 'Resume' : 'Pause';
+  const isPaused = this.paused;
+  // Update visible label
+  btn.textContent = isPaused ? 'Resume' : 'Pause';
+  // Accessibility state (aria-pressed = true means currently paused)
+  btn.setAttribute('aria-pressed', String(isPaused));
+  btn.setAttribute('aria-label', isPaused ? 'Resume game timer' : 'Pause game timer');
   }
 
   /**
