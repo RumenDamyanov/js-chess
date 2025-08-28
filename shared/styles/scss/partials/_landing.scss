@@ -20,9 +20,7 @@
 	.app-header .nav-links { justify-content:flex-start; }
 }
 
-.hero.hero-compact {padding:60px 0 30px;min-height:auto;}
-.hero.hero-compact .hero-content {max-width:820px;margin:0 auto;text-align:center;}
-.hero.hero-compact h2 {font-size:40px;margin:0 0 16px;}
+// Removed initial hero-compact sizing to avoid duplicate selectors; unified styles defined later in enhanced hero section
 
 // Stack / architecture columns
 .stack-column h3 {text-align:center;color:#2c3e50;margin:0 0 1.5rem;font-size:1.5rem;}
@@ -31,7 +29,7 @@
 .stack-item:hover {background:#667eea;color:#fff;transform:scale(1.02);}
 
 // Footer
-.footer {background:#2c3e50;color:#fff;padding:3rem 0 1rem;}
+// Removed base footer style (gradient + refined version defined later to prevent duplicate selector warning)
 .footer-content {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-bottom:2rem;}
 .footer-section h4 {margin:0 0 1rem;color:#ecf0f1;}
 .footer-section a {color:#bdc3c7;text-decoration:none;display:block;margin:0 0 .5rem;transition:color .3s ease;}
@@ -164,12 +162,10 @@
 [data-theme="dark"] .api-features span { background:#303d4b; color:#d2d9e0; }
 
 // Framework badge mapping (HTML uses .framework-tag instead of .framework-badge now)
-.framework-tag { @extend .framework-badge; display:inline-block; }
-.framework-tag.wip { background:linear-gradient(45deg,#6b7280,#4b5563); }
+// Removed @extend usage and early .framework-tag definitions (later unified .framework-tag, .framework-badge block replaces this)
 
 // WIP dim / coming soon
-.framework-card.wip.dimmed { opacity:.55; filter:grayscale(.35); }
-[data-theme="dark"] .framework-card.wip.dimmed { opacity:.6; }
+// Removed early .framework-card.wip.dimmed definitions (kept modern layout consolidated version)
 .btn.btn-disabled, .btn-disabled { cursor:not-allowed; opacity:.55; background:linear-gradient(90deg,#9ca3af,#6b7280); color:#fff; }
 // Outline button variant (landing specific usage)
 .btn-outline { background:transparent; border:2px solid #667eea; color:#3b4a60; font-weight:600; padding:.55rem 1.1rem; border-radius:10px; transition:background .25s,color .25s,border-color .25s; }
@@ -308,8 +304,7 @@
 .framework-card::before { content:""; position:absolute; top:0; left:0; right:0; height:5px; background:var(--status-accent,var(--card-gradient)); border-top-left-radius:inherit; border-top-right-radius:inherit; opacity:.95; }
 
 // Header cluster
-.framework-card .framework-header { display:flex; align-items:center; gap:1rem; margin:0 0 .25rem; }
-.framework-card .framework-header { flex-wrap:wrap; }
+.framework-card .framework-header { display:flex; align-items:center; gap:1rem; margin:0 0 .25rem; flex-wrap:wrap; }
 .framework-card .framework-icon { flex:0 0 auto; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.1rem; width:52px; height:52px; border-radius:16px; background:var(--status-accent,var(--card-gradient)); color:#fff; box-shadow:0 4px 10px -2px rgba(0,0,0,.3); transition:transform .45s cubic-bezier(.25,.46,.45,.94); }
 .framework-card:hover .framework-icon { transform:rotate(-8deg) scale(1.06); }
 .framework-card h3 { font-size:1.25rem; font-weight:700; letter-spacing:.25px; margin:0; color:var(--color-text-primary,#2c3e50); }
@@ -317,7 +312,7 @@
 
 // Tag (pill) + state variants
 .framework-tag, .framework-badge { align-self:flex-start; font-size:.65rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; padding:.4rem .85rem; border-radius:40px; background:var(--status-accent,var(--card-gradient)); color:#fff; box-shadow:0 2px 4px rgba(0,0,0,.2); position:relative; /* remove overflow:hidden so long labels are fully visible */ }
-.framework-tag.wip { background:var(--status-accent); }
+// (Duplicate .framework-tag.wip removed earlier; retain single declaration below in modern section)
 
 // Description + features
 .framework-description { margin:0; font-size:.85rem; line-height:1.55; color:var(--color-text-secondary,#5a6572); }
@@ -338,7 +333,7 @@
 
 // Soft separators for rows (only visual if two distinct tiers)
 .frameworks-modern .framework-grid-dual + .framework-grid-dual { margin-top:var(--landing-gap); position:relative; }
-.frameworks-modern .framework-grid-dual + .framework-grid-dual::before { content:""; position:absolute; top:calc(-1 * var(--landing-gap)/2); left:0; right:0; height:1px; background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.15),rgba(0,0,0,0)); }
+.frameworks-modern .framework-grid-dual + .framework-grid-dual::before { content:""; position:absolute; top:calc(-1 * var(--landing-gap) / 2); left:0; right:0; height:1px; background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.15),rgba(0,0,0,0)); }
 [data-theme="dark"] .frameworks-modern .framework-grid-dual + .framework-grid-dual::before { background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.18),rgba(255,255,255,0)); }
 
 // Motion preferences
@@ -374,11 +369,7 @@
 .footer .container { background:transparent; box-shadow:none; min-height:0; padding-top:0; padding-bottom:0; }
 
 // Hero refinements (ensure visible styling when global container previously obscured it)
-.hero.hero-compact { background:linear-gradient(135deg,#f8faff 0%,#eef2f9 100%); }
-[data-theme="dark"] .hero.hero-compact { background:linear-gradient(135deg,#141a22 0%,#1c2530 100%); }
-.hero.hero-compact .hero-content { padding-top:1rem; padding-bottom:1.5rem; }
-.hero.hero-compact p.hero-description { color:#4a5460; }
-[data-theme="dark"] .hero.hero-compact p.hero-description { color:#b7c2cc; }
+// Removed duplicated hero-compact background/content/description overrides (hero enhancements earlier provide final styles)
 
 // Readable section headings (avoid overly light gradient-on-light issues)
 .frameworks-modern .section-intro h2,
@@ -391,14 +382,7 @@
 [data-theme="dark"] .architecture h2 { color:#f0f3f6; }
 
 // Footer improvements & contrast
-.footer { background:linear-gradient(140deg,#2b3644,#1f2731); }
-[data-theme="dark"] .footer { background:linear-gradient(140deg,#121a23,#182029); }
-.footer a { color:#c9d2dd; }
-.footer a:hover { color:#ffffff; }
-.footer .footer-section h3, .footer .footer-section h4 { color:#ffffff; }
-[data-theme="dark"] .footer .footer-section h3, [data-theme="dark"] .footer .footer-section h4 { color:#f5f8fb; }
-.footer .footer-bottom { color:#a5b1bc; }
-[data-theme="dark"] .footer .footer-bottom { color:#8d99a5; }
+// Removed duplicate footer refined block (retain initial refined definitions earlier to avoid no-duplicate-selectors rule violations)
 
 
 
