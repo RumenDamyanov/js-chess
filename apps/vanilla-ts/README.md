@@ -96,36 +96,38 @@ Visit http://localhost:3002
 
 ```
 vanilla-ts/
-├── index.html              # Entry point
-├── css/
-│   ├── style.css           # Main styles with animations
-│   └── chat.css            # Chat component styles
-├── dist/                   # Compiled JavaScript (auto-generated)
+├── index.html                  # Entry (links scss/dist/app-bundle.css only – tokens included)
+├── scss/
+│   ├── bundle.scss             # Imports shared main.scss + app-overrides
+│   ├── app-overrides.scss      # TS app-specific tweaks
+│   └── dist/
+│       └── app-bundle.css      # Compiled stylesheet (generated)
+├── dist/                       # Compiled JavaScript (auto-generated)
 │   ├── main.js
 │   ├── components/
 │   ├── services/
 │   ├── types/
 │   └── utils/
-├── src/                    # TypeScript source files
-│   ├── main.ts             # Application entry point
-│   ├── types/              # Type definitions
-│   │   └── chess.ts        # Chess-specific types
-│   ├── components/         # UI components
+├── src/                        # TypeScript source files
+│   ├── main.ts                 # Application entry point
+│   ├── types/                  # Type definitions
+│   │   └── chess.ts            # Chess-specific types
+│   ├── components/             # UI components
 │   │   ├── game-controller.ts
 │   │   ├── chess-board.ts
 │   │   ├── config-manager.ts
 │   │   ├── chat-manager.ts
 │   │   └── debug-ui-manager.ts
-│   ├── services/           # API and external services
+│   ├── services/               # API and external services
 │   │   └── api-client.ts
-│   └── utils/              # Utility functions
+│   └── utils/                  # Utility functions
 │       ├── chess-utils.ts
 │       ├── dom-utils.ts
 │       ├── storage.ts
 │       └── debug.ts
-├── tsconfig.json           # TypeScript configuration
-├── package.json            # Build configuration
-└── README.md               # This file
+├── tsconfig.json               # TypeScript configuration
+├── package.json                # Build configuration
+└── README.md                   # This file
 ```
 
 ## Comparison with Other Implementations

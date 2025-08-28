@@ -1,6 +1,30 @@
+<!-- Project title placed first per MD041 -->
 # JS Chess - Frontend Showcase
 
-[![CI/CD Pipeline](https://github.com/RumenDamyanov/js-chess/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/RumenDamyanov/js-chess/actions)
+## Styling Architecture (Design System Migration)
+
+The project now uses a shared SCSS design system located in `shared/styles/scss`.
+
+Core partials:
+
+- `_variables.scss` / `_mixins.scss` – tokens + helpers bridging to existing CSS custom properties.
+- `_cards.scss`, `_panels.scss`, `_buttons.scss`, `_slots.scss`, `_forms.scss` – core UI primitives & patterns.
+- `_board.scss`, `_messages.scss`, `_status.scss`, `_timer.scss`, `_move-history.scss` – chess domain & game UI.
+- `_promotion.scss`, `_debug.scss` – utility overlays (promotion dialog + debug panel).
+
+Each app has a SCSS bundle entry (`apps/<app>/scss/bundle.scss`) that imports the shared `main.scss` plus its local `app-overrides.scss`. Bundles compile to `scss/dist/app-bundle.css` and should be preferred as the single stylesheet include.
+
+Build scripts:
+
+- `npm run build:styles` – development (expanded) build + per‑app bundles.
+- `npm run watch:styles` – watch mode (bundles + shared).
+- `npm run build:styles:prod` – compressed production CSS (`*.min.css`).
+
+Migration status: All legacy shared and per‑app CSS (e.g. `css/style.css`, `chat.css`, `common.css`, `header.css`, `board-toolbar.css`) have been retired. Design tokens were migrated from `tokens.css` into the SCSS build (no raw CSS tracked).
+
+Style quality: Stylelint + Autoprefixer + cssnano are integrated. Use `npm run lint:styles`, `npm run watch:styles` for live rebuilds, and `npm run build:styles:prod` for a minified, prefixed build.
+
+ [![CI/CD Pipeline](https://github.com/RumenDamyanov/js-chess/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/RumenDamyanov/js-chess/actions)
 [![Go Chess API](https://img.shields.io/badge/API-go--chess-blue.svg)](https://github.com/RumenDamyanov/go-chess)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -57,7 +81,7 @@ WIP / Planned: React · Angular · UI5 (JS) · UI5 (TS)
 ```text
 shared/
     api/                # JS & TS API clients, websocket helpers
-    styles/             # Design system (tokens, common, header, board, chat, theme-toggle.js)
+    styles/             # Design system (scss/ partials incl. _tokens.scss, theme-toggle.js)
 apps/
     vanilla-js/
     vanilla-ts/
@@ -81,10 +105,10 @@ Makefile              # Convenience targets
 
 ## Theming & Shared Styles
 
-- Source of truth: `shared/styles/tokens.css`
+- Source of truth: SCSS partial `shared/styles/scss/partials/_tokens.scss` (emits CSS Custom Properties)
 - Dark overrides: `[data-theme="dark"]`
 - Runtime path in containers: `/shared/styles/*`
-- HTML references: `shared/styles/tokens.css`
+- HTML no longer links a standalone tokens file; tokens are bundled with the compiled CSS.
 - Toggle: `JSChessTheme.toggle()` (persists via `localStorage`)
 
 Add new tokens or component CSS in `shared/styles` and rebuild images; all static apps pick up changes automatically. Future preprocessing (PostCSS/Sass) can hook into the placeholder Make target `build-shared-styles`.
@@ -173,12 +197,12 @@ Expect partial / outdated UX until rewrites land.
 
 ## 🎨 Theming & Shared Styles
 
-Unified theming is implemented via CSS Custom Properties in `shared/styles/tokens.css` with a light theme under `:root` and a dark theme scope using `[data-theme="dark"]`. Frontend apps load the same files so visual consistency is guaranteed.
+Unified theming is implemented via CSS Custom Properties emitted by `_tokens.scss` with a light theme under `:root` and a dark theme scope using `[data-theme="dark"]`. Frontend apps load the same compiled bundle so visual consistency is guaranteed.
 
 Runtime path expectations inside Docker containers:
 
 - All shared styles are copied to `/usr/share/nginx/html/shared/styles/`
-- HTML references use relative paths like `shared/styles/tokens.css`
+- No standalone tokens file needs referencing (compile step outputs all variables in common/app bundles)
 
 Add new design tokens or component styles in the shared directory; all static apps will receive them on the next image rebuild. If a preprocessing pipeline (PostCSS/Sass) is introduced, the placeholder Make target `build-shared-styles` can be extended.
 
@@ -292,7 +316,7 @@ Notes:
 
 - Vue verbose AI logs removed; now gated behind `aiEngine`.
 - TypeScript app legacy bespoke panel removed; adapter proxies old API to shared system.
-- Panel CSS lives in `shared/styles/common.css` (`.debug-panel`, `.debug-actions`, notifications, active button outline).
+- Unified panel / overlay styles now live in SCSS partials (`_debug.scss`, `_promotion.scss`) inside the compiled bundles.
 - Minimal footprint: no frameworks, pure DOM + cookies.
 
 ### Cleanup Commands

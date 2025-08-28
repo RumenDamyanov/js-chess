@@ -1,0 +1,28 @@
+// Entry SCSS (authoritative shared design system)
+// All legacy shared *.css removed; tokens moved into SCSS partials (no raw CSS tracked).
+
+@use "partials/tokens";
+@use "partials/variables" as *;
+@use "partials/mixins" as *;
+@use "partials/cards";
+@use "partials/buttons";
+@use "partials/panels";
+@use "partials/slots";
+@use "partials/forms";
+@use "partials/board";
+@use "partials/pieces";
+@use "partials/messages";
+@use "partials/status";
+@use "partials/timer";
+@use "partials/move-history";
+@use "partials/promotion";
+@use "partials/debug";
+@use "partials/layout";
+@use "partials/chat";
+@use "partials/utilities";
+@use "partials/landing";
+
+/* Namespace marker (reserved for potential runtime feature flags) */
+:root { --scss-enabled: 1; }
+
+/* SCSS partials emit concrete class rules (cards/buttons). */

@@ -98,7 +98,7 @@ restart-frontend: ## Restart active frontend containers (WIP excluded)
 ##@ Build Commands
 
 .PHONY: build
-build: ## Build active containers only (backend + non-WIP frontends)
+build: build-shared-styles ## Build active containers only (backend + non-WIP frontends)
 	@echo "$(GREEN)Building active containers (excluding angular/react)...$(RESET)"
 	@docker-compose build $(ACTIVE_SERVICES)
 	@echo "$(GREEN)✅ Active containers built$(RESET)"
@@ -110,7 +110,7 @@ build-backend: ## Build only the backend container
 	@echo "$(GREEN)✅ Backend built$(RESET)"
 
 .PHONY: build-frontend
-build-frontend: ## Build active frontend containers (WIP excluded)
+build-frontend: build-shared-styles ## Build active frontend containers (WIP excluded)
 	@echo "$(GREEN)Building active frontend containers (excluding angular/react)...$(RESET)"
 	@docker-compose build $(FRONTEND_IMAGES)
 	@echo "$(GREEN)✅ Active frontend containers built$(RESET)"
@@ -146,12 +146,20 @@ build-landing: ## Build only Landing page container
 ##@ Design System / Shared Assets
 
 .PHONY: build-shared-styles
-build-shared-styles: ## (No-op placeholder) Process shared CSS design tokens if a build step is added later
-	@echo "Shared styles currently require no build. Add preprocessing (e.g., PostCSS/Sass) here in future."
+build-shared-styles: ## Compile shared SCSS → CSS bundle (shared/styles/scss/dist)
+	@echo "Building shared SCSS bundle..."
+	@npm run --silent build:styles || (echo "SCSS build failed" && exit 1)
+	@echo "✅ Shared SCSS compiled"
+
+.PHONY: watch-shared-styles
+watch-shared-styles: ## Watch shared SCSS and rebuild on changes
+	@echo "Watching SCSS (Ctrl+C to stop)..."
+	@npm run watch:styles
 
 .PHONY: rebuild
 rebuild: ## Complete rebuild of active containers only (WIP excluded)
 	@echo "$(YELLOW)Performing complete rebuild (excluding angular/react)...$(RESET)"
+	@$(MAKE) build-shared-styles
 	@docker-compose down --rmi local --volumes --remove-orphans
 	@docker-compose build --no-cache $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)
@@ -169,6 +177,7 @@ rebuild: ## Complete rebuild of active containers only (WIP excluded)
 .PHONY: restart
 restart: ## Soft rebuild (active containers only, cache enabled)
 	@echo "$(YELLOW)Performing soft restart of active containers (excluding angular/react)...$(RESET)"
+	@$(MAKE) build-shared-styles
 	@docker-compose down
 	@docker-compose build $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)

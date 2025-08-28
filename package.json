@@ -29,7 +29,7 @@
     "start:backend": "cd backend/go-chess && make run-server",
   "start:landing": "cd apps/landing && npx http-server -p 3000 --cors -c-1 .",
   "start:vanilla": "cd apps/vanilla-js && npx http-server -p 3001 --cors -c-1 .",
-  "start:vanilla-ts": "cd apps/vanilla-ts && npx http-server dist -p 3002 --cors -c-1",
+  "start:vanilla-ts": "cd apps/vanilla-ts && npx http-server -p 3002 --cors -c-1 .",
   "start:jquery": "cd apps/jquery && npx http-server -p 3003 --cors -c-1 .",
   "start:vue": "cd apps/vue-js && npm run dev",
   "start:react": "cd apps/react-js && npm run dev",
@@ -51,7 +51,19 @@
     "dev": "docker-compose up --build",
     "dev:backend": "cd backend/go-chess && make docker-dev",
 
-    "lint": "echo 'Run linting in individual app directories'",
+  "lint": "echo 'Run linting in individual app directories'",
+  "build:styles": "sass shared/styles/scss/main.scss shared/styles/scss/dist/common-scss.css --no-source-map && npm run build:app-styles && npm run build:bundles",
+  "build:app-styles": "sass apps/vanilla-js/scss/app-overrides.scss:apps/vanilla-js/scss/dist/app-overrides.css apps/vanilla-ts/scss/app-overrides.scss:apps/vanilla-ts/scss/dist/app-overrides.css apps/jquery/scss/app-overrides.scss:apps/jquery/scss/dist/app-overrides.css apps/vue-js/src/styles/app-overrides.scss:apps/vue-js/src/styles/app-overrides.css --no-source-map",
+  "build:bundles": "sass apps/vanilla-js/scss/bundle.scss:apps/vanilla-js/scss/dist/app-bundle.css apps/vanilla-ts/scss/bundle.scss:apps/vanilla-ts/scss/dist/app-bundle.css apps/jquery/scss/bundle.scss:apps/jquery/scss/dist/app-bundle.css apps/vue-js/src/styles/bundle.scss:apps/vue-js/src/styles/app-bundle.css --no-source-map && npm run sync:vanilla-ts:css",
+  "build:styles:prod": "sass shared/styles/scss/main.scss shared/styles/scss/dist/common-scss.css && sass apps/vanilla-js/scss/bundle.scss:apps/vanilla-js/scss/dist/app-bundle.css && sass apps/vanilla-ts/scss/bundle.scss:apps/vanilla-ts/scss/dist/app-bundle.css && sass apps/jquery/scss/bundle.scss:apps/jquery/scss/dist/app-bundle.css && sass apps/vue-js/src/styles/bundle.scss:apps/vue-js/src/styles/app-bundle.css && postcss shared/styles/scss/dist/common-scss.css -o shared/styles/scss/dist/common-scss.min.css && postcss apps/vanilla-js/scss/dist/app-bundle.css -o apps/vanilla-js/scss/dist/app-bundle.min.css && postcss apps/vanilla-ts/scss/dist/app-bundle.css -o apps/vanilla-ts/scss/dist/app-bundle.min.css && postcss apps/jquery/scss/dist/app-bundle.css -o apps/jquery/scss/dist/app-bundle.min.css && postcss apps/vue-js/src/styles/app-bundle.css -o apps/vue-js/src/styles/app-bundle.min.css",
+  "lint:styles": "stylelint \"**/*.{css,scss}\"",
+  "fix:styles": "stylelint \"**/*.{css,scss}\" --fix",
+  "watch:styles": "sass --watch shared/styles/scss/main.scss:shared/styles/scss/dist/common-scss.css apps/vanilla-js/scss/bundle.scss:apps/vanilla-js/scss/dist/app-bundle.css apps/vanilla-ts/scss/bundle.scss:apps/vanilla-ts/scss/dist/app-bundle.css apps/jquery/scss/bundle.scss:apps/jquery/scss/dist/app-bundle.css apps/vue-js/src/styles/bundle.scss:apps/vue-js/src/styles/app-bundle.css --no-source-map",
+  "prestart:landing": "npm run build:styles",
+  "prestart:vanilla": "npm run build:styles",
+  "prestart:jquery": "npm run build:styles",
+  "prestart:vanilla-ts": "npm run build:styles && npm run sync:vanilla-ts:css",
+  "sync:vanilla-ts:css": "mkdir -p apps/vanilla-ts/dist/scss/dist && cp apps/vanilla-ts/scss/dist/app-bundle.css apps/vanilla-ts/dist/scss/dist/app-bundle.css || true",
     "test": "echo 'Run tests in individual app directories'",
 
   "clean": "npm run clean:vue && npm run clean:react && npm run clean:angular",
@@ -60,9 +72,23 @@
   "clean:angular": "cd apps/angular && rm -rf node_modules dist"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
-    "http-server": "^14.1.1"
+    "cssnano": "^6.0.1",
+    "http-server": "^14.1.1",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^10.1.0",
+    "sass": "^1.77.8",
+    "stylelint": "^16.7.0",
+    "stylelint-config-standard": "^36.0.0",
+    "stylelint-config-standard-scss": "^13.0.0",
+    "stylelint-order": "^6.0.4"
   },
+  "browserslist": [
+    "defaults",
+    ">0.2%",
+    "not dead"
+  ],
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"

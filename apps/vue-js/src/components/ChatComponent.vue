@@ -264,5 +264,5 @@ export default {
 </script>
 
 <style scoped>
-@import '@shared/chat.css';
+/* Chat styles provided globally via SCSS bundle */
 </style>

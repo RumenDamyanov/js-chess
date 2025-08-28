@@ -1,0 +1,13 @@
+@use 'variables' as *;
+// Game messages & move history hover dark variants centralization
+[data-theme="dark"] .move-history .move-item:hover { background:linear-gradient(145deg,#243041,#1c2530); }
+
+/* Dark game messages */
+[data-theme="dark"] .game-messages-region .game-message {
+  background:#26303d;
+  border-color:#374151;
+}
+[data-theme="dark"] .game-messages-region .game-message.success { border-left-color: var(--color-success); }
+[data-theme="dark"] .game-messages-region .game-message.error { border-left-color: var(--color-danger); }
+[data-theme="dark"] .game-messages-region .game-message.warning { border-left-color: var(--color-warning); }
+[data-theme="dark"] .game-messages-region .game-message.info { border-left-color: var(--color-info); }

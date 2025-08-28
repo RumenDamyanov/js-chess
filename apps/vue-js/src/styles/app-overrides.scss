@@ -1,0 +1,52 @@
+// Vue app-specific SCSS overrides (imported after shared bundle in main entry)
+@use '../../../../shared/styles/scss/partials/variables' as *;
+
+// Subtle transition tuning
+.board-wrapper { transition: transform .25s ease; }
+
+// Layout: 3-column responsive grid (left | center | right) used on main page
+.container > main {
+	display: grid;
+	grid-template-columns: 300px auto 300px;
+	gap: 30px;
+	align-items: start;
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+	.container > main { grid-template-columns: 250px auto 250px; gap: 20px; }
+}
+@media (max-width: 860px) {
+	.left-panel, .right-panel, .board-panel { width: 100%; }
+}
+@media (max-width: 768px) {
+	.container > main { grid-template-columns: 1fr; gap: 20px; }
+}
+
+.left-panel, .right-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.board-panel {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+// Ensure messages region stacks beneath board with newest at bottom (flex-column-reverse)
+.game-messages-region {
+	width: 100%;
+	max-width: 480px;
+	margin: 8px auto 4px;
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 6px;
+	min-height: 0;
+}
+
+// Defensive: flip support already handled via shared board styles; keep board-wrapper margin tweak
+.board-panel .board-wrapper { margin-bottom: 4px; }

@@ -1,0 +1,5 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.btn-primary { @include button-variant(linear-gradient(135deg, $color-accent, $color-accent-alt)); }
+.btn-secondary { @include button-variant(rgba(255,255,255,0.08), $color-text-primary); border:1px solid $color-border; }

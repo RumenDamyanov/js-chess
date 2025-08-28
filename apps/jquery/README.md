@@ -35,12 +35,15 @@ Visit http://localhost:3002
 
 ```
 jquery/
-├── index.html          # Main HTML file
-├── css/
-│   └── style.css       # jQuery-specific styles
+├── index.html              # Entry (links scss/dist/app-bundle.css only – tokens included)
+├── scss/
+│   ├── bundle.scss         # Imports shared main.scss + app-overrides
+│   ├── app-overrides.scss  # jQuery-specific tweaks
+│   └── dist/
+│       └── app-bundle.css  # Compiled stylesheet (generated)
 ├── js/
-│   └── app.js          # Main jQuery application
-└── README.md           # This file
+│   └── app.js              # Main jQuery application
+└── README.md               # This file
 ```
 
 ## Learning Objectives

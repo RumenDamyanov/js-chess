@@ -1,0 +1,94 @@
+// Centralized form control styles (inputs, selects, textareas, PGN output/input) + dark mode
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Light mode base
+.game-config input[type="text"],
+.game-config input[type="number"],
+.game-config select,
+.game-config textarea,
+#pgn-output,
+.pgn-output,
+.pgn-input,
+textarea,
+input[type="text"],
+input[type="number"],
+select {
+  background: #fff;
+  color: var(--color-text-primary,#2c3e50);
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: .85rem;
+  line-height: 1.3;
+  transition: background .25s, border-color .25s, box-shadow .25s;
+}
+
+.game-config input:focus,
+.game-config select:focus,
+.game-config textarea:focus,
+#pgn-output:focus,
+.pgn-output:focus,
+.pgn-input:focus,
+textarea:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-brand-start,#007bff);
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+}
+
+// Custom checkbox styling (centralized from legacy per-app CSS)
+.checkbox-label { display:flex !important; align-items:center; cursor:pointer; font-size:14px !important; margin-bottom:0 !important; position:relative; }
+.checkbox-label input[type="checkbox"] { opacity:0; position:absolute; width:0; height:0; }
+.checkmark { width:18px; height:18px; background:#fff; border:2px solid #ced4da; border-radius:4px; margin-right:10px; position:relative; transition:all .3s ease; }
+.checkbox-label input[type="checkbox"]:checked + .checkmark { background:#007bff; border-color:#007bff; }
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after { content:'✓'; position:absolute; top:-2px; left:2px; color:#fff; font-size:12px; font-weight:bold; }
+@include dark-theme('.checkmark') { background:#26303d; border:2px solid #374151; }
+@include dark-theme('.checkbox-label input[type="checkbox"]:checked + .checkmark') { background:#3d8bfd; border-color:#3d8bfd; }
+
+// Dark mode
+[data-theme="dark"] .game-config input[type="text"],
+[data-theme="dark"] .game-config input[type="number"],
+[data-theme="dark"] .game-config select,
+[data-theme="dark"] .game-config textarea,
+[data-theme="dark"] #pgn-output,
+[data-theme="dark"] .pgn-output,
+[data-theme="dark"] .pgn-input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] select {
+  background:#26303d;
+  border:1px solid #374151;
+  color: var(--color-text-primary,#f2f5f9);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4) inset;
+}
+
+[data-theme="dark"] .game-config input:focus,
+[data-theme="dark"] .game-config select:focus,
+[data-theme="dark"] .game-config textarea:focus,
+[data-theme="dark"] #pgn-output:focus,
+[data-theme="dark"] .pgn-output:focus,
+[data-theme="dark"] .pgn-input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] input[type="text"]:focus,
+[data-theme="dark"] input[type="number"]:focus,
+[data-theme="dark"] select:focus {
+  border-color:#3d8bfd;
+  box-shadow:0 0 0 3px rgba(61,139,253,0.35);
+}
+
+[data-theme="dark"] .pgn-output::placeholder { color:#9ca3af; opacity:.85; }
+
+// PGN specific sizing helpers
+.pgn-output { width:100%; min-height:120px; resize:vertical; font-family:var(--font-mono,monospace); font-size:.7rem; padding:6px 8px; }
+.pgn-input { width:100%; min-height:80px; font-family:var(--font-mono,monospace); font-size:.7rem; padding:6px 8px; }
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color:#9ca3af; opacity:.85; }
+
+[data-theme="dark"] input[type="checkbox"] { accent-color:#3d8bfd; }
+

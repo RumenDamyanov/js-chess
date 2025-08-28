@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JS Chess - Framework Comparison</title>
-    <link rel="stylesheet" href="shared/common.css">
-    <link rel="stylesheet" href="shared/header.css">
-    <link rel="stylesheet" href="css/landing.css">
+    <!-- Use root shared compiled SCSS bundle instead of duplicated local copies -->
+    <!-- Shared compiled bundle (ensured by prestart script) -->
+    <link rel="stylesheet" href="../../shared/styles/scss/dist/common-scss.css">
+    <!-- legacy landing.css removed; styles consolidated into shared bundle -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' style='font-size:14px'>♛</text></svg>">
 </head>
 <body>
@@ -44,15 +45,19 @@
                     </div>
                 </section>
 
-        <section id="frameworks" class="frameworks">
+    <section id="frameworks" class="frameworks-modern landing-layout">
             <div class="container">
-                <h2>Demo Applications</h2>
-                <p class="section-description">All demos share rules, AI, and backend. UI variants highlight framework patterns. Two UI5 variants are in preparation.</p>
-                <div class="framework-grid grid-2x4">
-                    <div class="framework-card">
+                       <div class="section-intro">
+                           <h2>Demo Applications</h2>
+                           <p>All demos share rules, AI, and backend. UI variants highlight framework patterns. Two UI5 variants are in preparation.</p>
+                       </div>
+                               <!-- Stable Row (4 production-ready demos) -->
+                               <h3 class="frameworks-tier-title">Stable Demos <span></span></h3>
+                               <div class="framework-grid-dual stable-row">
+                          <div class="framework-card stable">
                         <div class="framework-header">
                             <div class="framework-icon vanilla" title="Vanilla JavaScript">JS</div>
-                            <h3>Vanilla JavaScript</h3>
+                            <h3>JavaScript</h3>
                             <span class="framework-tag">Pure JS</span>
                         </div>
                         <p class="framework-description">
@@ -70,7 +75,7 @@
                         </div>
                     </div>
 
-                    <div class="framework-card">
+                    <div class="framework-card stable">
                         <div class="framework-header">
                             <div class="framework-icon typescript" title="Vanilla TypeScript">TS</div>
                             <h3>TypeScript</h3>
@@ -91,7 +96,7 @@
                         </div>
                     </div>
 
-                    <div class="framework-card">
+                    <div class="framework-card stable">
                         <div class="framework-header">
                             <div class="framework-icon jquery" title="jQuery">jQ</div>
                             <h3>jQuery</h3>
@@ -112,10 +117,10 @@
                         </div>
                     </div>
 
-            <div class="framework-card">
+            <div class="framework-card stable">
                         <div class="framework-header">
                             <div class="framework-icon vue">Vue</div>
-                            <h3>Vue.js 3</h3>
+                            <h3>Vue.js</h3>
                 <span class="framework-tag">Stable</span>
                         </div>
                         <p class="framework-description">
@@ -134,10 +139,14 @@
                         </div>
                     </div>
 
+                </div><!-- /stable-row -->
+                <!-- Roadmap Row (WIP / upcoming demos) -->
+                <h3 class="frameworks-tier-title">In Progress <span></span></h3>
+                <div class="framework-grid-dual roadmap-row">
             <div class="framework-card wip dimmed">
                         <div class="framework-header">
                 <div class="framework-icon react">React</div>
-                <h3>React.js 18</h3>
+                <h3>React.js</h3>
                 <span class="framework-tag wip">WIP</span>
                         </div>
                         <p class="framework-description">
@@ -152,14 +161,14 @@
                         </div>
                         <div class="framework-actions">
                             <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
-                            <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/react-js" class="btn btn-outline" target="_blank">View Code</a>
+                            <span class="btn btn-outline btn-disabled" target="_blank">View Code</span>
                         </div>
                     </div>
 
             <div class="framework-card wip dimmed">
                         <div class="framework-header">
                             <div class="framework-icon angular">Angular</div>
-                            <h3>Angular 17+</h3>
+                            <h3>Angular</h3>
                             <span class="framework-tag wip">WIP</span>
                         </div>
                         <p class="framework-description">
@@ -172,15 +181,15 @@
                             <span class="feature">RxJS</span>
                             <span class="feature">Full TypeScript</span>
                         </div>
-                                                <div class="framework-actions">
-                                                        <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
-                                                        <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/angular" class="btn btn-outline" target="_blank">View Code</a>
+                        <div class="framework-actions">
+                          <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
+                          <span class="btn btn-outline btn-disabled" target="_blank">View Code</span>
                         </div>
                     </div>
                         <div class="framework-card wip dimmed">
                             <div class="framework-header">
                                 <div class="framework-icon ui5" title="UI5 JavaScript" style="background:#552b2b;">UI5</div>
-                                <h3>UI5 (JavaScript)</h3>
+                                <h3>UI5 (JS)</h3>
                                 <span class="framework-tag wip">WIP</span>
                             </div>
                             <p class="framework-description">OpenUI5 vanilla JS flavor showcasing enterprise component model, theming, and MVC structure integration (in progress).</p>
@@ -197,7 +206,7 @@
                         <div class="framework-card wip dimmed">
                             <div class="framework-header">
                                 <div class="framework-icon ui5" title="UI5 TypeScript" style="background:#1e3550;">UI5</div>
-                                <h3>UI5 (TypeScript)</h3>
+                                <h3>UI5 (TS)</h3>
                                 <span class="framework-tag wip">WIP</span>
                             </div>
                             <p class="framework-description">OpenUI5 with TypeScript typings, decorators exploration, and strict model interfaces (in progress).</p>
@@ -211,6 +220,7 @@
                                 <span class="btn btn-outline btn-disabled" title="WIP">View Code</span>
                             </div>
                         </div>
+                </div><!-- /roadmap-row -->
                 </div>
             </div>
         </section>
@@ -259,87 +269,6 @@
                         <h3>Responsive Design</h3>
                         <p>Mobile-friendly interface with adaptive layouts and touch-optimized chess board interaction.</p>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="comparison" class="comparison">
-            <div class="container">
-                <h2>Framework Comparison</h2>
-                <p class="section-description">
-                    Compare the different approaches, trade-offs, and characteristics of each framework implementation.
-                </p>
-
-                <div class="comparison-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Aspect</th>
-                                <th>Vanilla JS</th>
-                                <th>TypeScript</th>
-                                <th>jQuery</th>
-                                <th>Vue.js</th>
-                                <th>React.js</th>
-                                <th>Angular</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Bundle Size</strong></td>
-                                <td class="size-small">~15KB</td>
-                                <td class="size-small">~25KB</td>
-                                <td class="size-small">~95KB</td>
-                                <td class="size-medium">~350KB</td>
-                                <td class="size-medium">~280KB</td>
-                                <td class="size-large">~450KB</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Learning Curve</strong></td>
-                                <td class="difficulty-medium">Medium</td>
-                                <td class="difficulty-medium">Medium</td>
-                                <td class="difficulty-easy">Easy</td>
-                                <td class="difficulty-easy">Easy</td>
-                                <td class="difficulty-medium">Medium</td>
-                                <td class="difficulty-hard">Steep</td>
-                            </tr>
-                            <tr>
-                                <td><strong>TypeScript</strong></td>
-                                <td>Optional</td>
-                                <td>Native</td>
-                                <td>Optional</td>
-                                <td>Integrated</td>
-                                <td>Integrated</td>
-                                <td>Native</td>
-                            </tr>
-                            <tr>
-                                <td><strong>State Management</strong></td>
-                                <td>Manual</td>
-                                <td>Manual</td>
-                                <td>Manual</td>
-                                <td>Pinia</td>
-                                <td>Context API</td>
-                                <td>Services</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Performance</strong></td>
-                                <td class="perf-excellent">Excellent</td>
-                                <td class="perf-excellent">Excellent</td>
-                                <td class="perf-good">Good</td>
-                                <td class="perf-excellent">Excellent</td>
-                                <td class="perf-excellent">Excellent</td>
-                                <td class="perf-good">Good</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Debugging</strong></td>
-                                <td class="eco-basic">Basic</td>
-                                <td class="eco-rich">Advanced</td>
-                                <td class="eco-basic">Basic</td>
-                                <td class="eco-mature">DevTools</td>
-                                <td class="eco-mature">DevTools</td>
-                                <td class="eco-complete">Complete</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </section>
@@ -415,6 +344,8 @@
                         <li><a href="http://localhost:3002">Vanilla (TS)</a></li>
                         <li><a href="http://localhost:3003">jQuery</a></li>
                         <li><a href="http://localhost:3004">Vue</a></li>
+                    </ul>
+                    <ul>
                         <li><span class="wip-link" title="Work in progress">React</span></li>
                         <li><span class="wip-link" title="Work in progress">Angular</span></li>
                         <li><span class="wip-link" title="Work in progress">UI5 (JS)</span></li>

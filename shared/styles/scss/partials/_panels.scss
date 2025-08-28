@@ -1,0 +1,19 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Unified panel styling (game configuration, timers, move history, status/info blocks)
+.panel-like, .game-config, .timer-info, .move-history, .game-info {
+  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+  border: 1px solid var(--color-border, #dee2e6);
+  border-radius: $radius-lg;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+@include dark-theme('.panel-like, .game-config, .timer-info, .move-history, .game-info') {
+  background: $color-surface-dark-gradient;
+  border: 1px solid $color-border-dark;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+// Move history internal scrollbar adjustments can remain per-app; unify container only.

@@ -1,0 +1,37 @@
+@use 'variables' as *;
+
+// Reusable mixins
+@mixin card-base {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: 14px 16px 18px;
+  box-shadow: $elevation-md;
+  position: relative;
+  transition: background $transition-base, border-color $transition-base, box-shadow $transition-base;
+}
+
+// Apply dark theme styles for a given selector scope.
+// Usage: @include dark-theme('.card-like') { ... }
+@mixin dark-theme($selector) {
+  [data-theme="dark"] #{$selector} {
+    @content;
+  }
+}
+
+@mixin focus-ring {
+  &:focus { outline:2px solid $color-accent; outline-offset:2px; }
+}
+
+@mixin button-variant($bg, $color: #fff) {
+  background: $bg;
+  color: $color;
+  border: none;
+  cursor: pointer;
+  font-weight:600;
+  border-radius: $radius-md;
+  transition: transform $transition-fast, box-shadow $transition-fast, background $transition-base;
+  &:hover { transform: translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.18); }
+  &:active { transform: translateY(0); }
+  &:disabled { opacity:.6; cursor:not-allowed; transform:none; box-shadow:none; }
+}

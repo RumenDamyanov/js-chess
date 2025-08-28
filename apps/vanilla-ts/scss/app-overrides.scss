@@ -1,0 +1,18 @@
+// Vanilla TS app-specific SCSS overrides
+@use '../../../shared/styles/scss/partials/variables' as *;
+
+// Example override: ensure TS specific badge styling parity
+.header-framework { letter-spacing: .5px; }
+
+// Layout grid (TypeScript variant)
+main { display:grid; grid-template-columns:300px auto 300px; gap:30px; align-items:start; max-width:1400px; margin:0 auto; }
+.left-panel, .right-panel { display:flex; flex-direction:column; gap:20px; }
+
+// Status block (central parity)
+.status { display:flex; flex-direction:column; gap:10px; }
+.status > div { padding:8px 12px; border-radius:6px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); font-weight:500; color:#2c3e50; border:1px solid rgba(0,0,0,0.05); }
+[data-theme="dark"] .status > div { background:#26303d; color:var(--color-text-primary,#f2f5f9); box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1px solid #374151; }
+[data-theme="dark"] .status > div span { color:inherit; }
+
+@media (max-width:1024px){ main { grid-template-columns:250px auto 250px; gap:20px; } }
+@media (max-width:768px){ main { grid-template-columns:1fr; gap:20px; } .left-panel { order:2; } .right-panel { order:3; } }
