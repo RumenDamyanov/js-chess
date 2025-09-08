@@ -49,9 +49,8 @@ select:focus {
   align-items: center;
   cursor: pointer;
   font-size: 14px !important;
-  margin-bottom: 0 !important;
   position: relative;
-  margin: 4px 0;
+  margin: 4px 0 0 !important;
 }
 .checkbox-label input[type="checkbox"] {
   opacity: 0;
