@@ -30,6 +30,13 @@ header h1 {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+// Hide theme and debug buttons temporarily for development
+#debug-btn,
+.theme-toggle-btn,
+button[onclick*="toggleTheme"] {
+  display: none !important;
+}
 .game-controls {
   display: flex;
   justify-content: center;

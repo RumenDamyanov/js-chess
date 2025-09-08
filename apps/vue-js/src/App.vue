@@ -23,7 +23,7 @@
           </ul>
 
           <div class="header-controls">
-            <button id="theme-toggle-btn" class="btn btn-secondary" @click="toggleTheme()" aria-label="Toggle theme">🌙</button>
+            <button id="theme-toggle-btn" class="btn btn-secondary" @click="toggleTheme()" aria-label="Toggle theme" style="display: none;">🌙</button>
             <!-- Debug button now injected by shared debug.js -->
           </div>
         </nav>
