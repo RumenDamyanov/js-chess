@@ -1,0 +1,155 @@
+// SVG-based chess piece rendering system
+// Uses SVG images from backend/go-chess/examples/gui/assets/pieces/
+// Provides high-quality, scalable piece graphics as alternative to Unicode symbols
+
+@use "variables" as *;
+@use "mixins" as *;
+
+// SVG piece base styles
+.piece-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+
+  img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+  }
+}
+
+// Hover lift effect (only if parent square not animating selection)
+.square:hover .piece-svg {
+  transform: translateY(-2px);
+}
+
+// Dark mode adjustments for SVG pieces
+[data-theme="dark"] .piece-svg img {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+}
+
+// SVG piece type mappings (background-image approach for better performance)
+.piece-svg.white.king {
+  background-image: url('/shared/assets/images/pieces/w_k.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.white.queen {
+  background-image: url('/shared/assets/images/pieces/w_q.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.white.rook {
+  background-image: url('/shared/assets/images/pieces/w_r.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.white.bishop {
+  background-image: url('/shared/assets/images/pieces/w_b.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.white.knight {
+  background-image: url('/shared/assets/images/pieces/w_n.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.white.pawn {
+  background-image: url('/shared/assets/images/pieces/w_p.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.black.king {
+  background-image: url('/shared/assets/images/pieces/b_k.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.black.queen {
+  background-image: url('/shared/assets/images/pieces/b_q.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.black.rook {
+  background-image: url('/shared/assets/images/pieces/b_r.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.black.bishop {
+  background-image: url('/shared/assets/images/pieces/b_b.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.black.knight {
+  background-image: url('/shared/assets/images/pieces/b_n.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.piece-svg.black.pawn {
+  background-image: url('/shared/assets/images/pieces/b_p.svg');
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+// Fallback for when SVG images fail to load - show Unicode symbols
+.piece-svg::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: calc(min(6vmin, 48px));
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  z-index: -1; // Behind the SVG, only shows if SVG fails
+  display: none; // Hide Unicode fallbacks when using SVG mode to prevent overlap
+}
+
+// Unicode fallbacks for SVG pieces
+.piece-svg.white.king::before { content: "♔"; }
+.piece-svg.white.queen::before { content: "♕"; }
+.piece-svg.white.rook::before { content: "♖"; }
+.piece-svg.white.bishop::before { content: "♗"; }
+.piece-svg.white.knight::before { content: "♘"; }
+.piece-svg.white.pawn::before { content: "♙"; }
+
+.piece-svg.black.king::before { content: "♚"; }
+.piece-svg.black.queen::before { content: "♛"; }
+.piece-svg.black.rook::before { content: "♜"; }
+.piece-svg.black.bishop::before { content: "♝"; }
+.piece-svg.black.knight::before { content: "♞"; }
+.piece-svg.black.pawn::before { content: "♟"; }
+
+// Dark mode Unicode fallbacks
+[data-theme="dark"] .piece-svg::before {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}

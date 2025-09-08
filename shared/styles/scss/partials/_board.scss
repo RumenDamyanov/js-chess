@@ -1,0 +1,177 @@
+// Board base + dark theme centralization
+@use "variables" as *;
+
+/* Base board + squares (light mode) */
+.chess-board {
+  --board-square-size: 60px;
+  display: grid;
+  grid-template-columns: repeat(8, var(--board-square-size));
+  grid-template-rows: repeat(8, var(--board-square-size));
+  gap: 0;
+  border: 2px solid var(--color-border, #d9dee3);
+  border-radius: var(--radius-lg, 8px);
+  margin: 20px auto;
+  width: fit-content;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  position: relative;
+  background: var(--color-bg-surface, #ffffff);
+  padding: 4px;
+  transition:
+    transform 0.45s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+.chess-board.flipped {
+  transform: rotate(180deg);
+}
+.chess-board.no-animate {
+  transition: none !important;
+}
+.chess-board.no-animate .square {
+  transition: none !important;
+}
+.chess-board.flipped .square {
+  transform: rotate(180deg);
+}
+.chess-board::before,
+.chess-board::after {
+  display: none;
+}
+
+.square {
+  width: var(--board-square-size);
+  height: var(--board-square-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.square.light {
+  background: var(--color-square-light, #f0d9b5);
+}
+.square.dark {
+  background: var(--color-square-dark, #b58863);
+}
+.square:hover {
+  outline: 2px solid var(--color-square-highlight, #91d5ff);
+  outline-offset: -2px;
+  z-index: 2;
+}
+.square.selected {
+  outline: 3px solid var(--color-square-selected-outline, #d48806);
+  background: var(--color-square-selected, #ffe58a) !important;
+  z-index: 3;
+}
+.square.valid-move {
+  box-shadow: inset 0 0 0 4px var(--color-square-highlight, #91d5ff);
+}
+.square.valid-move::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--color-square-move-dot, rgba(0, 0, 0, 0.35));
+  border-radius: 50%;
+}
+.square.castling-move {
+  box-shadow: inset 0 0 0 4px #ffb347;
+}
+.castling-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 12px;
+  color: #8b4513;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
+}
+.square.hint-from {
+  background-color: #4caf50 !important;
+  box-shadow: inset 0 0 0 3px #2e7d32;
+  animation: pulse-from 2s infinite;
+}
+.square.hint-to {
+  background-color: #ff9800 !important;
+  box-shadow: inset 0 0 0 3px #f57c00;
+  animation: pulse-to 2s infinite;
+  position: relative;
+}
+.square.hint-to::after {
+  content: "⭐";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  animation: star-twinkle 1.5s infinite;
+  z-index: 10;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+@keyframes pulse-from {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 3px #2e7d32;
+    background-color: #4caf50;
+  }
+  50% {
+    box-shadow: inset 0 0 0 5px #1b5e20;
+    background-color: #66bb6a;
+  }
+}
+@keyframes pulse-to {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 3px #f57c00;
+    background-color: #ff9800;
+  }
+  50% {
+    box-shadow: inset 0 0 0 5px #e65100;
+    background-color: #ffb74d;
+  }
+}
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* Dark board container & squares */
+[data-theme="dark"] .chess-board {
+  background: var(--color-bg-surface, #1e2530);
+  border-color: var(--color-border, #374151);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+[data-theme="dark"] .chess-board .square.light {
+  background: var(--color-square-light, #b58863);
+}
+[data-theme="dark"] .chess-board .square.dark {
+  background: var(--color-square-dark, #2c3e50);
+}
+[data-theme="dark"] .chess-board .square.selected {
+  outline: 3px solid var(--color-square-selected-outline, #ffd666);
+}

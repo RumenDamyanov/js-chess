@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -41,6 +41,11 @@ jobs:
         run: |
           echo "Installing root dependencies..."
           npm ci
+
+      - name: Lint SCSS (stylelint)
+        run: |
+          echo "Running stylelint for SCSS/CSS..."
+          npm run lint:styles || (echo "❌ Stylelint failed" && exit 1)
 
       - name: Verify submodule backend
         run: |
@@ -149,8 +154,9 @@ jobs:
     needs: setup-and-validate
 
     strategy:
+      fail-fast: false
       matrix:
-        # NOTE: angular & react-js still excluded (WIP). vue-js is now stable and re-enabled.
+        # Add vanilla-js build (no package.json but we still compile shared styles), keep WIP excluded
         app: [vanilla-ts, vue-js]
 
     steps:
@@ -160,10 +166,20 @@ jobs:
           submodules: recursive
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+
+      - name: Prepare shared styles (root install + build)
+        run: |
+          echo "Installing root dependencies & building shared styles (required for app-bundle.css)"
+          npm ci
+          npm run build:styles
+
+      - name: Stylelint (matrix scope)
+        run: |
+          npm run lint:styles
 
       - name: Install dependencies for ${{ matrix.app }}
         run: |
@@ -185,6 +201,14 @@ jobs:
           cd apps/${{ matrix.app }}
           npm run build
           echo "✅ ${{ matrix.app }} build successful"
+
+      - name: Report CSS bundle size
+        run: |
+          if [ -f "apps/${{ matrix.app }}/dist/assets/index-*.css" ]; then
+            size=$(wc -c apps/${{ matrix.app }}/dist/assets/index-*.css | tail -1 | awk '{print $1}')
+            echo "CSS_SIZE_BYTES=$size" >> $GITHUB_ENV
+            echo "✅ CSS bundle size: $size bytes"
+          fi
 
       - name: Validate build artifacts
         run: |
@@ -354,7 +378,7 @@ jobs:
           submodules: recursive
 
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -398,9 +422,14 @@ jobs:
           submodules: recursive
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install root dependencies (for stylelint)
+        run: |
+          echo "Installing root dependencies for quality checks..."
+          npm ci
 
       - name: Check for common issues
         run: |
@@ -452,6 +481,10 @@ jobs:
       - name: Security scan
         run: |
           echo "Running basic security checks..."
+      - name: SCSS Lint (redundant safety)
+        run: |
+          echo "Re-running stylelint as safety net in quality job..."
+          npm run lint:styles
 
           # Check for potential secrets in repository
           if grep -r -i "password\|secret\|token\|key" --include="*.js" --include="*.ts" --include="*.json" . | grep -v node_modules | grep -v ".git" | head -5; then

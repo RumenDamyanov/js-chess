@@ -1,0 +1,81 @@
+// Chess piece glyph mapping & base styling
+// Renders Unicode chess symbols based on semantic classes applied in frameworks.
+
+.piece {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: calc(min(6vmin, 48px));
+  line-height: 1;
+  user-select: none;
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.piece.white {
+  color: var(--color-piece-white, #ffffff);
+}
+.piece.black {
+  color: var(--color-piece-black, #222831);
+}
+
+// Provide slightly stronger contrast in dark mode
+[data-theme="dark"] .piece.white {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] .piece.black {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+
+// Hover lift (only if parent square not animating selection)
+.square:hover .piece {
+  transform: translateY(-2px);
+}
+
+// Unicode glyph assignment
+.piece.king.white::before {
+  content: "♔";
+}
+.piece.queen.white::before {
+  content: "♕";
+}
+.piece.rook.white::before {
+  content: "♖";
+}
+.piece.bishop.white::before {
+  content: "♗";
+}
+.piece.knight.white::before {
+  content: "♘";
+}
+.piece.pawn.white::before {
+  content: "♙";
+}
+
+.piece.king.black::before {
+  content: "♚";
+}
+.piece.queen.black::before {
+  content: "♛";
+}
+.piece.rook.black::before {
+  content: "♜";
+}
+.piece.bishop.black::before {
+  content: "♝";
+}
+.piece.knight.black::before {
+  content: "♞";
+}
+.piece.pawn.black::before {
+  content: "♟";
+}
+
+// Accessibility: visually hidden fallback text if glyphs fail to load (optional)
+.piece::before {
+  font-family:
+    "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}

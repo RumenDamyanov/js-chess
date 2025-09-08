@@ -34,6 +34,11 @@
       let btn = document.getElementById('debug-btn');
       if(!btn){
         const headerControls = document.querySelector('.header-controls');
+        if(!headerControls){
+          // Retry after a short delay for frameworks like Vue that render asynchronously
+          setTimeout(()=> this.ensureButton(), 100);
+          return;
+        }
         btn = document.createElement('button');
         btn.id='debug-btn';
         btn.className='btn btn-debug';
@@ -43,7 +48,7 @@
   btn.setAttribute('aria-expanded','false');
   btn.setAttribute('aria-controls','debug-panel');
   btn.addEventListener('click', ()=> this.togglePanel());
-        if(headerControls) headerControls.appendChild(btn); else document.body.appendChild(btn);
+        headerControls.appendChild(btn);
       }
     }
 
@@ -120,4 +125,6 @@
 
   window.Debug = DebugClass;
   document.addEventListener('DOMContentLoaded', ()=> DebugClass.init());
+  // Also try to initialize after a delay for frameworks that render asynchronously
+  setTimeout(()=> { if(!document.getElementById('debug-btn')) DebugClass.init(); }, 500);
 })();

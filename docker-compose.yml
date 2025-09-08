@@ -122,6 +122,17 @@ services:
     networks:
       - chess-network
 
+  # WebAssembly demo
+  chess-wasm:
+    build:
+      context: .
+      dockerfile: ./apps/wasm/Dockerfile
+    container_name: chess-wasm
+    ports:
+      - "3007:80"
+    networks:
+      - chess-network
+
   # Nginx reverse proxy (optional, for advanced routing)
   nginx:
     build:
@@ -138,6 +149,7 @@ services:
       - chess-vue
       - chess-react
       - chess-angular
+      - chess-wasm
     networks:
       - chess-network
     profiles:

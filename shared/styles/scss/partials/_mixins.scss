@@ -1,0 +1,105 @@
+@use "variables" as *;
+
+// Reusable mixins
+@mixin card-base {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $space-lg $space-xl $space-2xl;
+  box-shadow: $elevation-md;
+  position: relative;
+  transition:
+    background $transition-base,
+    border-color $transition-base,
+    box-shadow $transition-base;
+}
+
+// Unified layout mixin for all chess apps
+@mixin chess-layout {
+  display: grid;
+  grid-template-columns: $layout-sidebar-width auto $layout-sidebar-width;
+  gap: $layout-main-gap;
+  align-items: start;
+  max-width: $layout-max-width;
+  margin: 0 auto;
+  padding-top: $space-2xl;
+  padding-bottom: $space-2xl;
+
+  // Responsive breakpoints
+  @media (max-width: 1024px) {
+    grid-template-columns: calc($layout-sidebar-width - 20px) auto calc($layout-sidebar-width - 20px);
+    gap: $space-xl;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: $space-xl;
+
+    .left-panel {
+      order: 2;
+    }
+
+    .right-panel {
+      order: 3;
+    }
+  }
+}
+
+// Unified panel styling
+@mixin panel-base {
+  @include card-base;
+  margin-bottom: $space-lg;
+}
+
+// Unified status block styling
+@mixin status-block {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+
+  > div {
+    padding: $space-sm $space-md;
+    border-radius: $radius-sm;
+    background: $color-surface;
+    box-shadow: $elevation-sm;
+    font-weight: 500;
+    color: $color-text-primary;
+    border: 1px solid $color-border;
+    font-size: 0.875rem;
+    line-height: 1.4;
+
+    span {
+      font-weight: 600;
+    }
+  }
+}
+
+// Apply dark theme styles for a given selector scope.
+// Usage: @include dark-theme('.card-like') { ... }
+@mixin dark-theme($selector) {
+  [data-theme="dark"] #{$selector} {
+    @content;
+  }
+}
+
+@mixin focus-ring {
+  &:focus {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+@mixin button-variant($bg, $color: #fff) {
+  background: $bg;
+  color: $color;
+  border: none;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,44 @@
+// Vanilla JS app-specific SCSS overrides
+@use "../../../shared/styles/scss/partials/variables" as *;
+@use "../../../shared/styles/scss/partials/mixins" as *;
+
+// Example: framework label tweak (scoped to this app only)
+.header-framework {
+  letter-spacing: 0.5px;
+}
+
+// Unified layout using shared mixins
+main {
+  @include chess-layout;
+}
+
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+// Game messages region tweaks
+.board-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.game-messages-region {
+  width: 100%;
+  max-width: 480px;
+  margin: 8px auto 4px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 6px;
+  min-height: 0;
+}
+.game-message-stack {
+  display: contents;
+}
+
+// Status block parity - uses unified styles from _panels.scss
+.game-info .status {
+  @include status-block;
+}

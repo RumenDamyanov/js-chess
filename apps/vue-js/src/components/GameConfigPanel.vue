@@ -1,6 +1,6 @@
 <template>
   <div class="game-config card-like" id="game-config">
-    <h3>⚙️ Game Settings</h3>
+    <h3>Game Settings</h3>
 
     <div class="config-section">
       <h4>Player Settings</h4>

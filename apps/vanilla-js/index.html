@@ -4,15 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess - Vanilla JavaScript</title>
-    <!-- Shared global styles -->
-    <link rel="stylesheet" href="shared/styles/tokens.css?v=dev1">
-    <link rel="stylesheet" href="shared/styles/common.css">
-    <link rel="stylesheet" href="shared/styles/header.css">
-    <link rel="stylesheet" href="shared/styles/chess-board.css">
-    <link rel="stylesheet" href="shared/styles/chat.css">
-    <link rel="stylesheet" href="shared/styles/board-toolbar.css">
-    <!-- App-specific overrides -->
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Consolidated SCSS bundle (shared design system + app overrides); legacy per-file CSS removed -->
+    <link rel="stylesheet" href="scss/dist/app-bundle.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' style='font-size:14px'>♛</text></svg>">
 </head>
 <body>
@@ -26,6 +19,7 @@
             <nav class="header-nav">
                 <ul class="nav-links">
                     <li><a href="http://localhost:3000" class="nav-link"><span class="tech-icon tech-home"></span> Home</a></li>
+                    <li><span class="nav-spacer"></span></li>
                     <li><span class="nav-separator"></span></li>
                     <li><a href="http://localhost:3001" class="nav-link active" title="Vanilla JavaScript"><span class="tech-icon tech-js"></span> Vanilla (JS)</a></li>
                     <li><a href="http://localhost:3002" class="nav-link" title="Vanilla TypeScript"><span class="tech-icon tech-ts"></span> Vanilla (TS)</a></li>
@@ -33,12 +27,12 @@
                     <li><a href="http://localhost:3004" class="nav-link" title="Vue"><span class="tech-icon tech-vue"></span> Vue</a></li>
                     <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-react"></span> React</span></li>
                     <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-angular"></span> Angular</span></li>
-                    <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-js"></span> UI5 (JS)</span></li>
-                    <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-ts"></span> UI5 (TS)</span></li>
+                    <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-ts"></span> UI5</span></li>
+                    <li><span class="nav-link nav-link-disabled" title="Native Go demo via WebAssembly" aria-disabled="true"><span class="tech-icon tech-wasm"></span> WASM</span></li>
                 </ul>
 
                 <div class="header-controls">
-                    <button id="theme-toggle-btn" class="btn btn-secondary" onclick="JSChessTheme.toggle()" aria-label="Toggle theme">🌙 Dark</button>
+                    <button id="theme-toggle-btn" class="btn btn-secondary" onclick="JSChessTheme.toggle()" aria-label="Toggle theme" style="display: none;">🌙</button>
                     <!-- Debug button now injected by shared debug.js -->
                 </div>
             </nav>
@@ -49,7 +43,7 @@
         <main>
             <div class="left-panel">
                 <div class="game-config">
-                    <h3>⚙️ Game Settings</h3>
+                    <h3>Game Settings</h3>
 
                     <div class="config-section">
                         <h4>Player Settings</h4>
@@ -126,7 +120,7 @@
                 </div>
 
                                 <div class="save-slots card-like" id="save-slots-card">
-                    <h3>💾 Save Slots</h3>
+                    <h3>Save Slots</h3>
                     <div class="slots-grid">
                         <div class="slot" data-slot="1">
                             <div class="slot-label">Slot 1</div>
@@ -183,7 +177,7 @@
                 </div>
 
                 <div id="timer-display" class="timer-info">
-                    <h3>⏱️ Game Timer</h3>
+                    <h3>Game Timer</h3>
                     <div class="timer-content">
                         <div class="timer-row">
                             <span class="timer-label">White:</span>
@@ -202,7 +196,7 @@
                 </div>
 
                 <div class="move-history">
-                    <h3>📜 Move History</h3>
+                    <h3>Move History</h3>
                     <div id="move-list" class="moves">
                         <div class="move-item">
                             <span class="move-number">-</span>
@@ -212,7 +206,7 @@
                 </div>
 
                 <div class="pgn-card card-like" id="pgn-card">
-                    <h3>📄 PGN</h3>
+                    <h3>PGN</h3>
                     <textarea id="pgn-output" class="pgn-output" readonly placeholder="Play moves to generate PGN"></textarea>
                     <div class="pgn-actions">
                         <button class="btn btn-smaller" id="pgn-copy-btn" aria-label="Copy PGN to clipboard" disabled>Copy</button>
@@ -263,6 +257,7 @@
     <!-- Load root shared assets (helpers/messages) -->
     <script src="../../shared/assets/js/helpers.js?v=dev1"></script>
     <script src="../../shared/assets/js/messages.js?v=dev1"></script>
+    <script src="../../shared/assets/js/piece-renderer.js?v=dev1"></script>
     <script src="js/config.js"></script>
     <script src="shared/assets/js/debug.js"></script>
     <script src="js/chess-game.js"></script>

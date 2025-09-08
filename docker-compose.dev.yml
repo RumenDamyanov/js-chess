@@ -1,0 +1,39 @@
+version: '3.8'
+
+# Development override file with volume mounts for live SCSS editing
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  # Landing page with live SCSS mounting
+  chess-landing:
+    volumes:
+      - ./shared/styles:/usr/share/nginx/html/shared/styles:ro
+      - ./apps/landing:/usr/share/nginx/html/apps/landing:ro
+
+  # Vanilla JavaScript with live SCSS mounting
+  chess-vanilla:
+    volumes:
+      - ./shared/styles:/usr/share/nginx/html/shared/styles:ro
+      - ./apps/vanilla-js/scss:/usr/share/nginx/html/scss:ro
+      - ./apps/vanilla-js:/usr/share/nginx/html/apps/vanilla-js:ro
+
+  # Vanilla TypeScript with live SCSS mounting
+  chess-vanilla-ts:
+    volumes:
+      - ./shared/styles:/usr/share/nginx/html/shared/styles:ro
+      - ./apps/vanilla-ts/scss:/usr/share/nginx/html/scss:ro
+      - ./apps/vanilla-ts:/usr/share/nginx/html/apps/vanilla-ts:ro
+
+  # jQuery with live SCSS mounting
+  chess-jquery:
+    volumes:
+      - ./shared/styles:/usr/share/nginx/html/shared/styles:ro
+      - ./apps/jquery/scss:/usr/share/nginx/html/scss:ro
+      - ./apps/jquery:/usr/share/nginx/html/apps/jquery:ro
+
+  # Vue.js with live SCSS mounting
+  chess-vue:
+    volumes:
+      - ./shared/styles:/usr/share/nginx/html/shared/styles:ro
+      - ./apps/vue-js/src/styles:/usr/share/nginx/html/assets:ro
+      - ./apps/vue-js/src:/usr/share/nginx/html/src:ro

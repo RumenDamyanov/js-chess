@@ -620,10 +620,16 @@ class ChessGameJQuery {
                 if (piece === '.') {
                     $square.html('').removeData('piece');
                 } else {
-                    const symbol = this.getPieceSymbol(piece);
-                    const isWhite = piece === piece.toUpperCase();
-                    const colorClass = isWhite ? 'piece-white' : 'piece-black';
-                    $square.html(`<span class="piece ${colorClass}">${symbol}</span>`).data('piece', piece);
+                    // Use the shared piece renderer for consistent rendering across apps
+                    if (window.chessPieceRenderer) {
+                        $square.html(window.chessPieceRenderer.createPieceElement(piece)).data('piece', piece);
+                    } else {
+                        // Fallback to original Unicode implementation
+                        const symbol = this.getPieceSymbol(piece);
+                        const isWhite = piece === piece.toUpperCase();
+                        const colorClass = isWhite ? 'piece-white' : 'piece-black';
+                        $square.html(`<span class="piece ${colorClass}">${symbol}</span>`).data('piece', piece);
+                    }
                 }
             });
         });

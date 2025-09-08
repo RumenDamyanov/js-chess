@@ -1,0 +1,1537 @@
+// Migrated landing page styles (expanded + dark theme variants)
+@use "variables" as *;
+@use "mixins" as *;
+
+// Header & navigation (migrated from legacy landing.css)
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0.5rem 0;
+  color: #fff;
+  position: relative;
+  z-index: 10;
+}
+.app-header .header-container {
+  max-width: 1330px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+.app-header .header-brand {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.app-header .header-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+}
+.app-header .header-framework {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.5px;
+}
+.app-header .header-nav {
+  display: flex;
+  align-items: center;
+}
+.app-header .nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.app-header .nav-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  letter-spacing: 0.25px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s,
+    transform 0.25s;
+}
+.app-header .nav-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.app-header .nav-link-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+.app-header .nav-link-disabled:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+.app-header .nav-separator {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.25);
+  display: inline-block;
+  margin: 0 0.25rem;
+}
+.app-header .nav-spacer {
+  flex: 1;
+  min-width: 2rem;
+}
+.app-header .header-controls .btn {
+  gap: 0.4rem;
+  padding: 0.5rem 1.25rem;
+}
+.app-header .header-controls .btn:first-child {
+  margin: 0 0 0 10px;
+}
+@media (max-width: 768px) {
+  .app-header .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 1rem;
+  }
+  .app-header .nav-links {
+    justify-content: flex-start;
+  }
+}
+
+// Removed initial hero-compact sizing to avoid duplicate selectors; unified styles defined later in enhanced hero section
+
+// Stack / architecture columns
+.stack-column h3 {
+  text-align: center;
+  color: #2c3e50;
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+}
+.stack-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.stack-item {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  transition: all 0.3s ease;
+}
+.stack-item:hover {
+  background: #667eea;
+  color: #fff;
+  transform: scale(1.02);
+}
+
+// Footer
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-top: 20px;
+}
+.footer-section h4 {
+  margin: 0 0 1rem;
+  color: #ecf0f1;
+}
+.footer-section a {
+  color: #bdc3c7;
+  text-decoration: none;
+  display: block;
+  margin: 0 0 0.5rem;
+  transition: color 0.3s ease;
+}
+.footer-section a:hover {
+  color: #667eea;
+}
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #34495e;
+  color: #95a5a6;
+}
+
+// Hero extras (visual, floating icons demo)
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3rem;
+}
+.chess-board-demo {
+  position: relative;
+  padding: 2rem;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, 40px);
+  grid-template-rows: repeat(2, 40px);
+  gap: 2px;
+  margin-bottom: 1rem;
+}
+.board .square {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+}
+.board .square.light {
+  background: #f0d9b5;
+}
+.board .square.dark {
+  background: #b58863;
+}
+.floating-icons {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.floating-icons .icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  animation: float 3s ease-in-out infinite;
+}
+.floating-icons .icon.js {
+  background: #f7df1e;
+  color: #000;
+}
+.floating-icons .icon.ts {
+  background: #3178c6;
+}
+.floating-icons .icon.vue {
+  background: #4fc08d;
+}
+.floating-icons .icon.react {
+  background: #61dafb;
+  color: #000;
+}
+.floating-icons .icon.angular {
+  background: #dd0031;
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Landing specific chat trigger (legacy .chat-fab migrated here)
+.chat-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  z-index: 999;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  color: #fff;
+}
+.chat-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+}
+.chat-fab .chat-icon {
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+.chat-fab .chat-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+@media (max-width: 768px) {
+  .chat-fab {
+    bottom: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+  }
+  .chat-fab .chat-icon {
+    font-size: 20px;
+  }
+  .chat-fab .chat-badge {
+    font-size: 9px;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+  .hero-description {
+    font-size: 1.1rem;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-title {
+    font-size: 2.5rem;
+  }
+  .frameworks-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .framework-card {
+    padding: 2rem;
+  }
+  .framework-actions {
+    justify-content: center;
+  }
+}
+@media (max-width: 480px) {
+  .hero {
+    min-height: 70vh;
+    padding: 2rem 0;
+  }
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .hero-description {
+    font-size: 1rem;
+  }
+  .framework-card {
+    padding: 1.5rem;
+  }
+  .framework-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .container {
+    padding: 0 1rem;
+  }
+}
+.hero.hero-compact .hero-description {
+  font-size: 17px;
+  line-height: 1.5;
+  margin: 0 0 22px;
+  color: #98a6b5;
+}
+
+// (Deprecated legacy framework grid & card styles removed in favor of modern .frameworks-modern implementation to avoid duplication.)
+// Dark theme variants for landing
+@include dark-theme(".app-header") {
+  background: linear-gradient(135deg, #2b3644 0%, #1f2731 100%);
+}
+@include dark-theme(".app-header .nav-link") {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.9);
+}
+@include dark-theme(".app-header .nav-link:hover") {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+@include dark-theme(".framework-card") {
+  background: linear-gradient(145deg, #2a3442, #1f2732);
+  border: 1px solid #374151;
+  box-shadow: 0 8px 34px rgba(0, 0, 0, 0.55);
+}
+@include dark-theme(".framework-name") {
+  color: #f2f5f9;
+}
+@include dark-theme(".framework-description") {
+  color: #c7d1dc;
+}
+@include dark-theme(".framework-feature, .feature") {
+  background: #2d3746;
+  color: #e2e8f0;
+}
+@include dark-theme(".footer") {
+  background: #1e2530;
+  color: #c7d1dc;
+}
+@include dark-theme(".footer-section a") {
+  color: #9ca3af;
+}
+@include dark-theme(".footer-section a:hover") {
+  color: #ffffff;
+}
+@include dark-theme(".footer-bottom") {
+  border-top: 1px solid #2f3a48;
+  color: #9ca3af;
+}
+@include dark-theme(".chat-fab") {
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.6);
+}
+
+// ---------------------------------------------------------
+// Additional Landing Sections (features, comparison, architecture)
+// Restored / recreated after migration so content is styled again.
+// ---------------------------------------------------------
+
+// Generic hero base (was implicit in legacy CSS)
+.hero {
+  padding: 120px 0 80px;
+  position: relative;
+  background: linear-gradient(135deg, #f8faff 0%, #eef2f9 100%);
+}
+[data-theme="dark"] .hero {
+  background: linear-gradient(135deg, #141a22 0%, #1c2530 100%);
+}
+
+// Section description typography
+.section-description {
+  max-width: 880px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #5a6572;
+  margin: 0 0 2.25rem;
+}
+[data-theme="dark"] .section-description {
+  color: #b5c0cc;
+}
+
+// Features grid
+.features {
+  padding: 90px 0 40px;
+}
+.features-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-top: 2.5rem;
+}
+.feature-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 1.75rem 1.5rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    140deg,
+    rgba(102, 126, 234, 0.1),
+    rgba(118, 75, 162, 0.08)
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+.feature-card:hover::before {
+  opacity: 1;
+}
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+.feature-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  color: #2c3e50;
+}
+.feature-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #5b6672;
+}
+[data-theme="dark"] .feature-card {
+  background: linear-gradient(145deg, #26303c, #1e2732);
+  border-color: #2f3a47;
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.55);
+}
+[data-theme="dark"] .feature-card h3 {
+  color: #f0f4f8;
+}
+[data-theme="dark"] .feature-card p {
+  color: #b8c3ce;
+}
+
+// Comparison table
+.comparison {
+  padding: 90px 0 60px;
+}
+.comparison-table {
+  margin-top: 2.5rem;
+  overflow-x: auto;
+}
+.comparison-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem;
+}
+.comparison-table th,
+.comparison-table td {
+  padding: 0.85rem 0.9rem;
+  text-align: left;
+}
+.comparison-table thead th {
+  background: #f0f4f9;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #445066;
+  border-bottom: 2px solid #d9e2ec;
+}
+.comparison-table tbody tr:nth-child(even) {
+  background: #fafbfd;
+}
+.comparison-table tbody tr:hover {
+  background: #f2f7fc;
+}
+.comparison-table td {
+  border-bottom: 1px solid #e4ebf2;
+  color: #4b5663;
+}
+.comparison-table td strong {
+  color: #2d3b4a;
+}
+[data-theme="dark"] .comparison-table thead th {
+  background: #2b3644;
+  color: #d7dde5;
+  border-color: #36424f;
+}
+[data-theme="dark"] .comparison-table tbody tr:nth-child(even) {
+  background: #222b35;
+}
+[data-theme="dark"] .comparison-table tbody tr:hover {
+  background: #2a3440;
+}
+[data-theme="dark"] .comparison-table td {
+  border-color: #313c48;
+  color: #b8c3ce;
+}
+[data-theme="dark"] .comparison-table td strong {
+  color: #ffffff;
+}
+
+// Architecture section
+.architecture {
+  padding: 90px 0;
+  background: linear-gradient(135deg, #f9fbfd 0%, #f1f5fa 100%);
+  position: relative;
+}
+[data-theme="dark"] .architecture {
+  background: linear-gradient(135deg, #181f27 0%, #1f2732 100%);
+}
+.architecture-content {
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  align-items: start;
+}
+.architecture-description h3 {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  color: #2c3e50;
+}
+.architecture-description p {
+  line-height: 1.55;
+  color: #586472;
+}
+.architecture-description ul {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+  color: #4b5866;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+[data-theme="dark"] .architecture-description h3 {
+  color: #f5f8fb;
+}
+[data-theme="dark"] .architecture-description p {
+  color: #b7c2cc;
+}
+[data-theme="dark"] .architecture-description ul {
+  color: #a7b2bd;
+}
+
+.architecture-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.diagram {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  min-width: 300px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+[data-theme="dark"] .diagram {
+  background: #25313e;
+  border-color: #32404d;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.6);
+}
+.frontend-layer,
+.api-layer {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.frontend-box,
+.api-box {
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  display: inline-block;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.frontend-items {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(60px, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.frontend-items span {
+  background: #f0f4f9;
+  padding: 0.35rem 0.25rem;
+  border-radius: 6px;
+  color: #3d4a58;
+}
+[data-theme="dark"] .frontend-items span {
+  background: #303d4b;
+  color: #d2d9e0;
+}
+.api-features {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.api-features span {
+  background: #eef3f8;
+  color: #415062;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+[data-theme="dark"] .api-features span {
+  background: #303d4b;
+  color: #d2d9e0;
+}
+
+// Framework badge mapping (HTML uses .framework-tag instead of .framework-badge now)
+// Removed @extend usage and early .framework-tag definitions (later unified .framework-tag, .framework-badge block replaces this)
+
+// WIP dim / coming soon
+// Removed early .framework-card.wip.dimmed definitions (kept modern layout consolidated version)
+.btn.btn-disabled,
+.btn-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: linear-gradient(90deg, #9ca3af, #6b7280);
+  color: #fff;
+}
+// Outline button variant (landing specific usage)
+.btn-outline {
+  background: transparent;
+  border: 2px solid #667eea;
+  color: #3b4a60;
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s;
+}
+.btn-outline:hover {
+  background: #667eea;
+  color: #fff;
+}
+[data-theme="dark"] .btn-outline {
+  border-color: #8b9bff;
+  color: #d5deea;
+}
+[data-theme="dark"] .btn-outline:hover {
+  background: #8b9bff;
+  color: #1c2430;
+}
+
+// Utility / status label classes for comparison table
+.size-small {
+  background: #e6f7ff;
+  color: #096dd9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  display: inline-block;
+}
+.size-medium {
+  background: #fffbe6;
+  color: #ad6800;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  display: inline-block;
+}
+.size-large {
+  background: #fff1f0;
+  color: #a8071a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  display: inline-block;
+}
+.difficulty-easy {
+  background: #f6ffed;
+  color: #237804;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.difficulty-medium {
+  background: #e6f4ff;
+  color: #0958d9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.difficulty-hard {
+  background: #fff0f6;
+  color: #c41d7f;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.perf-excellent {
+  background: #f0fff4;
+  color: #0c6b3d;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.perf-good {
+  background: #f5faff;
+  color: #144c8a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.eco-basic {
+  background: #fafafa;
+  color: #444;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.eco-rich {
+  background: #f0f5ff;
+  color: #1d39c4;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.eco-mature {
+  background: #f9f0ff;
+  color: #531dab;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.eco-complete {
+  background: #fff2e8;
+  color: #d4380d;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+[data-theme="dark"] .size-small {
+  background: #102a44;
+  color: #49a3ff;
+}
+[data-theme="dark"] .size-medium {
+  background: #2a2614;
+  color: #d79600;
+}
+[data-theme="dark"] .size-large {
+  background: #401d1d;
+  color: #ff4d4f;
+}
+[data-theme="dark"] .difficulty-easy {
+  background: #142c1a;
+  color: #52c41a;
+}
+[data-theme="dark"] .difficulty-medium {
+  background: #10243c;
+  color: #69b1ff;
+}
+[data-theme="dark"] .difficulty-hard {
+  background: #401934;
+  color: #ff85c0;
+}
+[data-theme="dark"] .perf-excellent {
+  background: #112d23;
+  color: #34c77b;
+}
+[data-theme="dark"] .perf-good {
+  background: #102b44;
+  color: #4da6ff;
+}
+[data-theme="dark"] .eco-basic {
+  background: #2d2d2d;
+  color: #d1d5db;
+}
+[data-theme="dark"] .eco-rich {
+  background: #242b45;
+  color: #7d9dff;
+}
+[data-theme="dark"] .eco-mature {
+  background: #2c2143;
+  color: #b38bff;
+}
+[data-theme="dark"] .eco-complete {
+  background: #40271d;
+  color: #ff9a62;
+}
+
+// Misc
+.muted-note {
+  font-size: 0.7rem;
+  opacity: 0.75;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 0.25rem;
+}
+.wip-link {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+[data-theme="dark"] .wip-link {
+  color: #b8c3ce;
+}
+
+// --- Appended: Additional visual refinements (icon variants, hero, container, footer) ---
+// Framework icon variants (not included in initial migration)
+.framework-icon.vanilla {
+  background: linear-gradient(135deg, #f39c12, #d35400);
+  color: #fff;
+  padding: 0.65rem 0.9rem;
+  border-radius: 14px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.framework-icon.typescript {
+  background: linear-gradient(135deg, #3178c6, #235a97);
+  color: #fff;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.framework-icon.jquery {
+  background: linear-gradient(135deg, #0769ad, #1a4b84);
+  color: #fff;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.framework-icon.vue {
+  background: linear-gradient(135deg, #42b883, #2c6e49);
+  color: #fff;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.framework-icon.react {
+  background: linear-gradient(135deg, #61dafb, #21759b);
+  color: #0b1f29;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.framework-icon.angular {
+  background: linear-gradient(135deg, #dd0031, #a30022);
+  color: #fff;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.framework-icon.ui5 {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  color: #fff;
+  padding: 0.65rem 1rem;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+// Hero enhancements (typography & actions) – adds gradient headline style
+.hero .hero-title {
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 1.25rem;
+  letter-spacing: -1px;
+  background: linear-gradient(90deg, #2c3e50, #4b5f73);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+[data-theme="dark"] .hero .hero-title {
+  background: linear-gradient(90deg, #f0f3f6, #b7c4d1);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.hero .hero-description {
+  font-size: 1.15rem;
+  max-width: 760px;
+  margin: 0 auto 2rem;
+  color: #5b6672;
+  line-height: 1.55;
+}
+[data-theme="dark"] .hero .hero-description {
+  color: #b9c4cf;
+}
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.hero-actions .btn {
+  min-width: 170px;
+}
+
+// Adapt existing markup: hero-compact uses plain <h2> (no hero-title class)
+.hero.hero-compact h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  margin: 0 0 1rem;
+  background: linear-gradient(90deg, #2c3e50, #4b5f73);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+[data-theme="dark"] .hero.hero-compact h2 {
+  background: linear-gradient(90deg, #f0f3f6, #b7c4d1);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.hero.hero-compact .hero-content {
+  padding: 0 1rem;
+}
+.hero.hero-compact .hero-content a.btn {
+  margin-top: 0.5rem;
+}
+
+// Container sizing (legacy .container width reintroduced for layout centering)
+// Generic container sizing (retain global sizing but landing sections remove background via overrides above)
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+// Footer refinements (headings & lists)
+.footer .footer-section h3 {
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+}
+.footer .footer-section p {
+  margin: 0;
+  line-height: 1.5;
+  font-size: 0.9rem;
+  color: #d1d9e2;
+}
+.footer-section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.footer-section ul li {
+  margin: 0 0 0.35rem;
+}
+[data-theme="dark"] .footer .footer-section p {
+  color: #b5c0cc;
+}
+
+// ---------------------------------------------------------
+// Legacy selector parity additions (post-migration audit)
+// Reintroduced only classes still referenced in current markup or
+// low-risk utilities used across multiple app headers.
+// ---------------------------------------------------------
+// Tech icon squares used in navigation links (legacy .tech-icon*)
+.tech-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  border-radius: 3px;
+  background: #666;
+  box-shadow:
+    0 0 0 1px #0006 inset,
+    0 0 2px #000a;
+  margin-right: 4px;
+  position: relative;
+  top: 1px;
+}
+.tech-js {
+  background: #f7df1e;
+  color: #000;
+}
+.tech-ts {
+  background: #3178c6;
+}
+.tech-jq {
+  background: #0769ad;
+}
+.tech-vue {
+  background: #42b883;
+}
+.tech-react {
+  background: #20232a;
+}
+.tech-angular {
+  background: #dd0031;
+}
+.tech-ui5-ts {
+  background: #2b5d9b;
+}
+.tech-wasm {
+  background: #654ff0;
+}
+// Optional home icon (not in legacy but used in other app menus)
+.tech-home {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+// Missing framework badge variant for Angular (used in legacy, absent post-migration)
+.framework-badge.angular {
+  background: linear-gradient(45deg, #dd0031, #c3002f);
+  color: #fff;
+}
+.angular.framework-tag {
+  background: linear-gradient(45deg, #dd0031, #c3002f);
+  color: #fff;
+}
+
+// Simple appear animation utility (legacy .animate-in + fadeInUp)
+.animate-in {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ---------------------------------------------------------
+// Re-imagined Landing Layout (modernized design system approach)
+// ---------------------------------------------------------
+// Variables (scoped custom properties for this module only)
+.landing-layout {
+  --landing-gap: 2.25rem;
+  --card-radius: 22px;
+  --card-bg: var(--color-bg-surface, #fff);
+  --card-bg-alt: linear-gradient(145deg, #ffffff, #f5f7fa);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --card-shadow:
+    0 6px 20px -4px rgba(20, 30, 40, 0.12),
+    0 2px 6px -1px rgba(20, 30, 40, 0.06);
+  --card-shadow-hover:
+    0 18px 42px -8px rgba(20, 30, 40, 0.18),
+    0 4px 14px -2px rgba(20, 30, 40, 0.12);
+  --card-gradient: linear-gradient(
+    135deg,
+    var(--color-brand-start, #667eea),
+    var(--color-brand-end, #764ba2)
+  );
+}
+[data-theme="dark"] .landing-layout {
+  --card-bg: #1e2530;
+  --card-bg-alt: linear-gradient(145deg, #1c2530, #25313d);
+  --card-border: #2f3a48;
+  --card-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.55);
+  --card-shadow-hover: 0 22px 46px -10px rgba(0, 0, 0, 0.65);
+}
+
+// New two-tier framework section: stable (row 1) + roadmap (row 2)
+.frameworks-modern {
+  padding: 100px 0 70px;
+}
+.frameworks-modern .section-intro {
+  max-width: 880px;
+  margin: 0 auto 3.25rem;
+  text-align: center;
+}
+.frameworks-modern .section-intro h2 {
+  margin: 0 0 1.2rem;
+  font-size: 2.4rem;
+  letter-spacing: -0.5px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #2c3e50, #4b5f73);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-theme="dark"] .frameworks-modern .section-intro h2 {
+  background: linear-gradient(90deg, #f0f3f6, #b7c4d1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.frameworks-modern .section-intro p {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: #5b6572;
+}
+[data-theme="dark"] .frameworks-modern .section-intro p {
+  color: #b8c3ce;
+}
+
+// Grid wrapper with explicit 4 column stable, followed by 4 WIP cells
+.frameworks-modern .framework-grid-dual {
+  display: grid;
+  gap: var(--landing-gap);
+  grid-template-columns: repeat(4, 1fr);
+  align-items: stretch;
+}
+@media (max-width: 1400px) {
+  .frameworks-modern .framework-grid-dual {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1100px) {
+  .frameworks-modern .framework-grid-dual {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 860px) {
+  .frameworks-modern .framework-grid-dual {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .frameworks-modern .framework-grid-dual {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Card base (shared for stable + wip)
+.framework-card {
+  position: relative;
+  border-radius: var(--card-radius);
+  background: var(--card-bg-alt);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  padding: 2.1rem 2rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    box-shadow 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.framework-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 20% 15%,
+    rgba(255, 255, 255, 0.65),
+    transparent 60%
+  );
+  opacity: 0;
+  mix-blend-mode: overlay;
+  transition: opacity 0.45s;
+  pointer-events: none;
+}
+.framework-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--card-shadow-hover);
+}
+.framework-card:hover::after {
+  opacity: 0.8;
+}
+
+// Stable vs WIP differentiation
+.framework-card.stable {
+  --status-accent: linear-gradient(135deg, #22a06b, #1b7f54);
+}
+.framework-card.wip {
+  --status-accent: linear-gradient(135deg, #6b7280, #4b5563);
+  filter: saturate(0.85);
+}
+.framework-card.demo {
+  --status-accent: linear-gradient(135deg, #654ff0, #5a3fd6);
+}
+[data-theme="dark"] .framework-card.wip {
+  filter: saturate(0.75) brightness(0.95);
+}
+.framework-card.wip.dimmed {
+  opacity: 0.55;
+}
+.framework-card.wip.dimmed:hover {
+  opacity: 0.65;
+}
+
+// Top bar accent derived from status accent
+.framework-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--status-accent, var(--card-gradient));
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  opacity: 0.95;
+}
+
+// Header cluster
+.framework-card .framework-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 0 0.25rem;
+  flex-wrap: wrap;
+}
+.framework-card .framework-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--status-accent, var(--card-gradient));
+  color: #fff;
+  box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.3);
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.framework-card:hover .framework-icon {
+  transform: rotate(-8deg) scale(1.06);
+}
+.framework-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.25px;
+  margin: 0;
+  color: var(--color-text-primary, #2c3e50);
+}
+[data-theme="dark"] .framework-card h3 {
+  color: #f0f3f6;
+}
+
+// Tag (pill) + state variants
+.framework-tag,
+.framework-badge {
+  align-self: flex-start;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border-radius: 40px;
+  background: var(--status-accent, var(--card-gradient));
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative; /* remove overflow:hidden so long labels are fully visible */
+}
+// (Duplicate .framework-tag.wip removed earlier; retain single declaration below in modern section)
+
+// Description + features
+.framework-description {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary, #5a6572);
+}
+[data-theme="dark"] .framework-description {
+  color: #c2ccd6;
+}
+.framework-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.framework-features .feature,
+.framework-feature {
+  background: rgba(0, 0, 0, 0.05);
+  color: #2c3e50;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+[data-theme="dark"] .framework-features .feature,
+[data-theme="dark"] .framework-feature {
+  background: #2d3746;
+  color: #d7dee6;
+}
+
+// Actions (primary + outline usage retained)
+.framework-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: auto;
+}
+.framework-actions .btn {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  border-radius: 9px;
+  padding: 0.55rem 1.05rem;
+}
+.framework-actions .btn-primary {
+  background: var(--card-gradient);
+  border: none;
+}
+.framework-actions .btn-primary:hover {
+  filter: brightness(1.07);
+}
+.framework-actions .btn-outline {
+  border-width: 2px;
+}
+
+// Roadmap labels (for WIP dynamic future use placeholder)
+.framework-card.wip .muted-note {
+  margin-left: 0;
+  display: block;
+}
+
+// Soft separators for rows (only visual if two distinct tiers)
+.frameworks-modern .framework-grid-dual + .framework-grid-dual {
+  margin-top: var(--landing-gap);
+  position: relative;
+}
+.frameworks-modern .framework-grid-dual + .framework-grid-dual::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--landing-gap) / 2);
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0)
+  );
+}
+[data-theme="dark"]
+  .frameworks-modern
+  .framework-grid-dual
+  + .framework-grid-dual::before {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+// Motion preferences
+@media (prefers-reduced-motion: reduce) {
+  .framework-card,
+  .framework-card .framework-icon {
+    transition: none !important;
+  }
+}
+
+// Tier titles (Stable / In Progress)
+.frameworks-tier-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.frameworks-tier-title span {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0)
+  );
+}
+[data-theme="dark"] .frameworks-tier-title span {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0)
+  );
+}
+[data-theme="dark"] .frameworks-tier-title {
+  opacity: 0.85;
+}
+
+// Staggered entrance animation for framework cards
+.frameworks-modern .framework-grid-dual .framework-card {
+  opacity: 0;
+  animation: fadeInUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+.frameworks-modern .stable-row .framework-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.frameworks-modern .stable-row .framework-card:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.frameworks-modern .stable-row .framework-card:nth-child(3) {
+  animation-delay: 0.19s;
+}
+.frameworks-modern .stable-row .framework-card:nth-child(4) {
+  animation-delay: 0.26s;
+}
+.frameworks-modern .roadmap-row .framework-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.frameworks-modern .roadmap-row .framework-card:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.frameworks-modern .roadmap-row .framework-card:nth-child(3) {
+  animation-delay: 0.19s;
+}
+.frameworks-modern .roadmap-row .framework-card:nth-child(4) {
+  animation-delay: 0.26s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .frameworks-modern .framework-grid-dual .framework-card {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+// -----------------------------------------
+// Landing page readability / layout fixes
+// -----------------------------------------
+// Ensure inner containers on landing sections don't paint a white panel that hides hero / section backgrounds.
+.hero .container,
+.frameworks-modern .container,
+.features .container,
+.comparison .container,
+.architecture .container,
+.footer .container {
+  background: transparent;
+  box-shadow: none;
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+// Hero refinements (ensure visible styling when global container previously obscured it)
+// Removed duplicated hero-compact background/content/description overrides (hero enhancements earlier provide final styles)
+
+// Readable section headings (avoid overly light gradient-on-light issues)
+.frameworks-modern .section-intro h2,
+.features h2,
+.comparison h2,
+.architecture h2 {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: #2c3e50;
+}
+[data-theme="dark"] .frameworks-modern .section-intro h2,
+[data-theme="dark"] .features h2,
+[data-theme="dark"] .comparison h2,
+[data-theme="dark"] .architecture h2 {
+  color: #f0f3f6;
+}
+
+// Footer improvements & contrast
+// Removed duplicate footer refined block (retain initial refined definitions earlier to avoid no-duplicate-selectors rule violations)

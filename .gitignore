@@ -123,6 +123,9 @@ dist/
 
 # Vue
 .vuepress/dist/
+apps/vue-js/src/styles/*.css
+!apps/vue-js/src/styles/*.scss
+
 
 # Miscellaneous
 wiki/

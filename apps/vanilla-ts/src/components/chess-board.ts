@@ -17,6 +17,7 @@ import {
   positionToNotation,
   positionsEqual,
   pieceToUnicode,
+  pieceToChar,
   parsePieceString,
   createPieceString,
   isValidPosition,
@@ -328,9 +329,19 @@ export class ChessBoard {
    * Create visual drag ghost element
    */
   private createDragGhost(piece: ChessPiece, pointer: { x: number; y: number }): void {
+    // Use shared piece renderer if available, fallback to Unicode
+    let ghostContent: string;
+    if ((window as any).chessPieceRenderer) {
+      // Convert piece to character notation for the renderer
+      const pieceChar = pieceToChar(piece.type, piece.color);
+      ghostContent = (window as any).chessPieceRenderer.createPieceElement(pieceChar);
+    } else {
+      ghostContent = pieceToUnicode(piece.type, piece.color);
+    }
+
     const ghost = createElement('div', {
       className: 'drag-ghost',
-      textContent: pieceToUnicode(piece.type, piece.color)
+      innerHTML: ghostContent
     });
 
     ghost.style.left = `${pointer.x - 30}px`;
@@ -631,9 +642,19 @@ export class ChessBoard {
     const square = this.getSquareElement(piece.position);
     Debug.log('boardRendering', '📍 Square element:', square);
 
+    // Use shared piece renderer if available, fallback to Unicode
+    let pieceContent: string;
+    if ((window as any).chessPieceRenderer) {
+      // Convert piece to character notation for the renderer
+      const pieceChar = pieceToChar(piece.type, piece.color);
+      pieceContent = (window as any).chessPieceRenderer.createPieceElement(pieceChar);
+    } else {
+      pieceContent = pieceToUnicode(piece.type, piece.color);
+    }
+
     const pieceElement = createElement('div', {
       className: `piece ${piece.color === PieceColor.WHITE ? 'piece-white' : 'piece-black'} ${piece.color}-${piece.type}`,
-      textContent: pieceToUnicode(piece.type, piece.color),
+      innerHTML: pieceContent,
       dataset: {
         piece: createPieceString(piece.type, piece.color),
         color: piece.color

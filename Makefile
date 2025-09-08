@@ -20,9 +20,9 @@ BACKEND_IMAGE := chess-backend
 # from default aggregate build / start / health targets to speed up development.
 # To re-enable them, add the services back to ACTIVE_SERVICES (and related port lists)
 # or invoke their individual targets (e.g., make start-angular, make build-react).
-ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
+ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing chess-wasm
 WIP_SERVICES := chess-angular chess-react # (disabled from aggregate commands)
-FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
+FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing chess-wasm
 
 ##@ General Commands
 
@@ -64,6 +64,7 @@ up: ## Start active (non-WIP) containers in detached mode
 	@echo "  Vue.js:              http://localhost:3004"
 	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
 	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
+	@echo "  WebAssembly:         http://localhost:3007"
 	@echo "  Backend API:         http://localhost:8080"
 
 .PHONY: start
@@ -73,6 +74,14 @@ start: up ## Alias for 'up' command
 dev: ## Start active containers (build if needed) and stream logs (WIP excluded)
 	@echo "$(GREEN)Starting development environment (excluding angular/react)...$(RESET)"
 	@docker-compose up --build $(ACTIVE_SERVICES)
+
+.PHONY: dev-volumes
+dev-volumes: ## Start containers with volume mounts for live SCSS editing (experimental)
+	@echo "$(YELLOW)Starting with volume mounts for live SCSS development...$(RESET)"
+	@echo "$(BLUE)Note: This mounts SCSS source files - changes will require manual sync$(RESET)"
+	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d $(ACTIVE_SERVICES) 2>/dev/null || \
+		(echo "$(RED)docker-compose.dev.yml not found, using standard mode$(RESET)"; $(MAKE) dev)
+	@echo "$(GREEN)✅ Development containers with volumes started$(RESET)"
 
 .PHONY: down
 down: ## Stop and remove all containers
@@ -98,7 +107,7 @@ restart-frontend: ## Restart active frontend containers (WIP excluded)
 ##@ Build Commands
 
 .PHONY: build
-build: ## Build active containers only (backend + non-WIP frontends)
+build: build-shared-styles ## Build active containers only (backend + non-WIP frontends)
 	@echo "$(GREEN)Building active containers (excluding angular/react)...$(RESET)"
 	@docker-compose build $(ACTIVE_SERVICES)
 	@echo "$(GREEN)✅ Active containers built$(RESET)"
@@ -110,7 +119,7 @@ build-backend: ## Build only the backend container
 	@echo "$(GREEN)✅ Backend built$(RESET)"
 
 .PHONY: build-frontend
-build-frontend: ## Build active frontend containers (WIP excluded)
+build-frontend: build-shared-styles ## Build active frontend containers (WIP excluded)
 	@echo "$(GREEN)Building active frontend containers (excluding angular/react)...$(RESET)"
 	@docker-compose build $(FRONTEND_IMAGES)
 	@echo "$(GREEN)✅ Active frontend containers built$(RESET)"
@@ -143,15 +152,27 @@ build-vanilla-ts: ## Build only Vanilla TypeScript container
 build-landing: ## Build only Landing page container
 	@docker-compose build chess-landing
 
+.PHONY: build-wasm
+build-wasm: ## Build only WebAssembly container
+	@docker-compose build chess-wasm
+
 ##@ Design System / Shared Assets
 
 .PHONY: build-shared-styles
-build-shared-styles: ## (No-op placeholder) Process shared CSS design tokens if a build step is added later
-	@echo "Shared styles currently require no build. Add preprocessing (e.g., PostCSS/Sass) here in future."
+build-shared-styles: ## Compile shared SCSS → CSS bundle (shared/styles/scss/dist)
+	@echo "Building shared SCSS bundle..."
+	@npm run --silent build:styles || (echo "SCSS build failed" && exit 1)
+	@echo "✅ Shared SCSS compiled"
+
+.PHONY: watch-shared-styles
+watch-shared-styles: ## Watch shared SCSS and rebuild on changes
+	@echo "Watching SCSS (Ctrl+C to stop)..."
+	@npm run watch:styles
 
 .PHONY: rebuild
 rebuild: ## Complete rebuild of active containers only (WIP excluded)
 	@echo "$(YELLOW)Performing complete rebuild (excluding angular/react)...$(RESET)"
+	@$(MAKE) build-shared-styles
 	@docker-compose down --rmi local --volumes --remove-orphans
 	@docker-compose build --no-cache $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)
@@ -164,11 +185,13 @@ rebuild: ## Complete rebuild of active containers only (WIP excluded)
 	@echo "  Vue.js:              http://localhost:3004"
 	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
 	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
+	@echo "  WebAssembly:         http://localhost:3007"
 	@echo "  Backend API:         http://localhost:8080"
 
 .PHONY: restart
 restart: ## Soft rebuild (active containers only, cache enabled)
 	@echo "$(YELLOW)Performing soft restart of active containers (excluding angular/react)...$(RESET)"
+	@$(MAKE) build-shared-styles
 	@docker-compose down
 	@docker-compose build $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)
@@ -246,7 +269,54 @@ start-landing: ## Start only Landing page container
 	@docker-compose up -d chess-landing
 	@echo "$(GREEN)✅ Landing page started on http://localhost:3000$(RESET)"
 
+.PHONY: start-wasm
+start-wasm: ## Start only WebAssembly container
+	@docker-compose up -d chess-wasm
+	@echo "$(GREEN)✅ WebAssembly started on http://localhost:3007$(RESET)"
+
 ##@ Development Tools
+
+.PHONY: dev-fe
+dev-fe: build-shared-styles sync-styles ## Development: rebuild SCSS only and sync to running containers
+	@echo "$(GREEN)✅ Frontend styles rebuilt and synced to running containers$(RESET)"
+	@echo "$(YELLOW)Active containers should now reflect SCSS changes$(RESET)"
+
+.PHONY: sync-styles
+sync-styles: ## Sync compiled CSS to running frontend containers (no rebuild)
+	@echo "$(BLUE)Syncing CSS changes to running containers...$(RESET)"
+	@for service in chess-vanilla chess-vanilla-ts chess-jquery chess-vue chess-landing; do \
+		if docker-compose ps $$service | grep -q "Up"; then \
+			echo "$(YELLOW)Syncing to $$service...$(RESET)"; \
+			docker cp shared/styles/scss/dist/common-scss.css $$service:/usr/share/nginx/html/shared/styles/scss/dist/ 2>/dev/null || echo "  Common CSS sync skipped (container may not be ready)"; \
+			case $$service in \
+				chess-vanilla) \
+					docker cp apps/vanilla-js/scss/dist/app-bundle.css $$service:/usr/share/nginx/html/scss/dist/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+				chess-vanilla-ts) \
+					docker cp apps/vanilla-ts/scss/dist/app-bundle.css $$service:/usr/share/nginx/html/scss/dist/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+				chess-jquery) \
+					docker cp apps/jquery/scss/dist/app-bundle.css $$service:/usr/share/nginx/html/scss/dist/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+				chess-vue) \
+					docker cp apps/vue-js/src/styles/app-bundle.css $$service:/usr/share/nginx/html/assets/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+			esac; \
+		else \
+			echo "$(YELLOW)Skipping $$service (not running)$(RESET)"; \
+		fi; \
+	done
+	@echo "$(GREEN)✅ CSS sync completed$(RESET)"
+
+.PHONY: dev-watch
+dev-watch: ## Watch SCSS changes and auto-sync to running containers
+	@echo "$(BLUE)Watching SCSS files for changes (Ctrl+C to stop)...$(RESET)"
+	@echo "$(YELLOW)Changes will be automatically synced to running containers$(RESET)"
+	@while true; do \
+		inotifywait -r -e modify,create,delete shared/styles/scss apps/*/scss 2>/dev/null || sleep 2; \
+		echo "$(BLUE)SCSS change detected, rebuilding...$(RESET)"; \
+		$(MAKE) dev-fe; \
+	done
 
 .PHONY: shell-backend
 shell-backend: ## Open shell in backend container
@@ -276,7 +346,7 @@ test-api: ## Test backend API endpoints
 .PHONY: test-frontend
 test-frontend: ## Test active frontend endpoints (WIP excluded)
 	@echo "$(BLUE)Testing active frontend endpoints...$(RESET)"
-	@for port in 3000 3001 3002 3003 3004; do \
+	@for port in 3000 3001 3002 3003 3004 3007; do \
 		echo "$(YELLOW)Testing http://localhost:$$port$(RESET)"; \
 		curl -s -o /dev/null -w "Status: %{http_code}\n" http://localhost:$$port || echo "Port $$port not responding"; \
 	done
@@ -325,7 +395,7 @@ health: ## Check health of active services (WIP excluded)
 	@echo "$(YELLOW)Backend API:$(RESET)"
 	@curl -s http://localhost:8080/health && echo " ✅" || echo " ❌"
 	@echo "$(YELLOW)Frontend Services:$(RESET)"
-	@for port in 3000 3001 3002 3003 3004; do \
+	@for port in 3000 3001 3002 3003 3004 3007; do \
 		printf "  Port $$port: "; \
 		curl -s -o /dev/null -w "%{http_code}" http://localhost:$$port && echo " ✅" || echo " ❌"; \
 	done
@@ -365,6 +435,7 @@ open: ## Open active applications in browser (macOS, WIP excluded)
 	@open http://localhost:3002  # Vanilla TypeScript
 	@open http://localhost:3003  # jQuery
 	@open http://localhost:3004  # Vue.js
+	@open http://localhost:3007  # WebAssembly
 	@echo "(Skipping WIP angular/react)"
 
 .PHONY: urls
@@ -377,6 +448,7 @@ urls: ## Display active application URLs (WIP excluded)
 	@echo "  $(YELLOW)Vue.js:$(RESET)              http://localhost:3004"
 	@echo "  $(YELLOW)(WIP) React.js:$(RESET)      http://localhost:3005 (disabled)"
 	@echo "  $(YELLOW)(WIP) Angular:$(RESET)       http://localhost:3006 (disabled)"
+	@echo "  $(YELLOW)WebAssembly:$(RESET)         http://localhost:3007"
 	@echo "  $(YELLOW)Backend API:$(RESET)         http://localhost:8080"
 	@echo "  $(YELLOW)API Docs:$(RESET)            http://localhost:8080/swagger"
 
@@ -393,10 +465,14 @@ help-detailed: ## Show detailed help with examples
 	@echo "  make down       # Stop everything"
 	@echo ""
 	@echo "$(GREEN)🔧 Development:$(RESET)"
-	@echo "  make dev        # Start with logs"
-	@echo "  make restart    # Restart all containers"
-	@echo "  make build      # Rebuild containers"
-	@echo "  make health     # Check service health"
+	@echo "  make dev            # Start with logs"
+	@echo "  make dev-volumes     # Start with live SCSS volume mounts"
+	@echo "  make dev-fe          # Rebuild SCSS only + sync to running containers"
+	@echo "  make dev-watch       # Watch SCSS changes and auto-sync"
+	@echo "  make sync-styles     # Sync compiled CSS to running containers"
+	@echo "  make restart         # Restart all containers"
+	@echo "  make build           # Rebuild containers"
+	@echo "  make health          # Check service health"
 	@echo ""
 	@echo "$(GREEN)🧹 Cleanup:$(RESET)"
 	@echo "  make clean      # Remove containers and images"

@@ -1,0 +1,68 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+// Unified panel styling (game configuration, timers, move history, status/info blocks)
+.panel-like,
+.game-config,
+.timer-info,
+.move-history,
+.game-info,
+.save-slots,
+.pgn-card {
+  @include panel-base;
+}
+
+// Unified status blocks across all apps
+.status {
+  @include status-block;
+}
+
+// Panel title icons (unified emoji system)
+.panel-like h3,
+.game-config h3,
+.timer-info h3,
+.move-history h3,
+.game-info h3,
+.save-slots h3,
+.pgn-card h3 {
+  margin: 0 0 $space-lg;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  color: $color-text-primary;
+}
+
+// Specific panel icons
+.game-config h3::before { content: "⚙️"; }
+.save-slots h3::before { content: "💾"; }
+.timer-info h3::before { content: "⏱️"; }
+.move-history h3::before { content: "📜"; }
+.game-info h3::before,
+.status + h3 { content: "🎯"; }
+.pgn-card h3::before { content: "📄"; }
+
+// Dark theme overrides
+@include dark-theme(
+  ".panel-like, .game-config, .timer-info, .move-history, .game-info, .save-slots, .pgn-card"
+) {
+  background: $color-surface-dark-gradient;
+  border: 1px solid $color-border-dark;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  h3 {
+    color: var(--color-text-primary, #f2f5f9);
+  }
+}
+
+@include dark-theme(".status > div") {
+  background: #26303d;
+  color: var(--color-text-primary, #f2f5f9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  border: 1px solid #374151;
+
+  span {
+    color: inherit;
+  }
+}

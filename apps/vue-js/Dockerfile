@@ -19,6 +19,11 @@ COPY ./apps/vue-js/nginx.conf ./nginx.conf
 ## Copy entire app shared directory (CSS + theme script)
 COPY ./apps/vue-js/shared ./shared
 
+# Copy shared SCSS design system for SCSS @use imports
+# Copy entire root shared directory (styles + assets) to mirror monorepo relative path expectations
+COPY ./shared ./shared
+COPY ./shared /shared
+
 # Copy shared JS/assets required by imports (helpers.js, pgn-core.js, etc.)
 COPY ./shared/assets ./shared/assets
 

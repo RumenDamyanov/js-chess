@@ -1,0 +1,19 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+// Generic card container used for save slots, PGN panel, timers, move history, etc.
+.card-like {
+  @include card-base;
+}
+.card-like h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+@include dark-theme(".card-like") {
+  background: $color-surface-dark-gradient; // unified dark gradient (previously duplicated across apps)
+  border-color: $color-border-dark;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}

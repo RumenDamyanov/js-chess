@@ -1,0 +1,98 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+// Save slots + PGN related small components (centralized)
+.slots-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+}
+.slot {
+  background: var(--color-bg-surface-alt, var(--color-bg-surface, #fff));
+  color: var(--color-text-primary, #2c3e50);
+  border: 1px solid var(--color-border, #d9dee3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition:
+    background $transition-base,
+    border-color $transition-base;
+}
+.slot:hover {
+  background: var(--color-bg-surface, #fff);
+  border-color: var(--color-accent, #2563eb);
+}
+.slot-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+.slot-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+.slot-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+@include dark-theme(".slot") {
+  background: #26303d;
+  border-color: $color-border-dark;
+}
+@include dark-theme(".slot:hover") {
+  background: #2d3947;
+}
+@include dark-theme(".slot-label") {
+  opacity: 0.85;
+}
+
+// PGN actions specific styling for compact layout
+.pgn-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.pgn-actions .btn {
+  padding: 2px 6px;
+  font-size: 0.6875rem; // 11px
+  font-weight: 500;
+  border-radius: 4px;
+  margin: 0;
+  min-width: auto;
+  flex: 0 0 auto;
+}
+
+// Board toolbar specific styling for consistent alignment
+.board-toolbar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.board-toolbar .btn {
+  flex: 0 0 auto;
+  min-width: 100px;
+}
+
+// Board toolbar dark theme
+@include dark-theme(".board-toolbar .btn") {
+  background: #2d3746;
+  border: 1px solid #3b4756;
+  color: var(--color-text-primary, #f2f5f9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+@include dark-theme(".board-toolbar .btn:hover") {
+  background: #354353;
+}

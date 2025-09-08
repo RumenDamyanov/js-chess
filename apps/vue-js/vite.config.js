@@ -11,15 +11,26 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-  '@shared': path.resolve(__dirname, './shared'), // app-local shared (CSS overrides etc.)
+  '@shared': path.resolve(__dirname, './shared'), // app-local shared (if present)
   '@root-shared': path.resolve(__dirname, '../..', 'shared') // repository root shared (design system + assets)
     }
   },
   build: {
     outDir: 'dist'
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Allow importing shared design system without deep relative paths for both local & Docker builds
+        silenceDeprecations: ['legacy-js-api'],
+        includePaths: [
+          path.resolve(__dirname, '../../shared/styles/scss')
+        ]
+      }
+    }
+  },
   server: {
     host: '0.0.0.0',
-    port: 3003
+    port: 3004
   }
 })

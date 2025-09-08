@@ -3,7 +3,7 @@
 	if(window.JSChessTheme) return;
 	const STORAGE_KEY='jschess-theme';
 	const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-	let current = localStorage.getItem(STORAGE_KEY) || (prefersDark ? 'dark' : 'light');
+	let current = localStorage.getItem(STORAGE_KEY) || 'dark'; // Default to dark mode
 
 	function apply(theme){
 		current = theme === 'dark' ? 'dark' : 'light';
@@ -11,7 +11,10 @@
 		else document.documentElement.removeAttribute('data-theme');
 		localStorage.setItem(STORAGE_KEY,current);
 		const btn=document.getElementById('theme-toggle-btn');
-		if(btn){ btn.textContent = current==='dark' ? '☀️ Light' : '🌙 Dark'; }
+		if(btn){
+			btn.textContent = current==='dark' ? '☀️' : '🌙'; // Icon-only buttons
+			btn.setAttribute('aria-label', current==='dark' ? 'Switch to light mode' : 'Switch to dark mode');
+		}
 	}
 
 	window.JSChessTheme = {
