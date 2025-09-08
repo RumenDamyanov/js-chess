@@ -1,0 +1,33 @@
+// Design tokens bridge (SCSS -> CSS Custom Properties)
+// Authoritative custom properties now emitted via _tokens.scss partial.
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 10px;
+$elevation-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+$elevation-md: 0 4px 14px rgba(0, 0, 0, 0.12);
+$transition-fast: 150ms ease;
+$transition-base: 220ms ease;
+
+// Spacing scale (consistent spacing tokens)
+$space-xs: 0.25rem; // 4px
+$space-sm: 0.5rem; // 8px
+$space-md: 0.75rem; // 12px
+$space-lg: 1rem; // 16px
+$space-xl: 1.25rem; // 20px
+$space-2xl: 1.5rem; // 24px
+$space-3xl: 2rem; // 32px
+
+// Layout tokens (unified across all apps)
+$layout-sidebar-width: 300px;
+$layout-main-gap: 30px;
+$layout-max-width: 1400px;
+
+// Color fallbacks (prefer CSS vars at runtime)
+$color-surface: var(--color-bg-surface, #ffffff);
+$color-surface-dark: #1e2530;
+$color-surface-dark-gradient: linear-gradient(145deg, #2a3442, #1f2732);
+$color-border: var(--color-border, #d9dee3);
+$color-border-dark: #374151;
+$color-text-primary: var(--color-text-primary, #2c3e50);
+$color-accent: var(--color-accent, #2563eb);
+$color-accent-alt: var(--color-accent-alt, #7c3aed);

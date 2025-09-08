@@ -1,0 +1,43 @@
+// Vue app-specific SCSS overrides (imported after shared bundle in main entry)
+@use "../../../../shared/styles/scss/partials/variables" as *;
+@use "../../../../shared/styles/scss/partials/mixins" as *;
+
+// Subtle transition tuning
+.board-wrapper {
+  transition: transform 0.25s ease;
+}
+
+// Unified layout using shared mixins
+.container > main {
+  @include chess-layout;
+}
+
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.board-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-md;
+}
+
+// Ensure messages region stacks beneath board with newest at bottom (flex-column-reverse)
+.game-messages-region {
+  width: 100%;
+  max-width: 480px;
+  margin: 8px auto 4px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 6px;
+  min-height: 0;
+}
+
+// Defensive: flip support already handled via shared board styles; keep board-wrapper margin tweak
+.board-panel .board-wrapper {
+  margin-bottom: 4px;
+}

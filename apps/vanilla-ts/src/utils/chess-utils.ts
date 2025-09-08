@@ -50,7 +50,7 @@ export function oppositeColor(color: PieceColor): PieceColor {
 }
 
 /**
- * Converts piece type to Unicode symbol
+ * Converts piece type to Unicode symbol (fallback)
  */
 export function pieceToUnicode(piece: PieceType, color: PieceColor): string {
   const pieces = {
@@ -73,6 +73,23 @@ export function pieceToUnicode(piece: PieceType, color: PieceColor): string {
   };
 
   return pieces[color][piece];
+}
+
+/**
+ * Converts piece type to character notation (P, p, Q, q, etc.)
+ */
+export function pieceToChar(piece: PieceType, color: PieceColor): string {
+  const charMap = {
+    [PieceType.KING]: 'k',
+    [PieceType.QUEEN]: 'q',
+    [PieceType.ROOK]: 'r',
+    [PieceType.BISHOP]: 'b',
+    [PieceType.KNIGHT]: 'n',
+    [PieceType.PAWN]: 'p'
+  };
+
+  const char = charMap[piece];
+  return color === PieceColor.WHITE ? char.toUpperCase() : char;
 }
 
 /**

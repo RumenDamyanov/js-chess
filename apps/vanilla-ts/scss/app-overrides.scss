@@ -1,0 +1,25 @@
+// Vanilla TS app-specific SCSS overrides
+@use "../../../shared/styles/scss/partials/variables" as *;
+@use "../../../shared/styles/scss/partials/mixins" as *;
+
+// Example override: ensure TS specific badge styling parity
+.header-framework {
+  letter-spacing: 0.5px;
+}
+
+// Unified layout using shared mixins
+main {
+  @include chess-layout;
+}
+
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+// Status block (central parity) - uses unified styles from _panels.scss
+.game-info .status {
+  @include status-block;
+}

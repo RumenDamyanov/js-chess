@@ -1,0 +1,92 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+// Base button styles
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  padding: $space-md $space-xl;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: $radius-md;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all $transition-fast;
+  user-select: none;
+  margin: 4px;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+// Size variants
+.btn-small {
+  padding: $space-sm $space-lg;
+  font-size: 0.8125rem;
+  border-radius: calc($radius-md - 2px);
+  margin: 2px;
+}
+
+.btn-smaller {
+  padding: $space-xs $space-md;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: calc($radius-md - 4px);
+  margin: 1px;
+}
+
+// Button variants
+.btn-primary {
+  @include button-variant(
+    linear-gradient(135deg, $color-accent, $color-accent-alt)
+  );
+}
+
+.btn-secondary {
+  @include button-variant($color-surface, $color-text-primary);
+  border: 1px solid $color-border;
+  box-shadow: $elevation-sm;
+
+  &:hover {
+    background: $color-surface;
+    box-shadow: $elevation-md;
+  }
+}
+
+// Dark mode overrides
+@include dark-theme(".btn-primary") {
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+}
+
+@include dark-theme(".btn-secondary") {
+  background: #374151;
+  color: #f3f4f6;
+  border-color: #4b5563;
+
+  &:hover {
+    background: #4b5563;
+  }
+}
+
+@include dark-theme(".btn-small, .btn-smaller") {
+  background: #374151;
+  color: #f3f4f6;
+  border-color: #4b5563;
+
+  &:hover {
+    background: #4b5563;
+  }
+}

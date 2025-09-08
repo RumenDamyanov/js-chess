@@ -1,0 +1,9 @@
+node_modules
+**/dist/
+shared/styles/scss/dist/
+apps/**/scss/dist/
+apps/**/src/styles/*.css
+apps/**/shared/scss/**
+apps/**/shared/*.css
+apps/landing/shared/scss/**
+apps/vue-js/shared/scss/**

@@ -10,6 +10,7 @@
         <nav class="header-nav">
           <ul class="nav-links">
             <li><a href="http://localhost:3000" class="nav-link"><span class="tech-icon tech-home"></span> Home</a></li>
+            <li><span class="nav-spacer"></span></li>
             <li><span class="nav-separator"></span></li>
             <li><a href="http://localhost:3001" class="nav-link" title="Vanilla JavaScript"><span class="tech-icon tech-js"></span> Vanilla (JS)</a></li>
             <li><a href="http://localhost:3002" class="nav-link" title="Vanilla TypeScript"><span class="tech-icon tech-ts"></span> Vanilla (TS)</a></li>
@@ -17,13 +18,13 @@
             <li><a href="http://localhost:3004" class="nav-link active" title="Vue"><span class="tech-icon tech-vue"></span> Vue</a></li>
             <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-react"></span> React</span></li>
             <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-angular"></span> Angular</span></li>
-            <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-ui5-js"></span> UI5 (JS)</span></li>
-            <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-ui5-ts"></span> UI5 (TS)</span></li>
+            <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-ui5-ts"></span> UI5</span></li>
+            <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Native Go demo via WebAssembly"><span class="tech-icon tech-wasm"></span> WASM</span></li>
           </ul>
 
           <div class="header-controls">
-            <button id="theme-toggle-btn" class="btn btn-secondary" @click="toggleTheme()" aria-label="Toggle theme">🌙 Dark</button>
-            <button id="debug-btn" class="btn" title="Toggle Debug">🐛</button>
+            <button id="theme-toggle-btn" class="btn btn-secondary" @click="toggleTheme()" aria-label="Toggle theme" style="display: none;">🌙</button>
+            <!-- Debug button now injected by shared debug.js -->
           </div>
         </nav>
       </div>
@@ -36,7 +37,7 @@
 
           <!-- Shared Save Slots structure required by pgn-core -->
           <div class="save-slots card-like" id="save-slots-card">
-            <h3>💾 Save Slots</h3>
+            <h3>Save Slots</h3>
             <div class="slots-grid save-slots">
               <div class="slot" data-slot="1">
                 <div class="slot-label">Slot 1</div>
@@ -124,7 +125,7 @@
           </div>
 
           <div class="timers-card card-like" v-if="config.enableTimer">
-            <h3>⏱ Timers</h3>
+            <h3>Timers</h3>
             <div class="timers" role="group" aria-label="Player timers">
               <div class="timer-row" role="status" aria-live="polite"><span>White:</span><span id="white-timer">{{ formatTime(whiteTime) }}</span></div>
               <div class="timer-row" role="status" aria-live="polite"><span>Black:</span><span id="black-timer">{{ formatTime(blackTime) }}</span></div>
@@ -138,7 +139,7 @@
           </div>
 
           <div class="move-history card-like" aria-label="Move history" role="region">
-            <h3>📜 Move History</h3>
+            <h3>Move History</h3>
             <ol id="move-list" class="moves" aria-live="polite">
               <li class="move-item" v-if="!gameId || !gameState?.move_history?.length">
                 <span class="move-number">-</span>
@@ -151,7 +152,7 @@
             </ol>
           </div>
           <div class="pgn-card card-like" id="pgn-card">
-            <h3>📄 PGN</h3>
+            <h3>PGN</h3>
             <textarea id="pgn-output" class="pgn-output" readonly placeholder="Play moves to generate PGN" ref="pgnOutputRef"></textarea>
             <div class="pgn-actions">
               <button class="btn btn-smaller" id="pgn-copy-btn" aria-label="Copy PGN to clipboard" disabled>Copy</button>
@@ -192,6 +193,7 @@ import GameConfigPanel from './components/GameConfigPanel.vue'
 import '@root-shared/assets/js/helpers.js'
 import '@root-shared/assets/js/pgn-core.js'
 import '@root-shared/assets/js/messages.js'
+import '@root-shared/assets/js/piece-renderer.js'
 
 // Reactive state
 const gameId = ref('')
@@ -857,6 +859,11 @@ const getSquareClass = (square, index) => {
 
 function pieceCssClasses(piece) {
   if (!piece) return []
+  // Use the shared piece renderer for consistent behavior across apps
+  if (window.chessPieceRenderer) {
+    return window.chessPieceRenderer.getPieceClasses(piece)
+  }
+  // Fallback to original implementation
   const isWhite = piece === piece.toUpperCase()
   const map = { k: 'king', q: 'queen', r: 'rook', b: 'bishop', n: 'knight', p: 'pawn' }
   const type = map[piece.toLowerCase()] || 'piece'
