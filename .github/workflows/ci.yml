@@ -11,7 +11,7 @@ on:
 
 env:
   NODE_VERSION: '20.x'
-  GO_VERSION: '1.22'
+  GO_VERSION: '1.23'
 
 jobs:
   # Job 1: Basic validation and dependency installation
