@@ -1,20 +1,74 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+@use "variables" as *;
+@use "mixins" as *;
 
 // Move history internals (panel container handled by _panels.scss)
-.move-history h3 { margin:0 0 15px; font-size:1.2em; color:#2c3e50; text-align:center; }
-.moves { max-height:300px; overflow-y:auto; border:1px solid #dee2e6; border-radius:8px; padding:10px; background:#fff; box-shadow:inset 0 2px 5px rgba(0,0,0,0.05); user-select:text; }
-.move-item { display:flex; justify-content:space-between; padding:8px 10px; border-bottom:1px solid #eee; border-radius:4px; margin-bottom:2px; transition:all .2s ease; }
-.move-item:hover { background:linear-gradient(145deg,#e3f2fd,#bbdefb); transform:translateX(3px); }
-.move-item:last-child { border-bottom:none; margin-bottom:0; }
-.move-number { font-weight:bold; min-width:35px; color:#2c3e50; font-size:14px; }
-.move-notation { flex:1; text-align:center; font-family:'Courier New',monospace; font-weight:500; color:#007bff; }
+.move-history h3 {
+  margin: 0 0 15px;
+  font-size: 1.2em;
+  color: #fff;
+  text-align: center;
+}
+.moves {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  user-select: text;
+}
+.move-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  transition: all 0.2s ease;
+}
+.move-item:hover {
+  background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+  transform: translateX(3px);
+}
+.move-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+.move-number {
+  font-weight: bold;
+  min-width: 35px;
+  color: #2c3e50;
+  font-size: 14px;
+}
+.move-notation {
+  flex: 1;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  font-weight: 500;
+  color: #007bff;
+}
 
-@include dark-theme('.move-history .moves') { background:#1e2530; border-color:#374151; }
-@include dark-theme('.move-history .move-item') { border-bottom:1px solid #2e3947; }
+@include dark-theme(".move-history .moves") {
+  background: #1e2530;
+  border-color: #374151;
+}
+@include dark-theme(".move-history .move-item") {
+  border-bottom: 1px solid #2e3947;
+}
 
 // Scrollbar styling (webkit) retained from legacy per-app CSS
-.moves::-webkit-scrollbar { width:6px; }
-.moves::-webkit-scrollbar-track { background:#f1f1f1; border-radius:3px; }
-.moves::-webkit-scrollbar-thumb { background:#007bff; border-radius:3px; }
-.moves::-webkit-scrollbar-thumb:hover { background:#0056b3; }
+.moves::-webkit-scrollbar {
+  width: 6px;
+}
+.moves::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+.moves::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 3px;
+}
+.moves::-webkit-scrollbar-thumb:hover {
+  background: #0056b3;
+}

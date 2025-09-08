@@ -54,7 +54,7 @@ export class GameController {
   constructor() {
     this.apiClient = new ChessAPIClient();
     this.configManager = new ConfigManager();
-    this.chessBoard = new ChessBoard();
+    this.chessBoard = new ChessBoard('chess-board');
     this.chatManager = new ChatManager(this.apiClient);
     this.gameConfig = this.configManager.getConfig();
 

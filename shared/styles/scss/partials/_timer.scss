@@ -1,17 +1,69 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+@use "variables" as *;
+@use "mixins" as *;
 
 // Timer panel internals (container panel styling comes from _panels.scss)
-.timer-content { display:flex; flex-direction:column; gap:10px; }
-.timer-row { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; margin-bottom:5px; border-radius:6px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-.timer-label { font-weight:600; color:#495057; }
-.timer { font-family:'Courier New',monospace; font-weight:bold; font-size:16px; color:#007bff; }
-.timer.active { color:#28a745; animation:pulse 1s infinite; }
-.timer.warning { color:#ffc107; }
-.timer.danger { color:#dc3545; animation:blink .5s infinite; }
+.timer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.timer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.timer-label {
+  font-weight: 600;
+  color: #495057;
+}
+.timer {
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  font-size: 16px;
+  color: #007bff;
+}
+.timer.active {
+  color: #28a745;
+  animation: pulse 1s infinite;
+}
+.timer.warning {
+  color: #ffc107;
+}
+.timer.danger {
+  color: #dc3545;
+  animation: blink 0.5s infinite;
+}
 
-@keyframes pulse { 0%,100% { opacity:1;} 50% { opacity:.7;} }
-@keyframes blink { 0%,100% { opacity:1;} 50% { opacity:.3;} }
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
 
-@include dark-theme('.timer-row') { background:#26303d; color: var(--color-text-primary,#f2f5f9); box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1px solid #374151; }
-@include dark-theme('.timer-row .timer-label, .timer-row .timer') { color:inherit; }
+@include dark-theme(".timer-row") {
+  background: #26303d;
+  color: var(--color-text-primary, #f2f5f9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  border: 1px solid #374151;
+}
+@include dark-theme(".timer-row .timer-label, .timer-row .timer") {
+  color: inherit;
+}

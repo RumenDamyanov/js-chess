@@ -1,9 +1,28 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+@use "variables" as *;
+@use "mixins" as *;
 
 // Unified status blocks (Player / Turn / Status / Move indicators)
-.status { display:flex; flex-direction:column; gap:10px; }
-.status > div { padding:8px 12px; border-radius:6px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); font-weight:500; color:#2c3e50; border:1px solid rgba(0,0,0,0.05); }
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.status > div {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  color: #2c3e50;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
 
-@include dark-theme('.status > div') { background:#26303d; color: var(--color-text-primary,#f2f5f9); box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1px solid #374151; }
-@include dark-theme('.status > div span') { color:inherit; }
+@include dark-theme(".status > div") {
+  background: #26303d;
+  color: var(--color-text-primary, #f2f5f9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  border: 1px solid #374151;
+}
+@include dark-theme(".status > div span") {
+  color: inherit;
+}

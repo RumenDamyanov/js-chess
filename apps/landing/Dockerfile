@@ -15,6 +15,9 @@ COPY ./apps/landing/ /usr/share/nginx/html/
 COPY ./shared/styles/ /usr/share/nginx/html/shared/styles/
 COPY --from=styles-build /build/shared/styles/scss/dist /usr/share/nginx/html/shared/styles/scss/dist
 
+# Copy shared assets (JavaScript and images)
+COPY ./shared/assets/ /usr/share/nginx/html/shared/assets/
+
 # Copy custom nginx configuration if needed
 COPY ./apps/landing/nginx.conf /etc/nginx/conf.d/default.conf
 

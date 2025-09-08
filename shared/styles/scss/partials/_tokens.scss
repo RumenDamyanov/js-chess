@@ -4,64 +4,86 @@
 
 /* Light theme defaults */
 :root {
-  --color-brand-start:#667eea;
-  --color-brand-end:#764ba2;
-  --color-bg-body-gradient:linear-gradient(135deg,var(--color-brand-start) 0%,var(--color-brand-end) 100%);
-  --color-bg-surface:#ffffff;
-  --color-bg-surface-alt:#f8f9fb;
-  --color-text-primary:#222831;
-  --color-text-secondary:#5a6270;
-  --color-text-inverse:#ffffff;
-  --color-border:#d9dee3;
-  --color-success:#22a06b;
-  --color-danger:#d9534f;
-  --color-warning:#ffb400;
-  --color-info:#3d8bfd;
-  --color-btn-primary-bg:linear-gradient(135deg,#667eea,#764ba2);
-  --color-btn-secondary-bg:#eef1f5;
-  --color-btn-secondary-border:#d0d7e2;
-  --color-btn-secondary-text:#2f3642;
-  --color-square-light:#f0d9b5;
-  --color-square-dark:#b58863;
-  --color-square-selected:#ffe58a;
-  --color-square-selected-outline:#d48806;
-  --color-square-highlight:#91d5ff;
-  --color-square-move-dot:rgba(0,0,0,.35);
-  --color-square-capture:rgba(255,0,0,.25);
-  --color-piece-white:#ffffff;
-  --color-piece-black:#222831;
-  --radius-sm:4px;
-  --radius-md:6px;
-  --radius-lg:10px;
-  --shadow-elevated:0 4px 16px rgba(0,0,0,0.12);
-  --transition-fast:.18s ease;
+  --color-brand-start: #667eea;
+  --color-brand-end: #764ba2;
+  --color-bg-body-gradient: linear-gradient(
+    135deg,
+    var(--color-brand-start) 0%,
+    var(--color-brand-end) 100%
+  );
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-alt: #f8f9fb;
+  --color-text-primary: #222831;
+  --color-text-secondary: #5a6270;
+  --color-text-inverse: #ffffff;
+  --color-border: #d9dee3;
+  --color-success: #22a06b;
+  --color-danger: #d9534f;
+  --color-warning: #ffb400;
+  --color-info: #3d8bfd;
+  --color-btn-primary-bg: linear-gradient(135deg, #667eea, #764ba2);
+  --color-btn-secondary-bg: #eef1f5;
+  --color-btn-secondary-border: #d0d7e2;
+  --color-btn-secondary-text: #2f3642;
+  --color-square-light: #f0d9b5;
+  --color-square-dark: #b58863;
+  --color-square-selected: #ffe58a;
+  --color-square-selected-outline: #d48806;
+  --color-square-highlight: #91d5ff;
+  --color-square-move-dot: rgba(0, 0, 0, 0.35);
+  --color-square-capture: rgba(255, 0, 0, 0.25);
+  --color-piece-white: #ffffff;
+  --color-piece-black: #222831;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --transition-fast: 0.18s ease;
 }
 
 /* Dark theme overrides */
 [data-theme="dark"] {
-  --color-bg-body-gradient:linear-gradient(135deg,#1f2937 0%, #111827 100%);
-  --color-bg-surface:#1e2530;
-  --color-bg-surface-alt:#26303d;
-  --color-text-primary:#f2f5f9;
-  --color-text-secondary:#9ca3af;
-  --color-border:#374151;
-  --color-btn-secondary-bg:#2d3746;
-  --color-btn-secondary-border:#3b4756;
-  --color-btn-secondary-text:#f2f5f9;
-  --color-square-light:#b58863; /* keep board contrast */
-  --color-square-dark:#2c3e50;
-  --color-square-selected:#8b6f2d;
-  --color-square-selected-outline:#ffd666;
-  --color-square-highlight:#2563eb;
-  --color-square-move-dot:rgba(255,255,255,.35);
-  --color-square-capture:rgba(255,76,76,.35);
-  --color-piece-white:#f8fafc;
-  --color-piece-black:#0f172a;
+  --color-bg-body-gradient: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  --color-bg-surface: #1e2530;
+  --color-bg-surface-alt: #26303d;
+  --color-text-primary: #f2f5f9;
+  --color-text-secondary: #9ca3af;
+  --color-border: #374151;
+  --color-btn-secondary-bg: #2d3746;
+  --color-btn-secondary-border: #3b4756;
+  --color-btn-secondary-text: #f2f5f9;
+  --color-square-light: #b58863; /* keep board contrast */
+  --color-square-dark: #2c3e50;
+  --color-square-selected: #8b6f2d;
+  --color-square-selected-outline: #ffd666;
+  --color-square-highlight: #2563eb;
+  --color-square-move-dot: rgba(255, 255, 255, 0.35);
+  --color-square-capture: rgba(255, 76, 76, 0.35);
+  --color-piece-white: #f8fafc;
+  --color-piece-black: #0f172a;
 }
 
-html,body { color-scheme: light dark; }
+html,
+body {
+  color-scheme: light dark;
+}
 
 /* Smooth theme transition */
-body, .card, .game-config, .timer-info, .move-history, .game-info, .save-slots, .pgn-card {
-  transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+body,
+.card,
+.game-config,
+.timer-info,
+.move-history,
+.game-info,
+.save-slots,
+.pgn-card {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.pgn-card .pgn-output {
+  width: calc(100% - 20px);
+  margin: 0 auto;
 }

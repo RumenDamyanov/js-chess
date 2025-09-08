@@ -6,7 +6,7 @@
 
 Multi-framework chess UI demos powered by the Go backend. A shared design system in `shared/styles` keeps visuals consistent across implementations.
 
-## 🔄 Current Status (Aug 2025)
+## 🔄 Current Status (Sep 2025)
 
 Active & stable (included in default Docker / Make builds):
 
@@ -23,28 +23,43 @@ Work‑in‑progress / planned (manual start or placeholders only):
 - UI5 (JS) – placeholder link (landing + headers)
 - UI5 (TS) – placeholder link (landing + headers)
 
+**🎨 Recent UI/UX Unification (Sep 2025):**
+
+- Unified design system across all 4 stable apps (vanilla-js, vanilla-ts, jquery, vue-js)
+- Consistent layout (300px sidebar width, 30px gaps, 1400px max-width)
+- Unified icon system (⚙️ Game Settings, 💾 Save Slots, ⏱️ Timers, 📜 Move History, 🎯 Game Status, 📄 PGN)
+- Shared SCSS mixins and variables for consistent spacing, colors, and theming
+- Fixed jQuery's narrower layout (1000px → 1400px) to match other apps
+- Identical light/dark theme appearance across all frameworks
+
 The WIP / planned entries are excluded from aggregate Make targets to keep build times low. UI5 variants are placeholders to illustrate upcoming framework diversity; ports will be assigned once scaffolds land.
 
 ## ✨ Recent Updates
 
-Late Aug 2025 highlights:
+Sep 2025 highlights:
 
-1. Vue 3 reached full feature parity (timers, save slots, status blocks, chat, move history, dark mode, unified board styling).
-2. Landing page redesign: modern dual‑row grid with stable vs WIP tiers and tech icon badges.
-3. Shared SCSS design system cleanup: duplicate selectors removed, `@extend` eliminated, stylelint enforced in multiple CI jobs.
-4. Unified debug panel + scoped log categories (legacy bespoke panels removed; AI noise gated behind `aiEngine`).
-5. Accessibility & UX: improved timer control semantics, nav placeholder states, message stack handling.
-6. Build stabilization: Sass CLI given `--load-path shared/styles/scss`; Vue switched to `@use 'main';` via Vite `includePaths` + Docker image now copies `shared/` once for resolution.
-7. CI hardening: matrix (vanilla-ts, vue-js) builds after shared style compile; stylelint runs in setup, matrix, and quality jobs with fail‑fast disabled.
-8. Future migration path: Remaining apps will migrate from deep relative `@use '../../../shared/.../main';` to simplified `@use 'main';` (already live in Vue) for consistency.
+1. **🎨 UI/UX Unification Complete**: All 4 stable apps now share identical design system with unified layout, spacing, icons, and theming
+2. **⚡ Fast Development Workflow**: New Make commands for rapid SCSS iteration without container rebuilds
+3. **🔧 Enhanced Development Tools**: Added `make dev-fe`, `make sync-styles`, `make dev-watch`, and `make dev-volumes` commands
+4. **🐳 Docker Development Mode**: Volume mounts for live SCSS editing with `docker-compose.dev.yml`
+5. Vue 3 reached full feature parity (timers, save slots, status blocks, chat, move history, dark mode, unified board styling)
+6. Landing page redesign: modern dual‑row grid with stable vs WIP tiers and tech icon badges
+7. Shared SCSS design system cleanup: duplicate selectors removed, `@extend` eliminated, stylelint enforced in multiple CI jobs
+8. Unified debug panel + scoped log categories (legacy bespoke panels removed; AI noise gated behind `aiEngine`)
+9. Accessibility & UX: improved timer control semantics, nav placeholder states, message stack handling
+10. Build stabilization: Sass CLI given `--load-path shared/styles/scss`; Vue switched to `@use 'main';` via Vite `includePaths` + Docker image now copies `shared/` once for resolution
+11. CI hardening: matrix (vanilla-ts, vue-js) builds after shared style compile; stylelint runs in setup, matrix, and quality jobs with fail‑fast disabled
+12. Future migration path: Remaining apps will migrate from deep relative `@use '../../../shared/.../main';` to simplified `@use 'main';` (already live in Vue) for consistency
 
 Planned next steps:
 
-- Migrate remaining app bundles to simplified `@use 'main';` (remove deep relative paths).
-- Implement UI5 (JS/TS) scaffolds with shared theme integration.
-- React & Angular rewrites aligned with shared primitives.
-- Add visual regression + a11y automated checks.
-- Incremental board rendering & animation pipeline.
+- ✅ **UI/UX Unification Complete**: All 4 stable apps now share identical design system
+- Migrate remaining app bundles to simplified `@use 'main';` (remove deep relative paths)
+- Implement UI5 (JS/TS) scaffolds with shared theme integration
+- React & Angular rewrites aligned with shared primitives
+- Add visual regression + a11y automated checks
+- Incremental board rendering & animation pipeline
+- Performance optimizations for the unified design system
 
 ## Frameworks
 
@@ -88,18 +103,41 @@ Makefile              # Convenience targets
 - Vue & future apps: prefer simplified `@use 'main';` (resolved by Sass load‑path / Vite includePaths). Legacy deep relative `@use '../../../shared/.../main';` entries will be migrated.
 - Docker: Shared design system copied into build context; static apps reference compiled bundles only (no raw token file needed at runtime).
 
-Add or modify tokens/components then run `npm run build:styles` (or rebuild images) — all active apps update automatically. The placeholder Make target `build-shared-styles` remains available for future pipeline hooks (e.g. PostCSS layering, style snapshots).
+**🎨 Unified Design System (Sep 2025):**
+
+- All 4 stable apps now share identical visual appearance
+- Consistent 300px sidebar widths, 30px gaps, 1400px max-width
+- Unified emoji icon system for all panel titles
+- Shared mixins for layout, status blocks, and panel styling
+- Identical light/dark theme behavior across frameworks
+
+**⚡ Fast Development Workflow:**
+
+- Use `make dev-fe` for rapid SCSS iteration (rebuilds styles + syncs to containers)
+- Use `make sync-styles` for instant CSS sync (if styles already compiled)
+- Use `make dev-volumes` for live editing with volume mounts
+- Use `make dev-watch` for automatic style syncing during development
+
+Add or modify tokens/components then run `npm run build:styles` (or `make dev-fe`) — all active apps update automatically. The placeholder Make target `build-shared-styles` remains available for future pipeline hooks (e.g. PostCSS layering, style snapshots).
 
 ## Styling Architecture (Design System Migration)
 
-The project now uses a shared SCSS design system located in `shared/styles/scss`.
+The project now uses a shared SCSS design system located in `shared/styles/scss` with unified UI/UX across all stable apps.
 
 Core partials:
 
-- `_variables.scss` / `_mixins.scss` – tokens + helpers bridging to existing CSS custom properties.
-- `_cards.scss`, `_panels.scss`, `_buttons.scss`, `_slots.scss`, `_forms.scss` – core UI primitives & patterns.
-- `_board.scss`, `_messages.scss`, `_status.scss`, `_timer.scss`, `_move-history.scss` – chess domain & game UI.
-- `_promotion.scss`, `_debug.scss` – utility overlays (promotion dialog + debug panel).
+- `_variables.scss` / `_mixins.scss` – tokens + helpers bridging to existing CSS custom properties, including unified layout mixins (`@include chess-layout`, `@include status-block`, `@include panel-base`)
+- `_cards.scss`, `_panels.scss`, `_buttons.scss`, `_slots.scss`, `_forms.scss` – core UI primitives & patterns with unified icon system
+- `_board.scss`, `_messages.scss`, `_status.scss`, `_timer.scss`, `_move-history.scss` – chess domain & game UI with consistent spacing
+- `_promotion.scss`, `_debug.scss` – utility overlays (promotion dialog + debug panel)
+
+**🎨 Unified Design System Features:**
+
+- **Layout System**: `$layout-sidebar-width: 300px`, `$layout-main-gap: 30px`, `$layout-max-width: 1400px`
+- **Icon System**: Consistent emoji icons (⚙️ Game Settings, 💾 Save Slots, ⏱️ Timers, 📜 Move History, 🎯 Game Status, 📄 PGN)
+- **Spacing System**: Standardized tokens (`$space-xs` through `$space-3xl`) for consistent padding/margins
+- **Theme System**: Identical light/dark mode appearance across all frameworks
+- **Mixin Library**: Reusable patterns for layout, status blocks, and panel styling
 
 Each app has a SCSS bundle entry (`apps/<app>/scss/bundle.scss`) that imports the shared `main.scss` plus its local `app-overrides.scss`.
 
@@ -132,6 +170,46 @@ make urls             # List service URLs (WIP flagged as disabled)
 Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (vue 3) · 8080 (API)
 
 WIP (manual if needed): 3005 (react) · 3006 (angular) · (UI5 JS/TS TBD)
+
+## ⚡ Fast Development Workflow
+
+For rapid SCSS iteration without rebuilding containers:
+
+### Quick SCSS Changes (Recommended)
+
+```bash
+# Start containers normally
+make up
+
+# Make SCSS changes, then sync instantly (~10-20 seconds)
+make dev-fe
+
+# Or sync without rebuilding if already compiled (~5 seconds)
+make sync-styles
+```
+
+### Live Development Mode (Experimental)
+
+```bash
+# Start with volume mounts for instant changes
+make dev-volumes
+
+# SCSS changes reflect immediately (may need occasional sync)
+```
+
+### Watch Mode for Continuous Development
+
+```bash
+# Auto-sync SCSS changes as you work
+make dev-watch
+```
+
+### Performance Comparison
+
+- **`make rebuild`**: Full container rebuild (~2-3 minutes)
+- **`make dev-fe`**: SCSS rebuild + sync (~10-20 seconds) ⚡
+- **`make sync-styles`**: CSS sync only (~5 seconds) ⚡⚡
+- **`make dev-volumes`**: Instant changes (with volume mounts) ⚡⚡⚡
 
 ## Make Targets (selection)
 
@@ -254,6 +332,10 @@ make urls          # Display all application URLs
 
 ```bash
 make dev           # Start active set with logs
+make dev-volumes   # Start with live SCSS volume mounts (experimental)
+make dev-fe        # Rebuild SCSS only + sync to running containers
+make dev-watch     # Watch SCSS changes and auto-sync
+make sync-styles   # Sync compiled CSS to running containers
 make build         # Build active containers
 make rebuild       # Clean rebuild (active only)
 make test-api      # Test backend API endpoints
@@ -508,3 +590,68 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ---
 
 ⭐ **Star this repo** if you find it helpful for learning different JavaScript frameworks!
+
+## 🔧 Troubleshooting
+
+### Common Development Issues
+
+**Port conflicts when starting containers:**
+
+```bash
+# Kill processes on specific ports
+for port in 3000 3001 3002 3003 3004 3005 3006; do lsof -ti:$port | xargs kill -9 2>/dev/null || true; done
+
+# Or use the aggressive cleanup
+make down && sleep 3 && make up
+```
+
+**SCSS changes not reflecting:**
+
+```bash
+# Quick sync for running containers
+make dev-fe
+
+# Or rebuild styles completely
+npm run build:styles && make sync-styles
+```
+
+**Container logs not showing:**
+
+```bash
+# Check container status
+make status
+
+# View specific logs
+make logs-backend
+make logs-frontend
+```
+
+**Permission issues with Docker:**
+
+```bash
+# Ensure Docker daemon is running
+docker info
+
+# Clean up and restart
+make clean && make up
+```
+
+**SCSS compilation errors:**
+
+```bash
+# Check for syntax errors
+npm run build:styles
+
+# Lint SCSS files
+npm run lint:styles
+
+# Fix linting issues automatically
+npm run fix:styles
+```
+
+**Development workflow tips:**
+
+- Use `make dev-fe` for rapid SCSS iteration (10-20 seconds vs 2-3 minutes for full rebuild)
+- Use `make dev-volumes` for instant SCSS changes during heavy development
+- Use `make sync-styles` when you just need to sync already compiled CSS
+- Check `make health` to verify all services are running correctly

@@ -702,17 +702,22 @@ class ChessGame {
             // Store the piece notation in a data attribute for later retrieval
             square.dataset.piece = piece;
 
-            // Convert piece notation to chess symbols
-            const pieceSymbols = {
-                'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-                'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
-            };
-
-            if (pieceSymbols[piece]) {
-                const isWhite = piece === piece.toUpperCase();
-                square.innerHTML = `<span class="piece ${isWhite ? 'piece-white' : 'piece-black'}">${pieceSymbols[piece]}</span>`;
+            // Use the shared piece renderer for consistent rendering across apps
+            if (window.chessPieceRenderer && piece) {
+                square.innerHTML = window.chessPieceRenderer.createPieceElement(piece);
             } else {
-                square.textContent = '';
+                // Fallback to original Unicode implementation
+                const pieceSymbols = {
+                    'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+                    'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
+                };
+
+                if (pieceSymbols[piece]) {
+                    const isWhite = piece === piece.toUpperCase();
+                    square.innerHTML = `<span class="piece ${isWhite ? 'piece-white' : 'piece-black'}">${pieceSymbols[piece]}</span>`;
+                } else {
+                    square.textContent = '';
+                }
             }
         });
     }

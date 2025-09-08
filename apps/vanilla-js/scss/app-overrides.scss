@@ -1,27 +1,44 @@
 // Vanilla JS app-specific SCSS overrides
-@use '../../../shared/styles/scss/partials/variables' as *;
+@use "../../../shared/styles/scss/partials/variables" as *;
+@use "../../../shared/styles/scss/partials/mixins" as *;
 
 // Example: framework label tweak (scoped to this app only)
-.header-framework { letter-spacing: .5px; }
+.header-framework {
+  letter-spacing: 0.5px;
+}
 
-// Placeholder for future vanilla-js specific theming tokens
+// Unified layout using shared mixins
+main {
+  @include chess-layout;
+}
 
-// Layout grid (app-specific)
-main { display:grid; grid-template-columns:300px auto 300px; gap:30px; align-items:start; max-width:1400px; margin:0 auto; }
-.left-panel, .right-panel { display:flex; flex-direction:column; gap:20px; }
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
 
 // Game messages region tweaks
-.board-wrapper { display:flex; flex-direction:column; align-items:center; }
-.game-messages-region { width:100%; max-width:480px; margin:8px auto 4px; display:flex; flex-direction:column-reverse; gap:6px; min-height:0; }
-.game-message-stack { display:contents; }
+.board-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.game-messages-region {
+  width: 100%;
+  max-width: 480px;
+  margin: 8px auto 4px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 6px;
+  min-height: 0;
+}
+.game-message-stack {
+  display: contents;
+}
 
-// Status block parity
-.status { display:flex; flex-direction:column; gap:10px; }
-.status > div { padding:8px 12px; border-radius:6px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); font-weight:500; color:#2c3e50; border:1px solid rgba(0,0,0,0.05); }
-[data-theme="dark"] .status > div { background:#26303d; color:var(--color-text-primary,#f2f5f9); box-shadow:0 2px 5px rgba(0,0,0,0.4); border:1px solid #374151; }
-[data-theme="dark"] .status > div span { color:inherit; }
-
-// Responsive adjustments scoped to this app
-@media (max-width:1024px){ main { grid-template-columns:250px auto 250px; gap:20px; } }
-@media (max-width:768px){ main { grid-template-columns:1fr; gap:20px; } .left-panel { order:2; } .right-panel { order:3; } }
-
+// Status block parity - uses unified styles from _panels.scss
+.game-info .status {
+  @include status-block;
+}

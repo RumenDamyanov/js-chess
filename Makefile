@@ -74,6 +74,14 @@ dev: ## Start active containers (build if needed) and stream logs (WIP excluded)
 	@echo "$(GREEN)Starting development environment (excluding angular/react)...$(RESET)"
 	@docker-compose up --build $(ACTIVE_SERVICES)
 
+.PHONY: dev-volumes
+dev-volumes: ## Start containers with volume mounts for live SCSS editing (experimental)
+	@echo "$(YELLOW)Starting with volume mounts for live SCSS development...$(RESET)"
+	@echo "$(BLUE)Note: This mounts SCSS source files - changes will require manual sync$(RESET)"
+	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d $(ACTIVE_SERVICES) 2>/dev/null || \
+		(echo "$(RED)docker-compose.dev.yml not found, using standard mode$(RESET)"; $(MAKE) dev)
+	@echo "$(GREEN)✅ Development containers with volumes started$(RESET)"
+
 .PHONY: down
 down: ## Stop and remove all containers
 	@echo "$(YELLOW)Stopping all containers...$(RESET)"
@@ -257,6 +265,48 @@ start-landing: ## Start only Landing page container
 
 ##@ Development Tools
 
+.PHONY: dev-fe
+dev-fe: build-shared-styles sync-styles ## Development: rebuild SCSS only and sync to running containers
+	@echo "$(GREEN)✅ Frontend styles rebuilt and synced to running containers$(RESET)"
+	@echo "$(YELLOW)Active containers should now reflect SCSS changes$(RESET)"
+
+.PHONY: sync-styles
+sync-styles: ## Sync compiled CSS to running frontend containers (no rebuild)
+	@echo "$(BLUE)Syncing CSS changes to running containers...$(RESET)"
+	@for service in chess-vanilla chess-vanilla-ts chess-jquery chess-vue chess-landing; do \
+		if docker-compose ps $$service | grep -q "Up"; then \
+			echo "$(YELLOW)Syncing to $$service...$(RESET)"; \
+			docker cp shared/styles/scss/dist/common-scss.css $$service:/usr/share/nginx/html/shared/styles/scss/dist/ 2>/dev/null || echo "  Common CSS sync skipped (container may not be ready)"; \
+			case $$service in \
+				chess-vanilla) \
+					docker cp apps/vanilla-js/scss/dist/app-bundle.css $$service:/usr/share/nginx/html/scss/dist/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+				chess-vanilla-ts) \
+					docker cp apps/vanilla-ts/scss/dist/app-bundle.css $$service:/usr/share/nginx/html/scss/dist/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+				chess-jquery) \
+					docker cp apps/jquery/scss/dist/app-bundle.css $$service:/usr/share/nginx/html/scss/dist/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+				chess-vue) \
+					docker cp apps/vue-js/src/styles/app-bundle.css $$service:/usr/share/nginx/html/assets/ 2>/dev/null || echo "  App CSS sync skipped"; \
+					;; \
+			esac; \
+		else \
+			echo "$(YELLOW)Skipping $$service (not running)$(RESET)"; \
+		fi; \
+	done
+	@echo "$(GREEN)✅ CSS sync completed$(RESET)"
+
+.PHONY: dev-watch
+dev-watch: ## Watch SCSS changes and auto-sync to running containers
+	@echo "$(BLUE)Watching SCSS files for changes (Ctrl+C to stop)...$(RESET)"
+	@echo "$(YELLOW)Changes will be automatically synced to running containers$(RESET)"
+	@while true; do \
+		inotifywait -r -e modify,create,delete shared/styles/scss apps/*/scss 2>/dev/null || sleep 2; \
+		echo "$(BLUE)SCSS change detected, rebuilding...$(RESET)"; \
+		$(MAKE) dev-fe; \
+	done
+
 .PHONY: shell-backend
 shell-backend: ## Open shell in backend container
 	@docker-compose exec chess-backend sh
@@ -402,10 +452,14 @@ help-detailed: ## Show detailed help with examples
 	@echo "  make down       # Stop everything"
 	@echo ""
 	@echo "$(GREEN)🔧 Development:$(RESET)"
-	@echo "  make dev        # Start with logs"
-	@echo "  make restart    # Restart all containers"
-	@echo "  make build      # Rebuild containers"
-	@echo "  make health     # Check service health"
+	@echo "  make dev            # Start with logs"
+	@echo "  make dev-volumes     # Start with live SCSS volume mounts"
+	@echo "  make dev-fe          # Rebuild SCSS only + sync to running containers"
+	@echo "  make dev-watch       # Watch SCSS changes and auto-sync"
+	@echo "  make sync-styles     # Sync compiled CSS to running containers"
+	@echo "  make restart         # Restart all containers"
+	@echo "  make build           # Rebuild containers"
+	@echo "  make health          # Check service health"
 	@echo ""
 	@echo "$(GREEN)🧹 Cleanup:$(RESET)"
 	@echo "  make clean      # Remove containers and images"

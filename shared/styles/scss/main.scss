@@ -10,6 +10,7 @@
 @use "partials/slots";
 @use "partials/forms";
 @use "partials/board";
+@use "partials/pieces-svg";
 @use "partials/pieces";
 @use "partials/messages";
 @use "partials/status";
@@ -23,6 +24,8 @@
 @use "partials/landing";
 
 /* Namespace marker (reserved for potential runtime feature flags) */
-:root { --scss-enabled: 1; }
+:root {
+  --scss-enabled: 1;
+}
 
 /* SCSS partials emit concrete class rules (cards/buttons). */

@@ -20,6 +20,7 @@
             <nav class="header-nav">
                 <ul class="nav-links">
                     <li><a href="http://localhost:3000" class="nav-link"><span class="tech-icon tech-home"></span> Home</a></li>
+                    <li><span class="nav-spacer"></span></li>
                     <li><span class="nav-separator"></span></li>
                     <li><a href="http://localhost:3001" class="nav-link" title="Vanilla JavaScript"><span class="tech-icon tech-js"></span> Vanilla (JS)</a></li>
                     <li><a href="http://localhost:3002" class="nav-link active" title="Vanilla TypeScript"><span class="tech-icon tech-ts"></span> Vanilla (TS)</a></li>
@@ -32,7 +33,7 @@
                 </ul>
 
                 <div class="header-controls">
-                    <button id="theme-toggle-btn" class="btn btn-secondary" onclick="JSChessTheme.toggle()" aria-label="Toggle theme">🌙 Dark</button>
+                    <button id="theme-toggle-btn" class="btn btn-secondary" onclick="JSChessTheme.toggle()" aria-label="Toggle theme">🌙</button>
                     <!-- Debug button now injected by shared debug.js -->
                 </div>
             </nav>
@@ -43,7 +44,7 @@
         <main>
             <div class="left-panel">
                 <div class="game-config">
-                    <h3>⚙️ Game Settings</h3>
+                    <h3>Game Settings</h3>
                     <div class="config-section">
                         <h4>Player Settings</h4>
                         <div class="config-group">
@@ -112,7 +113,7 @@
                 </div>
 
                                 <div class="save-slots card-like" id="save-slots-card">
-                    <h3>💾 Save Slots</h3>
+                    <h3>Save Slots</h3>
                     <div class="slots-grid">
                         <div class="slot" data-slot="1">
                             <div class="slot-label">Slot 1</div>
@@ -169,7 +170,7 @@
                 </div>
 
                 <div id="timer-display" class="timer-info">
-                    <h3>⏱️ Game Timer</h3>
+                    <h3>Game Timer</h3>
                     <div class="timer-content">
                         <div class="timer-row">
                             <span class="timer-label">White:</span>
@@ -187,7 +188,7 @@
                 </div>
 
                 <div class="move-history">
-                    <h3>📜 Move History</h3>
+                    <h3>Move History</h3>
                     <div id="move-list" class="moves">
                         <div class="move-item">
                             <span class="move-number">-</span>
@@ -197,7 +198,7 @@
                 </div>
 
                 <div class="pgn-card card-like" id="pgn-card">
-                    <h3>📄 PGN</h3>
+                    <h3>PGN</h3>
                     <textarea id="pgn-output" class="pgn-output" readonly placeholder="Play moves to generate PGN"></textarea>
                     <div class="pgn-actions">
                         <button class="btn btn-smaller" id="pgn-copy-btn" aria-label="Copy PGN to clipboard" disabled>Copy</button>
@@ -249,6 +250,7 @@
     <!-- Ensure shared helpers/messages loaded before main module for PGN + messaging -->
     <script src="shared/assets/js/helpers.js"></script>
     <script src="shared/assets/js/messages.js"></script>
+    <script src="shared/assets/js/piece-renderer.js"></script>
     <script src="shared/assets/js/pgn-core.js"></script>
     <script src="shared/assets/js/debug.js"></script>
     <script type="module" src="dist/main.js"></script>
