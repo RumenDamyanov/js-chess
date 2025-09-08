@@ -15,13 +15,13 @@ Active & stable (included in default Docker / Make builds):
 - Vanilla TypeScript
 - jQuery
 - Vue 3 (now feature‑aligned: timers, save slots, board + dark mode, shared debug)
+- **WebAssembly** (native Go chess engine via WASM)
 
 Work‑in‑progress / planned (manual start or placeholders only):
 
 - Angular (refactor toward new shared UI patterns)
 - React (planned)
-- UI5 (JS) – placeholder link (landing + headers)
-- UI5 (TS) – placeholder link (landing + headers)
+- UI5 (TypeScript) – consolidated entry (was previously separated as JS/TS variants)
 
 **🎨 Recent UI/UX Unification (Sep 2025):**
 
@@ -39,17 +39,19 @@ The WIP / planned entries are excluded from aggregate Make targets to keep build
 Sep 2025 highlights:
 
 1. **🎨 UI/UX Unification Complete**: All 4 stable apps now share identical design system with unified layout, spacing, icons, and theming
-2. **⚡ Fast Development Workflow**: New Make commands for rapid SCSS iteration without container rebuilds
-3. **🔧 Enhanced Development Tools**: Added `make dev-fe`, `make sync-styles`, `make dev-watch`, and `make dev-volumes` commands
-4. **🐳 Docker Development Mode**: Volume mounts for live SCSS editing with `docker-compose.dev.yml`
-5. Vue 3 reached full feature parity (timers, save slots, status blocks, chat, move history, dark mode, unified board styling)
-6. Landing page redesign: modern dual‑row grid with stable vs WIP tiers and tech icon badges
-7. Shared SCSS design system cleanup: duplicate selectors removed, `@extend` eliminated, stylelint enforced in multiple CI jobs
-8. Unified debug panel + scoped log categories (legacy bespoke panels removed; AI noise gated behind `aiEngine`)
-9. Accessibility & UX: improved timer control semantics, nav placeholder states, message stack handling
-10. Build stabilization: Sass CLI given `--load-path shared/styles/scss`; Vue switched to `@use 'main';` via Vite `includePaths` + Docker image now copies `shared/` once for resolution
-11. CI hardening: matrix (vanilla-ts, vue-js) builds after shared style compile; stylelint runs in setup, matrix, and quality jobs with fail‑fast disabled
-12. Future migration path: Remaining apps will migrate from deep relative `@use '../../../shared/.../main';` to simplified `@use 'main';` (already live in Vue) for consistency
+2. **🚀 WebAssembly Chess Engine**: Added native Go chess engine compiled to WASM running `go.rumenx.com/chess` with Ebiten v2 graphics
+3. **⚡ Fast Development Workflow**: New Make commands for rapid SCSS iteration without container rebuilds
+4. **🔧 Enhanced Development Tools**: Added `make dev-fe`, `make sync-styles`, `make dev-watch`, and `make dev-volumes` commands
+5. **🐳 Docker Development Mode**: Volume mounts for live SCSS editing with `docker-compose.dev.yml`
+6. **🎯 Navigation Cleanup**: Consolidated UI5 variants from separate JS/TS entries to single TypeScript implementation
+7. Vue 3 reached full feature parity (timers, save slots, status blocks, chat, move history, dark mode, unified board styling)
+8. Landing page redesign: modern dual‑row grid with stable vs WIP tiers and tech icon badges
+9. Shared SCSS design system cleanup: duplicate selectors removed, `@extend` eliminated, stylelint enforced in multiple CI jobs
+10. Unified debug panel + scoped log categories (legacy bespoke panels removed; AI noise gated behind `aiEngine`)
+11. Accessibility & UX: improved timer control semantics, nav placeholder states, message stack handling
+12. Build stabilization: Sass CLI given `--load-path shared/styles/scss`; Vue switched to `@use 'main';` via Vite `includePaths` + Docker image now copies `shared/` once for resolution
+13. CI hardening: matrix (vanilla-ts, vue-js) builds after shared style compile; stylelint runs in setup, matrix, and quality jobs with fail‑fast disabled
+14. Future migration path: Remaining apps will migrate from deep relative `@use '../../../shared/.../main';` to simplified `@use 'main';` (already live in Vue) for consistency
 
 Planned next steps:
 
@@ -63,9 +65,9 @@ Planned next steps:
 
 ## Frameworks
 
-Stable: Vanilla JS · Vanilla TS · jQuery · Vue 3
+Stable: Vanilla JS · Vanilla TS · jQuery · Vue 3 · **WebAssembly**
 
-WIP / Planned: React · Angular · UI5 (JS) · UI5 (TS)
+WIP / Planned: React · Angular · UI5 (TypeScript)
 
 ## Repository Layout (excerpt)
 
@@ -167,9 +169,9 @@ make install          # Build & start backend + stable frontends
 make urls             # List service URLs (WIP flagged as disabled)
 ```
 
-Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (vue 3) · 8080 (API)
+Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (vue 3) · 3007 (WASM) · 8080 (API)
 
-WIP (manual if needed): 3005 (react) · 3006 (angular) · (UI5 JS/TS TBD)
+WIP (manual if needed): 3005 (react) · 3006 (angular) · 3008 (UI5 TS)
 
 ## ⚡ Fast Development Workflow
 
@@ -242,9 +244,9 @@ make install          # Build & start backend + stable frontends
 make urls             # List service URLs (WIP flagged as disabled)
 ```
 
-Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (vue 3) · 8080 (API)
+Primary active ports: 3000 (landing) · 3001 (vanilla JS) · 3002 (vanilla TS) · 3003 (jQuery) · 3004 (vue 3) · 3007 (WASM) · 8080 (API)
 
-WIP (manual if needed): 3005 (react) · 3006 (angular) · (UI5 JS/TS TBD)
+WIP (manual if needed): 3005 (react) · 3006 (angular) · 3008 (UI5 TS)
 
 ### Local Development (no Docker)
 

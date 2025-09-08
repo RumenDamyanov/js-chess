@@ -25,8 +25,8 @@
                         <li><a href="http://localhost:3004" class="nav-link" title="Vue.js"><span class="tech-icon tech-vue"></span> Vue</a></li>
                         <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-react"></span> React</span></li>
                         <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-angular"></span> Angular</span></li>
-                        <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-js"></span> UI5 (JS)</span></li>
-                        <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-ts"></span> UI5 (TS)</span></li>
+                        <li><span class="nav-link nav-link-disabled" title="Work in progress" aria-disabled="true"><span class="tech-icon tech-ui5-ts"></span> UI5</span></li>
+                        <li><a href="http://localhost:3007" class="nav-link" title="Native Go demo via WebAssembly"><span class="tech-icon tech-wasm"></span> WASM</a></li>
                         <li><span class="nav-separator"></span></li>
                         <li><a href="https://github.com/RumenDamyanov/js-chess" class="nav-link" target="_blank">GitHub</a></li>
                     </ul>
@@ -39,7 +39,7 @@
                     <div class="container">
                         <div class="hero-content">
                             <h2>Multi‑Framework Chess Showcase</h2>
-                            <p class="hero-description">Compare eight implementations (4 live, 4 in progress) of the same chess experience across popular front‑end stacks.</p>
+                            <p class="hero-description">Compare seven implementations (4 live, 3 in progress) plus a native WebAssembly demo of the same chess experience across popular front‑end stacks.</p>
                             <a href="#frameworks" class="btn btn-primary">Jump to Demos ↓</a>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
             <div class="container">
                        <div class="section-intro">
                            <h2>Demo Applications</h2>
-                           <p>All demos share rules, AI, and backend. UI variants highlight framework patterns. Two UI5 variants are in preparation.</p>
+                           <p>All demos share rules, AI, and backend. UI variants highlight framework patterns. One UI5 variant and a native WASM demo are in preparation.</p>
                        </div>
                                <!-- Stable Row (4 production-ready demos) -->
                                <h3 class="frameworks-tier-title">Stable Demos <span></span></h3>
@@ -188,25 +188,8 @@
                     </div>
                         <div class="framework-card wip dimmed">
                             <div class="framework-header">
-                                <div class="framework-icon ui5" title="UI5 JavaScript" style="background:#552b2b;">UI5</div>
-                                <h3>UI5 (JS)</h3>
-                                <span class="framework-tag wip">WIP</span>
-                            </div>
-                            <p class="framework-description">OpenUI5 vanilla JS flavor showcasing enterprise component model, theming, and MVC structure integration (in progress).</p>
-                            <div class="framework-features">
-                                <span class="feature">MVC</span>
-                                <span class="feature">Theming</span>
-                                <span class="feature">i18n</span>
-                            </div>
-                            <div class="framework-actions">
-                                <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
-                                <span class="btn btn-outline btn-disabled" title="WIP">View Code</span>
-                            </div>
-                        </div>
-                        <div class="framework-card wip dimmed">
-                            <div class="framework-header">
                                 <div class="framework-icon ui5" title="UI5 TypeScript" style="background:#1e3550;">UI5</div>
-                                <h3>UI5 (TS)</h3>
+                                <h3>UI5</h3>
                                 <span class="framework-tag wip">WIP</span>
                             </div>
                             <p class="framework-description">OpenUI5 with TypeScript typings, decorators exploration, and strict model interfaces (in progress).</p>
@@ -218,6 +201,23 @@
                             <div class="framework-actions">
                                 <span class="btn btn-disabled" title="Work in progress">Coming Soon</span>
                                 <span class="btn btn-outline btn-disabled" title="WIP">View Code</span>
+                            </div>
+                        </div>
+                        <div class="framework-card demo">
+                            <div class="framework-header">
+                                <div class="framework-icon wasm" title="WebAssembly" style="background:#654ff0;">WASM</div>
+                                <h3>WebAssembly</h3>
+                                <span class="framework-tag demo">Demo</span>
+                            </div>
+                            <p class="framework-description">Native Go chess GUI compiled to WebAssembly. Demonstrates the native go-chess package running directly in the browser without JavaScript frameworks.</p>
+                            <div class="framework-features">
+                                <span class="feature">Native Go</span>
+                                <span class="feature">WebAssembly</span>
+                                <span class="feature">No JS Framework</span>
+                            </div>
+                            <div class="framework-actions">
+                                <a href="http://localhost:3007" class="btn btn-primary">Try Demo</a>
+                                <a href="https://github.com/RumenDamyanov/js-chess/tree/main/apps/wasm" class="btn btn-outline" target="_blank">View Code</a>
                             </div>
                         </div>
                 </div><!-- /roadmap-row -->
@@ -302,8 +302,8 @@
                                     <span>Vue.js</span>
                                     <span>React.js</span>
                                     <span>Angular</span>
-                                    <span>UI5 (JS)</span>
-                                    <span>UI5 (TS)</span>
+                                    <span>UI5</span>
+                                    <span>WASM</span>
                                 </div>
                             </div>
                             <div class="api-layer">
@@ -348,8 +348,8 @@
                     <ul>
                         <li><span class="wip-link" title="Work in progress">React</span></li>
                         <li><span class="wip-link" title="Work in progress">Angular</span></li>
-                        <li><span class="wip-link" title="Work in progress">UI5 (JS)</span></li>
-                        <li><span class="wip-link" title="Work in progress">UI5 (TS)</span></li>
+                        <li><span class="wip-link" title="Work in progress">UI5</span></li>
+                        <li><a href="http://localhost:3007">WASM</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">

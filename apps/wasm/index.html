@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess - WebAssembly</title>
+    <!-- Shared styles -->
+    <link rel="stylesheet" href="shared/styles/scss/dist/common-scss.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' style='font-size:14px'>♛</text></svg>">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        
+        /* Header styles */
+        .app-header {
+            background: #2c3e50;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1000;
+        }
+        
+        /* Main content area for WASM game */
+        .wasm-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: calc(100vh - 60px); /* Account for header */
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .wasm-header {
+            text-align: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .wasm-header h1 {
+            color: #654ff0;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .wasm-header p {
+            color: #666;
+            font-size: 1.1em;
+            margin: 0;
+        }
+        
+        /* Game container that will hold the Ebiten canvas */
+        .game-wrapper {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        /* Style the Ebiten canvas when it's injected */
+        canvas {
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .loading .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #654ff0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .info-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .info-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .info-panel ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .info-panel li {
+            margin: 8px 0;
+            color: #555;
+        }
+        
+        .controls-info {
+            background: #e7f3ff;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .controls-info h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+        
+        .control-item {
+            margin: 5px 0;
+            color: #0c5460;
+        }
+        
+        .control-item strong {
+            display: inline-block;
+            min-width: 60px;
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            color: #666;
+            font-size: 0.9em;
+            background: white;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <a href="http://localhost:3000" class="header-brand">
+                <span class="header-title">♟️ JS Chess</span>
+                <span class="header-framework">WebAssembly</span>
+            </a>
+
+            <nav class="header-nav">
+                <ul class="nav-links">
+                    <li><a href="http://localhost:3000" class="nav-link"><span class="tech-icon tech-home"></span> Home</a></li>
+                    <li><span class="nav-spacer"></span></li>
+                    <li><span class="nav-separator"></span></li>
+                    <li><a href="http://localhost:3001" class="nav-link" title="Vanilla JavaScript"><span class="tech-icon tech-js"></span> Vanilla (JS)</a></li>
+                    <li><a href="http://localhost:3002" class="nav-link" title="Vanilla TypeScript"><span class="tech-icon tech-ts"></span> Vanilla (TS)</a></li>
+                    <li><a href="http://localhost:3003" class="nav-link" title="jQuery"><span class="tech-icon tech-jq"></span> jQuery</a></li>
+                    <li><a href="http://localhost:3004" class="nav-link" title="Vue"><span class="tech-icon tech-vue"></span> Vue</a></li>
+                    <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-react"></span> React</span></li>
+                    <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-angular"></span> Angular</span></li>
+                    <li><span class="nav-link nav-link-disabled" aria-disabled="true" title="Work in progress"><span class="tech-icon tech-ui5-ts"></span> UI5</span></li>
+                    <li><a href="http://localhost:3007" class="nav-link active" title="Native Go demo via WebAssembly"><span class="tech-icon tech-wasm"></span> WASM</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wasm-content">
+        <div class="wasm-header">
+            <h1>Native Go Chess via WebAssembly</h1>
+            <p>Experience the native Go chess engine running directly in your browser through WebAssembly</p>
+        </div>
+
+        <div id="loadingMessage" class="loading">
+            <div class="spinner"></div>
+            <p>Loading WebAssembly chess engine...</p>
+            <small>This may take a few moments on first load</small>
+        </div>
+
+        <div id="errorMessage" class="error" style="display: none;">
+            <h3>Failed to Load</h3>
+            <p id="errorText">WebAssembly is not supported in your browser or failed to load.</p>
+        </div>
+
+        <!-- The Ebiten canvas will be injected here by the Go WASM code -->
+        <div id="gameWrapper" class="game-wrapper" style="display: none;">
+            <!-- Canvas will be inserted here by Ebiten -->
+        </div>
+
+        <div class="controls-info">
+            <h3>🎮 Game Controls</h3>
+            <div class="control-item"><strong>Click:</strong> Select piece / destination</div>
+            <div class="control-item"><strong>Space:</strong> Cycle AI difficulty</div>
+            <div class="control-item"><strong>A:</strong> Toggle Human vs AI mode</div>
+            <div class="control-item"><strong>N:</strong> New game</div>
+            <div class="control-item"><strong>E:</strong> Evaluate position</div>
+            <div class="control-item"><strong>U:</strong> Undo move</div>
+            <div class="control-item"><strong>F:</strong> Flip board</div>
+            <div class="control-item"><strong>W/B:</strong> Choose color (before first move)</div>
+        </div>
+
+        <div class="info-panel">
+            <h3>About This Demo</h3>
+            <p>This chess implementation showcases the native Go chess engine compiled to WebAssembly. Unlike the JavaScript framework demos, this runs the original Go code directly in the browser without any JavaScript chess logic.</p>
+            <ul>
+                <li><strong>Native Performance:</strong> Direct execution of Go code via WASM</li>
+                <li><strong>Complete Chess Engine:</strong> Full rule implementation with AI</li>
+                <li><strong>Interactive Board:</strong> Click to move pieces, with visual highlights</li>
+                <li><strong>Multiple AI Levels:</strong> From harmless to godlike difficulty</li>
+                <li><strong>Position Evaluation:</strong> Real-time chess position analysis</li>
+                <li><strong>Move History:</strong> Standard Algebraic Notation (SAN) display</li>
+            </ul>
+        </div>
+
+        <div class="footer-note">
+            <p>Powered by <a href="https://go.rumenx.com/chess" target="_blank">go-chess</a> module, using <a href="https://github.com/hajimehoshi/ebiten" target="_blank">Ebiten</a> game engine, compiled to WebAssembly.</p>
+        </div>
+    </main>
+
+    <!-- WebAssembly Support -->
+    <script src="wasm_exec.js"></script>
+    <script>
+        // Check WebAssembly support
+        if (!WebAssembly) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = 'WebAssembly is not supported in your browser.';
+        } else {
+            // Load and run the WASM module
+            const go = new Go();
+            
+            WebAssembly.instantiateStreaming(fetch("chess.wasm"), go.importObject)
+                .then((result) => {
+                    // Hide loading message
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    
+                    // Show game wrapper (Ebiten will inject canvas here)
+                    document.getElementById('gameWrapper').style.display = 'block';
+                    
+                    // Run the Go program (this will create and append the canvas)
+                    go.run(result.instance);
+                    
+                    // After a short delay, try to move the canvas into our wrapper
+                    setTimeout(() => {
+                        const canvas = document.querySelector('canvas');
+                        const wrapper = document.getElementById('gameWrapper');
+                        if (canvas && wrapper && !wrapper.contains(canvas)) {
+                            wrapper.appendChild(canvas);
+                        }
+                    }, 100);
+                })
+                .catch((err) => {
+                    console.error('Failed to load WASM:', err);
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('errorText').textContent = 'Failed to load WebAssembly module: ' + err.message;
+                });
+        }
+    </script>
+</body>
+</html>

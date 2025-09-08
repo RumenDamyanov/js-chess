@@ -1066,11 +1066,11 @@
 .tech-angular {
   background: #dd0031;
 }
-.tech-ui5-js {
-  background: #b04848;
-}
 .tech-ui5-ts {
   background: #2b5d9b;
+}
+.tech-wasm {
+  background: #654ff0;
 }
 // Optional home icon (not in legacy but used in other app menus)
 .tech-home {
@@ -1242,6 +1242,9 @@
 .framework-card.wip {
   --status-accent: linear-gradient(135deg, #6b7280, #4b5563);
   filter: saturate(0.85);
+}
+.framework-card.demo {
+  --status-accent: linear-gradient(135deg, #654ff0, #5a3fd6);
 }
 [data-theme="dark"] .framework-card.wip {
   filter: saturate(0.75) brightness(0.95);

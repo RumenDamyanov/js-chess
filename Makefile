@@ -20,9 +20,9 @@ BACKEND_IMAGE := chess-backend
 # from default aggregate build / start / health targets to speed up development.
 # To re-enable them, add the services back to ACTIVE_SERVICES (and related port lists)
 # or invoke their individual targets (e.g., make start-angular, make build-react).
-ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
+ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing chess-wasm
 WIP_SERVICES := chess-angular chess-react # (disabled from aggregate commands)
-FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
+FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing chess-wasm
 
 ##@ General Commands
 
@@ -64,6 +64,7 @@ up: ## Start active (non-WIP) containers in detached mode
 	@echo "  Vue.js:              http://localhost:3004"
 	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
 	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
+	@echo "  WebAssembly:         http://localhost:3007"
 	@echo "  Backend API:         http://localhost:8080"
 
 .PHONY: start
@@ -151,6 +152,10 @@ build-vanilla-ts: ## Build only Vanilla TypeScript container
 build-landing: ## Build only Landing page container
 	@docker-compose build chess-landing
 
+.PHONY: build-wasm
+build-wasm: ## Build only WebAssembly container
+	@docker-compose build chess-wasm
+
 ##@ Design System / Shared Assets
 
 .PHONY: build-shared-styles
@@ -180,6 +185,7 @@ rebuild: ## Complete rebuild of active containers only (WIP excluded)
 	@echo "  Vue.js:              http://localhost:3004"
 	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
 	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
+	@echo "  WebAssembly:         http://localhost:3007"
 	@echo "  Backend API:         http://localhost:8080"
 
 .PHONY: restart
@@ -263,6 +269,11 @@ start-landing: ## Start only Landing page container
 	@docker-compose up -d chess-landing
 	@echo "$(GREEN)✅ Landing page started on http://localhost:3000$(RESET)"
 
+.PHONY: start-wasm
+start-wasm: ## Start only WebAssembly container
+	@docker-compose up -d chess-wasm
+	@echo "$(GREEN)✅ WebAssembly started on http://localhost:3007$(RESET)"
+
 ##@ Development Tools
 
 .PHONY: dev-fe
@@ -335,7 +346,7 @@ test-api: ## Test backend API endpoints
 .PHONY: test-frontend
 test-frontend: ## Test active frontend endpoints (WIP excluded)
 	@echo "$(BLUE)Testing active frontend endpoints...$(RESET)"
-	@for port in 3000 3001 3002 3003 3004; do \
+	@for port in 3000 3001 3002 3003 3004 3007; do \
 		echo "$(YELLOW)Testing http://localhost:$$port$(RESET)"; \
 		curl -s -o /dev/null -w "Status: %{http_code}\n" http://localhost:$$port || echo "Port $$port not responding"; \
 	done
@@ -384,7 +395,7 @@ health: ## Check health of active services (WIP excluded)
 	@echo "$(YELLOW)Backend API:$(RESET)"
 	@curl -s http://localhost:8080/health && echo " ✅" || echo " ❌"
 	@echo "$(YELLOW)Frontend Services:$(RESET)"
-	@for port in 3000 3001 3002 3003 3004; do \
+	@for port in 3000 3001 3002 3003 3004 3007; do \
 		printf "  Port $$port: "; \
 		curl -s -o /dev/null -w "%{http_code}" http://localhost:$$port && echo " ✅" || echo " ❌"; \
 	done
@@ -424,6 +435,7 @@ open: ## Open active applications in browser (macOS, WIP excluded)
 	@open http://localhost:3002  # Vanilla TypeScript
 	@open http://localhost:3003  # jQuery
 	@open http://localhost:3004  # Vue.js
+	@open http://localhost:3007  # WebAssembly
 	@echo "(Skipping WIP angular/react)"
 
 .PHONY: urls
@@ -436,6 +448,7 @@ urls: ## Display active application URLs (WIP excluded)
 	@echo "  $(YELLOW)Vue.js:$(RESET)              http://localhost:3004"
 	@echo "  $(YELLOW)(WIP) React.js:$(RESET)      http://localhost:3005 (disabled)"
 	@echo "  $(YELLOW)(WIP) Angular:$(RESET)       http://localhost:3006 (disabled)"
+	@echo "  $(YELLOW)WebAssembly:$(RESET)         http://localhost:3007"
 	@echo "  $(YELLOW)Backend API:$(RESET)         http://localhost:8080"
 	@echo "  $(YELLOW)API Docs:$(RESET)            http://localhost:8080/swagger"
 
