@@ -16,13 +16,11 @@ PROJECT_NAME := js-chess
 COMPOSE_FILE := docker-compose.yml
 BACKEND_IMAGE := chess-backend
 
-# NOTE: Angular / React are currently marked WIP and intentionally excluded
-# from default aggregate build / start / health targets to speed up development.
-# To re-enable them, add the services back to ACTIVE_SERVICES (and related port lists)
-# or invoke their individual targets (e.g., make start-angular, make build-react).
-ACTIVE_SERVICES := chess-backend chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing chess-wasm
-WIP_SERVICES := chess-angular chess-react # (disabled from aggregate commands)
-FRONTEND_IMAGES := chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing chess-wasm
+# NOTE: All frameworks are now active and included in aggregate targets.
+# This includes React, Angular, and the new UI5 TypeScript implementations.
+# Individual targets are available for granular control if needed.
+ACTIVE_SERVICES := chess-backend chess-landing chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-react-ts chess-angular chess-wasm chess-ui5
+FRONTEND_IMAGES := chess-landing chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-react-ts chess-angular chess-wasm chess-ui5
 
 ##@ General Commands
 
@@ -46,33 +44,34 @@ logs-backend: ## Show backend logs only
 	@docker-compose logs -f chess-backend
 
 .PHONY: logs-frontend
-logs-frontend: ## Show active frontend logs (WIP: angular/react excluded)
-	@docker-compose logs -f chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
+logs-frontend: ## Show all frontend logs
+	@docker-compose logs -f chess-landing chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-react-ts chess-angular chess-wasm chess-ui5
 
 ##@ Development Commands
 
 .PHONY: up
-up: ## Start active (non-WIP) containers in detached mode
-	@echo "$(GREEN)Starting active containers (excluding angular/react)...$(RESET)"
+up: ## Start all containers in detached mode
+	@echo "$(GREEN)Starting all containers...$(RESET)"
 	@docker-compose up -d $(ACTIVE_SERVICES)
-	@echo "$(GREEN)✅ Active containers started!$(RESET)"
+	@echo "$(GREEN)✅ All containers started!$(RESET)"
 	@echo "$(YELLOW)Access URLs:$(RESET)"
 	@echo "  Landing Page:        http://localhost:3000"
 	@echo "  Vanilla JS:          http://localhost:3001"
 	@echo "  Vanilla TypeScript:  http://localhost:3002"
 	@echo "  jQuery:              http://localhost:3003"
 	@echo "  Vue.js:              http://localhost:3004"
-	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
-	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
+	@echo "  React (TS):          http://localhost:3005"
+	@echo "  Angular:             http://localhost:3006"
 	@echo "  WebAssembly:         http://localhost:3007"
+	@echo "  UI5 TypeScript:      http://localhost:3008"
 	@echo "  Backend API:         http://localhost:8080"
 
 .PHONY: start
 start: up ## Alias for 'up' command
 
 .PHONY: dev
-dev: ## Start active containers (build if needed) and stream logs (WIP excluded)
-	@echo "$(GREEN)Starting development environment (excluding angular/react)...$(RESET)"
+dev: ## Start all containers (build if needed) and stream logs
+	@echo "$(GREEN)Starting development environment...$(RESET)"
 	@docker-compose up --build $(ACTIVE_SERVICES)
 
 .PHONY: dev-volumes
@@ -99,16 +98,16 @@ restart-backend: ## Restart only the backend container
 	@echo "$(GREEN)✅ Backend restarted$(RESET)"
 
 .PHONY: restart-frontend
-restart-frontend: ## Restart active frontend containers (WIP excluded)
-	@echo "$(YELLOW)Restarting active frontend containers...$(RESET)"
-	@docker-compose restart chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-landing
-	@echo "$(GREEN)✅ Active frontend containers restarted$(RESET)"
+restart-frontend: ## Restart all frontend containers
+	@echo "$(YELLOW)Restarting all frontend containers...$(RESET)"
+	@docker-compose restart chess-landing chess-jquery chess-vanilla chess-vanilla-ts chess-vue chess-react-ts chess-angular chess-wasm chess-ui5
+	@echo "$(GREEN)✅ All frontend containers restarted$(RESET)"
 
 ##@ Build Commands
 
 .PHONY: build
-build: build-shared-styles ## Build active containers only (backend + non-WIP frontends)
-	@echo "$(GREEN)Building active containers (excluding angular/react)...$(RESET)"
+build: build-shared-styles ## Build all containers
+	@echo "$(GREEN)Building all containers...$(RESET)"
 	@docker-compose build $(ACTIVE_SERVICES)
 	@echo "$(GREEN)✅ Active containers built$(RESET)"
 
@@ -119,18 +118,16 @@ build-backend: ## Build only the backend container
 	@echo "$(GREEN)✅ Backend built$(RESET)"
 
 .PHONY: build-frontend
-build-frontend: build-shared-styles ## Build active frontend containers (WIP excluded)
-	@echo "$(GREEN)Building active frontend containers (excluding angular/react)...$(RESET)"
+build-frontend: build-shared-styles ## Build all frontend containers
+	@echo "$(GREEN)Building all frontend containers...$(RESET)"
 	@docker-compose build $(FRONTEND_IMAGES)
-	@echo "$(GREEN)✅ Active frontend containers built$(RESET)"
+	@echo "$(GREEN)✅ All frontend containers built$(RESET)"
 
 .PHONY: build-angular
 build-angular: ## Build only Angular container
 	@docker-compose build chess-angular
 
-.PHONY: build-react
-build-react: ## Build only React container
-	@docker-compose build chess-react
+# (Deprecated legacy react-js build target removed; use 'make rebuild-react')
 
 .PHONY: build-vue
 build-vue: ## Build only Vue container
@@ -156,6 +153,10 @@ build-landing: ## Build only Landing page container
 build-wasm: ## Build only WebAssembly container
 	@docker-compose build chess-wasm
 
+.PHONY: build-ui5
+build-ui5: ## Build only UI5 TypeScript container
+	@docker-compose build chess-ui5
+
 ##@ Design System / Shared Assets
 
 .PHONY: build-shared-styles
@@ -170,32 +171,156 @@ watch-shared-styles: ## Watch shared SCSS and rebuild on changes
 	@npm run watch:styles
 
 .PHONY: rebuild
-rebuild: ## Complete rebuild of active containers only (WIP excluded)
-	@echo "$(YELLOW)Performing complete rebuild (excluding angular/react)...$(RESET)"
+rebuild: ## Complete rebuild of all containers
+	@echo "$(YELLOW)Performing complete rebuild of all containers...$(RESET)"
 	@$(MAKE) build-shared-styles
 	@docker-compose down --rmi local --volumes --remove-orphans
 	@docker-compose build --no-cache $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)
-	@echo "$(GREEN)✅ Complete rebuild (active set) finished$(RESET)"
+	@echo "$(GREEN)✅ Complete rebuild finished$(RESET)"
 	@echo "$(YELLOW)Access URLs:$(RESET)"
 	@echo "  Landing Page:        http://localhost:3000"
-	@echo "  Vanilla JS:          http://localhost:3001"
-	@echo "  Vanilla TS:          http://localhost:3002"
+	@echo "  Vanilla (JS):          http://localhost:3001"
+	@echo "  Vanilla (TS):          http://localhost:3002"
 	@echo "  jQuery:              http://localhost:3003"
 	@echo "  Vue.js:              http://localhost:3004"
-	@echo "  (WIP) React.js:      http://localhost:3005  # disabled"
-	@echo "  (WIP) Angular:       http://localhost:3006  # disabled"
+	@echo "  React (TS):          http://localhost:3005"
+	@echo "  Angular:             http://localhost:3006"
 	@echo "  WebAssembly:         http://localhost:3007"
+	@echo "  UI5 (TS):      http://localhost:3008"
 	@echo "  Backend API:         http://localhost:8080"
 
+# Parameterized rebuild for individual services
+# Usage: make rebuild-app APP=react-ts
+.PHONY: rebuild-app
+rebuild-app: ## Rebuild specific app container (usage: make rebuild-app APP=react-ts)
+	@if [ -z "$(APP)" ]; then \
+		echo "$(RED)Error: APP parameter is required$(RESET)"; \
+		echo "$(YELLOW)Usage: make rebuild-app APP=<app-name>$(RESET)"; \
+		echo "$(YELLOW)Available apps:$(RESET)"; \
+		echo "  backend, landing, jquery, vanilla, vanilla-ts, vue, react-ts, angular, wasm, ui5"; \
+		exit 1; \
+	fi
+	@$(MAKE) _rebuild-single-app-$(APP)
+
+# Individual app rebuild targets
+.PHONY: _rebuild-single-app-backend
+_rebuild-single-app-backend:
+	@echo "$(YELLOW)Rebuilding Backend API (chess-backend)...$(RESET)"
+	@docker-compose stop chess-backend
+	@docker rmi js-chess-chess-backend 2>/dev/null || true
+	@docker-compose build --no-cache chess-backend
+	@docker-compose up -d chess-backend
+	@echo "$(GREEN)✅ Backend API rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:8080$(RESET)"
+
+.PHONY: _rebuild-single-app-react-ts
+_rebuild-single-app-react-ts:
+	@echo "$(YELLOW)Rebuilding React TS App (chess-react-ts)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-react-ts 2>/dev/null || true
+	@docker rmi js-chess-chess-react-ts 2>/dev/null || true
+	@docker-compose build --no-cache chess-react-ts
+	@docker-compose up -d chess-react-ts
+	@echo "$(GREEN)✅ React TS App rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3005$(RESET)"
+
+.PHONY: _rebuild-single-app-angular
+_rebuild-single-app-angular:
+	@echo "$(YELLOW)Rebuilding Angular App (chess-angular)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-angular
+	@docker rmi js-chess-chess-angular 2>/dev/null || true
+	@docker-compose build --no-cache chess-angular
+	@docker-compose up -d chess-angular
+	@echo "$(GREEN)✅ Angular App rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3006$(RESET)"
+
+.PHONY: _rebuild-single-app-vue
+_rebuild-single-app-vue:
+	@echo "$(YELLOW)Rebuilding Vue.js App (chess-vue)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-vue
+	@docker rmi js-chess-chess-vue 2>/dev/null || true
+	@docker-compose build --no-cache chess-vue
+	@docker-compose up -d chess-vue
+	@echo "$(GREEN)✅ Vue.js App rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3004$(RESET)"
+
+.PHONY: _rebuild-single-app-vanilla
+_rebuild-single-app-vanilla:
+	@echo "$(YELLOW)Rebuilding Vanilla JavaScript (chess-vanilla)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-vanilla
+	@docker rmi js-chess-chess-vanilla 2>/dev/null || true
+	@docker-compose build --no-cache chess-vanilla
+	@docker-compose up -d chess-vanilla
+	@echo "$(GREEN)✅ Vanilla JavaScript rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3001$(RESET)"
+
+.PHONY: _rebuild-single-app-vanilla-ts
+_rebuild-single-app-vanilla-ts:
+	@echo "$(YELLOW)Rebuilding Vanilla TypeScript (chess-vanilla-ts)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-vanilla-ts
+	@docker rmi js-chess-chess-vanilla-ts 2>/dev/null || true
+	@docker-compose build --no-cache chess-vanilla-ts
+	@docker-compose up -d chess-vanilla-ts
+	@echo "$(GREEN)✅ Vanilla TypeScript rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3002$(RESET)"
+
+.PHONY: _rebuild-single-app-jquery
+_rebuild-single-app-jquery:
+	@echo "$(YELLOW)Rebuilding jQuery App (chess-jquery)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-jquery
+	@docker rmi js-chess-chess-jquery 2>/dev/null || true
+	@docker-compose build --no-cache chess-jquery
+	@docker-compose up -d chess-jquery
+	@echo "$(GREEN)✅ jQuery App rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3003$(RESET)"
+
+.PHONY: _rebuild-single-app-wasm
+_rebuild-single-app-wasm:
+	@echo "$(YELLOW)Rebuilding WebAssembly App (chess-wasm)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-wasm
+	@docker rmi js-chess-chess-wasm 2>/dev/null || true
+	@docker-compose build --no-cache chess-wasm
+	@docker-compose up -d chess-wasm
+	@echo "$(GREEN)✅ WebAssembly App rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3007$(RESET)"
+
+.PHONY: _rebuild-single-app-ui5
+_rebuild-single-app-ui5:
+	@echo "$(YELLOW)Rebuilding UI5 TypeScript App (chess-ui5)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-ui5
+	@docker rmi js-chess-chess-ui5 2>/dev/null || true
+	@docker-compose build --no-cache chess-ui5
+	@docker-compose up -d chess-ui5
+	@echo "$(GREEN)✅ UI5 TypeScript App rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3008$(RESET)"
+
+.PHONY: _rebuild-single-app-landing
+_rebuild-single-app-landing:
+	@echo "$(YELLOW)Rebuilding Landing Page (chess-landing)...$(RESET)"
+	@$(MAKE) build-shared-styles
+	@docker-compose stop chess-landing
+	@docker rmi js-chess-chess-landing 2>/dev/null || true
+	@docker-compose build --no-cache chess-landing
+	@docker-compose up -d chess-landing
+	@echo "$(GREEN)✅ Landing Page rebuilt successfully$(RESET)"
+	@echo "$(YELLOW)Access URL: http://localhost:3000$(RESET)"
+
 .PHONY: restart
-restart: ## Soft rebuild (active containers only, cache enabled)
-	@echo "$(YELLOW)Performing soft restart of active containers (excluding angular/react)...$(RESET)"
+restart: ## Soft rebuild (all containers, cache enabled)
+	@echo "$(YELLOW)Performing soft restart of all containers...$(RESET)"
 	@$(MAKE) build-shared-styles
 	@docker-compose down
 	@docker-compose build $(ACTIVE_SERVICES)
 	@docker-compose up -d $(ACTIVE_SERVICES)
-	@echo "$(GREEN)✅ Active containers restarted$(RESET)"
+	@echo "$(GREEN)✅ All containers restarted$(RESET)"
 
 ##@ Cleanup Commands
 
@@ -229,6 +354,47 @@ clean-volumes: ## Remove all Docker volumes
 
 ##@ Individual Container Management
 
+# Quick rebuild aliases for common apps
+.PHONY: rebuild-react
+rebuild-react: ## Quick rebuild of React TS app
+	@$(MAKE) rebuild-app APP=react-ts
+
+.PHONY: rebuild-angular
+rebuild-angular: ## Quick rebuild of Angular app
+	@$(MAKE) rebuild-app APP=angular
+
+.PHONY: rebuild-vue
+rebuild-vue: ## Quick rebuild of Vue app
+	@$(MAKE) rebuild-app APP=vue
+
+.PHONY: rebuild-backend
+rebuild-backend: ## Quick rebuild of backend
+	@$(MAKE) rebuild-app APP=backend
+
+.PHONY: rebuild-vanilla
+rebuild-vanilla: ## Quick rebuild of Vanilla JS app
+	@$(MAKE) rebuild-app APP=vanilla
+
+.PHONY: rebuild-vanilla-ts
+rebuild-vanilla-ts: ## Quick rebuild of Vanilla TypeScript app
+	@$(MAKE) rebuild-app APP=vanilla-ts
+
+.PHONY: rebuild-jquery
+rebuild-jquery: ## Quick rebuild of jQuery app
+	@$(MAKE) rebuild-app APP=jquery
+
+.PHONY: rebuild-wasm
+rebuild-wasm: ## Quick rebuild of WebAssembly app
+	@$(MAKE) rebuild-app APP=wasm
+
+.PHONY: rebuild-ui5
+rebuild-ui5: ## Quick rebuild of UI5 TypeScript app
+	@$(MAKE) rebuild-app APP=ui5
+
+.PHONY: rebuild-landing
+rebuild-landing: ## Quick rebuild of Landing page
+	@$(MAKE) rebuild-app APP=landing
+
 .PHONY: start-backend
 start-backend: ## Start only the backend container
 	@docker-compose up -d chess-backend
@@ -240,9 +406,9 @@ start-angular: ## Start only Angular container
 	@echo "$(GREEN)✅ Angular started on http://localhost:3006$(RESET)"
 
 .PHONY: start-react
-start-react: ## Start only React container
-	@docker-compose up -d chess-react
-	@echo "$(GREEN)✅ React started on http://localhost:3005$(RESET)"
+start-react: ## Start only React TS container
+	@docker-compose up -d chess-react-ts
+	@echo "$(GREEN)✅ React TS started on http://localhost:3005$(RESET)"
 
 .PHONY: start-vue
 start-vue: ## Start only Vue container
@@ -273,6 +439,11 @@ start-landing: ## Start only Landing page container
 start-wasm: ## Start only WebAssembly container
 	@docker-compose up -d chess-wasm
 	@echo "$(GREEN)✅ WebAssembly started on http://localhost:3007$(RESET)"
+
+.PHONY: start-ui5
+start-ui5: ## Start only UI5 TypeScript container
+	@docker-compose up -d chess-ui5
+	@echo "$(GREEN)✅ UI5 TypeScript started on http://localhost:3008$(RESET)"
 
 ##@ Development Tools
 
@@ -327,8 +498,8 @@ shell-angular: ## Open shell in Angular container
 	@docker-compose exec chess-angular sh
 
 .PHONY: shell-react
-shell-react: ## Open shell in React container
-	@docker-compose exec chess-react sh
+shell-react: ## Open shell in React TS container
+	@docker-compose exec chess-react-ts sh
 
 .PHONY: shell-vue
 shell-vue: ## Open shell in Vue container
@@ -344,9 +515,9 @@ test-api: ## Test backend API endpoints
 	@curl -s http://localhost:8080/health || echo "Backend not responding"
 
 .PHONY: test-frontend
-test-frontend: ## Test active frontend endpoints (WIP excluded)
-	@echo "$(BLUE)Testing active frontend endpoints...$(RESET)"
-	@for port in 3000 3001 3002 3003 3004 3007; do \
+test-frontend: ## Test all frontend endpoints
+	@echo "$(BLUE)Testing all frontend endpoints...$(RESET)"
+	@for port in 3000 3001 3002 3003 3004 3005 3006 3007 3008; do \
 		echo "$(YELLOW)Testing http://localhost:$$port$(RESET)"; \
 		curl -s -o /dev/null -w "Status: %{http_code}\n" http://localhost:$$port || echo "Port $$port not responding"; \
 	done
@@ -390,12 +561,12 @@ inspect: ## Show detailed container information
 	@docker-compose ps --format "table {{.Service}}\t{{.Status}}\t{{.Ports}}"
 
 .PHONY: health
-health: ## Check health of active services (WIP excluded)
-	@echo "$(BLUE)Service Health Check (active only):$(RESET)"
+health: ## Check health of all services
+	@echo "$(BLUE)Service Health Check:$(RESET)"
 	@echo "$(YELLOW)Backend API:$(RESET)"
 	@curl -s http://localhost:8080/health && echo " ✅" || echo " ❌"
 	@echo "$(YELLOW)Frontend Services:$(RESET)"
-	@for port in 3000 3001 3002 3003 3004 3007; do \
+	@for port in 3000 3001 3002 3003 3004 3005 3006 3007 3008; do \
 		printf "  Port $$port: "; \
 		curl -s -o /dev/null -w "%{http_code}" http://localhost:$$port && echo " ✅" || echo " ❌"; \
 	done
@@ -428,27 +599,30 @@ setup: install ## Alias for install command
 ##@ Quick Access URLs
 
 .PHONY: open
-open: ## Open active applications in browser (macOS, WIP excluded)
-	@echo "$(GREEN)Opening active applications in browser...$(RESET)"
+open: ## Open all applications in browser (macOS)
+	@echo "$(GREEN)Opening all applications in browser...$(RESET)"
 	@open http://localhost:3000  # Landing page
 	@open http://localhost:3001  # Vanilla JS
 	@open http://localhost:3002  # Vanilla TypeScript
 	@open http://localhost:3003  # jQuery
 	@open http://localhost:3004  # Vue.js
+	@open http://localhost:3005  # React TS
+	@open http://localhost:3006  # Angular
 	@open http://localhost:3007  # WebAssembly
-	@echo "(Skipping WIP angular/react)"
+	@open http://localhost:3008  # UI5 TypeScript
 
 .PHONY: urls
-urls: ## Display active application URLs (WIP excluded)
-	@echo "$(BLUE)Application URLs (active set):$(RESET)"
+urls: ## Display all application URLs
+	@echo "$(BLUE)Application URLs:$(RESET)"
 	@echo "  $(YELLOW)Landing Page:$(RESET)        http://localhost:3000"
 	@echo "  $(YELLOW)Vanilla JS:$(RESET)          http://localhost:3001"
 	@echo "  $(YELLOW)Vanilla TypeScript:$(RESET)  http://localhost:3002"
 	@echo "  $(YELLOW)jQuery:$(RESET)              http://localhost:3003"
 	@echo "  $(YELLOW)Vue.js:$(RESET)              http://localhost:3004"
-	@echo "  $(YELLOW)(WIP) React.js:$(RESET)      http://localhost:3005 (disabled)"
-	@echo "  $(YELLOW)(WIP) Angular:$(RESET)       http://localhost:3006 (disabled)"
+	@echo "  $(YELLOW)React (TS):$(RESET)          http://localhost:3005"
+	@echo "  $(YELLOW)Angular:$(RESET)             http://localhost:3006"
 	@echo "  $(YELLOW)WebAssembly:$(RESET)         http://localhost:3007"
+	@echo "  $(YELLOW)UI5 TypeScript:$(RESET)      http://localhost:3008"
 	@echo "  $(YELLOW)Backend API:$(RESET)         http://localhost:8080"
 	@echo "  $(YELLOW)API Docs:$(RESET)            http://localhost:8080/swagger"
 
@@ -472,6 +646,9 @@ help-detailed: ## Show detailed help with examples
 	@echo "  make sync-styles     # Sync compiled CSS to running containers"
 	@echo "  make restart         # Restart all containers"
 	@echo "  make build           # Rebuild containers"
+	@echo "  make rebuild         # Complete rebuild of all containers"
+	@echo "  make rebuild-app APP=react-ts  # Rebuild specific app"
+	@echo "  make rebuild-react   # Quick rebuild React TS app"
 	@echo "  make health          # Check service health"
 	@echo ""
 	@echo "$(GREEN)🧹 Cleanup:$(RESET)"
@@ -482,7 +659,7 @@ help-detailed: ## Show detailed help with examples
 	@echo "$(GREEN)🎯 Individual Services:$(RESET)"
 	@echo "  make start-backend   # Backend only"
 	@echo "  make start-angular   # Angular only"
-	@echo "  make build-react     # Build React only"
+	@echo "  make rebuild-react   # Rebuild React TS only"
 	@echo ""
 	@echo "$(GREEN)🔍 Debugging:$(RESET)"
 	@echo "  make shell-backend   # Shell into backend"
